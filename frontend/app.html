@@ -229,6 +229,124 @@
       line-height: 1.5;
     }
 
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-group input {
+      width: 100%;
+      border: 1px solid var(--gris-claro);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 14px;
+      color: var(--gris-oscuro);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .form-group input:focus {
+      border-color: var(--celeste-institucional);
+      box-shadow: 0 0 0 3px rgba(45, 170, 225, 0.18);
+    }
+
+    .form-group input.valid {
+      border-color: #2e7d32;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 9000;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--blanco);
+      border-radius: 16px;
+      padding: 28px 24px 20px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    .modal-box .numero-asignado {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--celeste-institucional);
+      margin: 16px 0 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .modal-box .modal-detail {
+      font-size: 13px;
+      color: var(--gris-medio);
+      margin: 4px 0;
+    }
+
+    .btn-primary {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background: var(--celeste-institucional);
+      color: var(--blanco);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: filter 0.18s ease;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      filter: brightness(0.96);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      border: 1px solid var(--gris-claro);
+      border-radius: 10px;
+      background: var(--blanco);
+      color: var(--gris-oscuro);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 14px;
+      cursor: pointer;
+      margin-top: 12px;
+      width: 100%;
+      transition: background 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #f7f9fc;
+    }
+
     @media (max-width: 768px) {
       .app-shell {
         flex-direction: column;
@@ -269,14 +387,49 @@
       </header>
 
       <main class="main-content">
-        <div class="content-card">
-          <h2>Bienvenido</h2>
-          <p>
-            Esta es la estructura general de la aplicación: barra lateral con ítems según el rol y barra superior con tu nombre y cierre de sesión.
-            Sustituye este bloque por el contenido de cada módulo (rutas o vistas de tu framework).
-          </p>
+        <div class="view active" id="view-inicio">
+          <div class="content-card">
+            <h2>Bienvenido</h2>
+            <p>
+              Seleccione una opción del menú lateral para comenzar.
+            </p>
+          </div>
+        </div>
+
+        <div class="view" id="view-solicitar-informe">
+          <div class="content-card">
+            <h2>Solicitar número de informe</h2>
+            <p style="margin-bottom: 18px;">Complete los datos del patrono para generar un nuevo número de informe patronal.</p>
+            <form id="formSolicitarInforme" novalidate>
+              <div class="form-group">
+                <label for="nombrePatrono">Nombre del patrono</label>
+                <input id="nombrePatrono" name="nombrePatrono" type="text" placeholder="Nombre completo del patrono" required />
+              </div>
+              <div class="form-group">
+                <label for="nitPatrono">NIT del patrono</label>
+                <input id="nitPatrono" name="nitPatrono" type="text" placeholder="NIT (sin guiones)" required />
+              </div>
+              <div class="form-group">
+                <label for="direccionPatrono">Dirección <span style="color: var(--gris-medio); font-weight: 400;">(opcional)</span></label>
+                <input id="direccionPatrono" name="direccionPatrono" type="text" placeholder="Dirección del patrono" />
+              </div>
+              <button type="submit" class="btn-primary" id="btnSolicitar">
+                <span class="btn-text">Solicitar número</span>
+              </button>
+            </form>
+          </div>
         </div>
       </main>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalExito">
+    <div class="modal-box">
+      <div style="font-size: 48px; line-height: 1;">✅</div>
+      <div class="numero-asignado" id="modalNumero">INF-2026-000</div>
+      <p class="modal-detail" id="modalFecha"></p>
+      <p class="modal-detail" id="modalEstado"></p>
+      <button type="button" class="btn-primary" id="btnCerrarModal" style="margin-top: 16px;">Cerrar</button>
     </div>
   </div>
 
@@ -286,20 +439,20 @@
     const LOGIN_PAGE = "login.html";
     const LOGIN_LOGOUT_PAGE = "login.html?logout=1";
 
-    /** Claves de rol que usa el backend o la demo; ajusta según tu API. */
+    const CONFIG = {
+      apiBaseUrl: "http://localhost:3000",
+      apiInformesPath: "/api/informes"
+    };
+
     const ROLE = {
       ADMIN: "admin",
       INSPECTOR: "inspector",
       CONSULTA: "consulta"
     };
 
-    /**
-     * Definición de menú: `roles` lista qué roles ven el ítem (omitir = todos los autenticados).
-     * `href` puede ser # por ahora hasta tener rutas reales.
-     */
     const MENU_ITEMS = [
-      { id: "inicio", label: "Inicio", icon: "⌂", href: "app.html", roles: null },
-      { id: "informes", label: "Informes patronales", icon: "📋", href: "#informes", roles: [ROLE.ADMIN, ROLE.INSPECTOR] },
+      { id: "inicio", label: "Inicio", icon: "⌂", href: "app.html", view: "inicio", roles: null },
+      { id: "informes", label: "Informes patronales", icon: "📋", view: "solicitar-informe", roles: [ROLE.ADMIN, ROLE.INSPECTOR] },
       { id: "inspecciones", label: "Inspecciones", icon: "🔍", href: "#inspecciones", roles: [ROLE.ADMIN, ROLE.INSPECTOR] },
       { id: "reportes", label: "Reportes", icon: "📊", href: "#reportes", roles: [ROLE.ADMIN] },
       { id: "usuarios", label: "Usuarios", icon: "👤", href: "#usuarios", roles: [ROLE.ADMIN] },
@@ -355,6 +508,12 @@
       return item.roles.map((r) => String(r).toLowerCase()).includes(role);
     }
 
+    function showView(viewId) {
+      document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+      const target = document.getElementById("view-" + viewId);
+      if (target) target.classList.add("active");
+    }
+
     function renderSidebar(role) {
       const nav = document.getElementById("sidebarNav");
       const label = document.getElementById("sidebarRoleLabel");
@@ -368,14 +527,20 @@
       const currentPage = window.location.pathname.split("/").pop() || "app.html";
 
       MENU_ITEMS.filter((item) => itemVisibleForRole(item, role)).forEach((item) => {
-        const hrefFile = item.href.split("#")[0];
-        const isCurrent = hrefFile && hrefFile === currentPage;
-        const a = document.createElement("a");
-        a.className = "nav-link" + (isCurrent ? " active" : "");
-        a.href = item.href;
-        if (isCurrent) a.setAttribute("aria-current", "page");
-        a.innerHTML = `<span class="nav-icon" aria-hidden="true">${item.icon}</span><span>${item.label}</span>`;
-        nav.appendChild(a);
+        const el = document.createElement(item.view ? "button" : "a");
+        el.className = "nav-link";
+
+        if (item.view) {
+          el.type = "button";
+          el.addEventListener("click", () => showView(item.view));
+        } else {
+          el.href = item.href;
+          const hrefFile = item.href.split("#")[0];
+          if (hrefFile && hrefFile === currentPage) el.classList.add("active");
+        }
+
+        el.innerHTML = `<span class="nav-icon" aria-hidden="true">${item.icon}</span><span>${item.label}</span>`;
+        nav.appendChild(el);
       });
     }
 
@@ -383,6 +548,76 @@
       localStorage.removeItem(SESSION_KEY);
       sessionStorage.removeItem(SESSION_KEY);
       window.location.href = LOGIN_LOGOUT_PAGE;
+    }
+
+    function getAuthToken() {
+      const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return null;
+      try {
+        const data = JSON.parse(raw);
+        return data.accessToken || data.token || null;
+      } catch {
+        return null;
+      }
+    }
+
+    async function solicitarInforme(event) {
+      event.preventDefault();
+
+      const nombrePatrono = document.getElementById("nombrePatrono").value.trim();
+      const nitPatrono = document.getElementById("nitPatrono").value.trim();
+      const direccionPatrono = document.getElementById("direccionPatrono").value.trim();
+
+      if (!nombrePatrono || !nitPatrono) {
+        showToast("Complete los campos obligatorios.", "warning");
+        return;
+      }
+
+      const token = getAuthToken();
+      if (!token) {
+        showToast("Sesión expirada. Inicie sesión nuevamente.", "error");
+        logout();
+        return;
+      }
+
+      const btn = document.getElementById("btnSolicitar");
+      btn.disabled = true;
+      btn.querySelector(".btn-text").textContent = "Procesando...";
+
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiInformesPath, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token
+          },
+          body: JSON.stringify({ nombrePatrono, nitPatrono, direccionPatrono: direccionPatrono || undefined })
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            showToast("Sesión expirada. Inicie sesión nuevamente.", "error");
+            logout();
+            return;
+          }
+          const err = await response.json().catch(() => ({}));
+          showToast(err.message || "Error al solicitar el número.", "error");
+          return;
+        }
+
+        const data = await response.json();
+        document.getElementById("modalNumero").textContent = data.numeroInforme;
+        document.getElementById("modalFecha").textContent = "Creado: " + new Date(data.createdAt).toLocaleString("es-GT");
+        document.getElementById("modalEstado").textContent = "Estado: " + data.estado;
+        document.getElementById("modalExito").classList.add("open");
+
+        document.getElementById("formSolicitarInforme").reset();
+      } catch {
+        showToast("Error de conexión con el servidor.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.querySelector(".btn-text").textContent = "Solicitar número";
+      }
     }
 
     function init() {
@@ -403,6 +638,13 @@
       renderSidebar(role);
 
       document.getElementById("btnLogout").addEventListener("click", logout);
+      document.getElementById("formSolicitarInforme").addEventListener("submit", solicitarInforme);
+      document.getElementById("btnCerrarModal").addEventListener("click", () => {
+        document.getElementById("modalExito").classList.remove("open");
+      });
+      document.getElementById("modalExito").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) document.getElementById("modalExito").classList.remove("open");
+      });
     }
 
     init();
