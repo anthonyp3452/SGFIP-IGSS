@@ -435,32 +435,16 @@
 
     const loginWithApi = async ({ email, password, remember }) => {
       const loginUrl = `${CONFIG.apiBaseUrl}${CONFIG.apiLoginPath}`;
-      if (!CONFIG.apiBaseUrl.includes("TU_BACKEND")) {
-        try {
-          const response = await fetch(loginUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password, remember })
-          });
-          return normalizeApiResult(response);
-        } catch {
-          return { ok: false, reason: "network" };
-        }
+      try {
+        const response = await fetch(loginUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        return normalizeApiResult(response);
+      } catch {
+        return { ok: false, reason: "network" };
       }
-
-      // Modo demo local mientras configuras el endpoint real.
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      if (email.toLowerCase() !== "admin@igss.gob.gt") return { ok: false, reason: "userNotFound" };
-      if (password !== "IGSS2026!") return { ok: false, reason: "wrongPassword" };
-      return {
-        ok: true,
-        data: {
-          token: "demo-token",
-          email,
-          userName: "Administrador demo",
-          role: "admin"
-        }
-      };
     };
 
     const saveSession = (data, remember) => {
@@ -468,12 +452,24 @@
       storage.setItem("sgfip_session", JSON.stringify(data));
     };
 
+    const flattenSession = (data) => {
+      const user = data.user || {};
+      return {
+        ...data,
+        accessToken: data.accessToken || data.token,
+        token: data.accessToken || data.token,
+        userName: user.nombre || user.name || data.userName,
+        email: user.email || data.email,
+        role: user.rolId === 1 ? 'admin' : user.rolId === 2 ? 'inspector' : user.rolId === 3 ? 'consulta' : data.role,
+      };
+    };
+
     const onAuthSuccess = (provider, data, remember) => {
       saveSession(
         {
           provider,
           loginAt: new Date().toISOString(),
-          ...data
+          ...flattenSession(data),
         },
         remember
       );
