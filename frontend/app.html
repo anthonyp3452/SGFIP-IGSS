@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SGFIP | Inicio</title>
+  <style>
+    :root {
+      --celeste-institucional: #2DAAE1;
+      --celeste-claro: #A7D8F5;
+      --blanco: #FFFFFF;
+      --gris-oscuro: #333333;
+      --gris-medio: #5c5c5c;
+      --gris-claro: #E0E0E0;
+      --sidebar-bg: #0f3d52;
+      --sidebar-hover: rgba(255, 255, 255, 0.08);
+      --sidebar-active: rgba(45, 170, 225, 0.35);
+      --navbar-height: 56px;
+      --sidebar-width: 260px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--gris-oscuro);
+      background: #f4f7f9;
+    }
+
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background: linear-gradient(180deg, var(--sidebar-bg) 0%, #0a2f3f 100%);
+      color: var(--blanco);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 0;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .sidebar-brand {
+      padding: 8px 18px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 12px;
+    }
+
+    .sidebar-brand .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .sidebar-brand .system-name {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.35;
+      opacity: 0.98;
+    }
+
+    .sidebar-brand .role-badge {
+      margin: 8px 0 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.75;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 10px;
+    }
+
+    .nav-section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.5;
+      padding: 12px 12px 6px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.92);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.15s ease;
+      margin-bottom: 4px;
+    }
+
+    .nav-link:hover {
+      background: var(--sidebar-hover);
+    }
+
+    .nav-link.active {
+      background: var(--sidebar-active);
+      color: var(--blanco);
+    }
+
+    .nav-icon {
+      width: 22px;
+      text-align: center;
+      opacity: 0.9;
+    }
+
+    .main-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .navbar {
+      height: var(--navbar-height);
+      flex-shrink: 0;
+      background: var(--blanco);
+      border-bottom: 1px solid var(--gris-claro);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 20px;
+      gap: 16px;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+    }
+
+    .user-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--celeste-institucional), var(--celeste-claro));
+      color: var(--blanco);
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-meta {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gris-oscuro);
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: var(--gris-medio);
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-logout {
+      border: 1px solid var(--gris-claro);
+      background: var(--blanco);
+      color: var(--gris-oscuro);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn-logout:hover {
+      background: #f7f9fc;
+      border-color: #c9d0d8;
+    }
+
+    .btn-logout:focus-visible {
+      outline: 2px solid var(--celeste-claro);
+      outline-offset: 2px;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 24px;
+    }
+
+    .content-card {
+      background: var(--blanco);
+      border-radius: 14px;
+      padding: 22px;
+      border: 1px solid var(--gris-claro);
+      max-width: 900px;
+    }
+
+    .content-card h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .content-card p {
+      margin: 0;
+      color: var(--gris-medio);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .app-shell {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        max-height: none;
+      }
+
+      .user-email {
+        max-width: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Menú principal">
+      <div class="sidebar-brand">
+        <div class="logo" aria-hidden="true">🏛️</div>
+        <p class="system-name">SGFIP</p>
+        <p class="role-badge" id="sidebarRoleLabel">Rol</p>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav" aria-label="Secciones"></nav>
+    </aside>
+
+    <div class="main-wrap">
+      <header class="navbar">
+        <div class="user-block">
+          <div class="user-avatar" id="userAvatar" aria-hidden="true">?</div>
+          <div class="user-meta">
+            <span class="user-name" id="navUserName">Usuario</span>
+            <span class="user-email" id="navUserEmail"></span>
+          </div>
+        </div>
+        <button type="button" class="btn-logout" id="btnLogout">Cerrar sesión</button>
+      </header>
+
+      <main class="main-content">
+        <div class="content-card">
+          <h2>Bienvenido</h2>
+          <p>
+            Esta es la estructura general de la aplicación: barra lateral con ítems según el rol y barra superior con tu nombre y cierre de sesión.
+            Sustituye este bloque por el contenido de cada módulo (rutas o vistas de tu framework).
+          </p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/toast.js"></script>
+  <script>
+    const SESSION_KEY = "sgfip_session";
+    const LOGIN_PAGE = "login.html";
+    const LOGIN_LOGOUT_PAGE = "login.html?logout=1";
+
+    /** Claves de rol que usa el backend o la demo; ajusta según tu API. */
+    const ROLE = {
+      ADMIN: "admin",
+      INSPECTOR: "inspector",
+      CONSULTA: "consulta"
+    };
+
+    /**
+     * Definición de menú: `roles` lista qué roles ven el ítem (omitir = todos los autenticados).
+     * `href` puede ser # por ahora hasta tener rutas reales.
+     */
+    const MENU_ITEMS = [
+      { id: "inicio", label: "Inicio", icon: "⌂", href: "app.html", roles: null },
+      { id: "informes", label: "Informes patronales", icon: "📋", href: "#informes", roles: [ROLE.ADMIN, ROLE.INSPECTOR] },
+      { id: "inspecciones", label: "Inspecciones", icon: "🔍", href: "#inspecciones", roles: [ROLE.ADMIN, ROLE.INSPECTOR] },
+      { id: "reportes", label: "Reportes", icon: "📊", href: "#reportes", roles: [ROLE.ADMIN] },
+      { id: "usuarios", label: "Usuarios", icon: "👤", href: "#usuarios", roles: [ROLE.ADMIN] },
+      { id: "consulta", label: "Consulta pública", icon: "📖", href: "#consulta", roles: [ROLE.ADMIN, ROLE.CONSULTA, ROLE.INSPECTOR] }
+    ];
+
+    const ROLE_LABELS = {
+      [ROLE.ADMIN]: "Administrador",
+      [ROLE.INSPECTOR]: "Inspector",
+      [ROLE.CONSULTA]: "Consulta"
+    };
+
+    function readSession() {
+      try {
+        const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+
+    function normalizeRole(session) {
+      const r = (session && (session.role || session.rol || (session.user && session.user.role))) || ROLE.CONSULTA;
+      return String(r).toLowerCase();
+    }
+
+    function displayName(session) {
+      if (!session) return "Usuario";
+      return (
+        session.userName ||
+        session.name ||
+        (session.user && (session.user.name || session.user.fullName)) ||
+        session.email ||
+        "Usuario"
+      );
+    }
+
+    function displayEmail(session) {
+      if (!session) return "";
+      return session.email || (session.user && session.user.email) || "";
+    }
+
+    function initials(name) {
+      const parts = String(name).trim().split(/\s+/).filter(Boolean);
+      if (parts.length === 0) return "?";
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    function itemVisibleForRole(item, role) {
+      if (!item.roles || item.roles.length === 0) return true;
+      return item.roles.map((r) => String(r).toLowerCase()).includes(role);
+    }
+
+    function renderSidebar(role) {
+      const nav = document.getElementById("sidebarNav");
+      const label = document.getElementById("sidebarRoleLabel");
+      label.textContent = ROLE_LABELS[role] || "Usuario";
+
+      const section = document.createElement("div");
+      section.className = "nav-section-label";
+      section.textContent = "Menú";
+      nav.appendChild(section);
+
+      const currentPage = window.location.pathname.split("/").pop() || "app.html";
+
+      MENU_ITEMS.filter((item) => itemVisibleForRole(item, role)).forEach((item) => {
+        const hrefFile = item.href.split("#")[0];
+        const isCurrent = hrefFile && hrefFile === currentPage;
+        const a = document.createElement("a");
+        a.className = "nav-link" + (isCurrent ? " active" : "");
+        a.href = item.href;
+        if (isCurrent) a.setAttribute("aria-current", "page");
+        a.innerHTML = `<span class="nav-icon" aria-hidden="true">${item.icon}</span><span>${item.label}</span>`;
+        nav.appendChild(a);
+      });
+    }
+
+    function logout() {
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.href = LOGIN_LOGOUT_PAGE;
+    }
+
+    function init() {
+      const session = readSession();
+      if (!session || (!session.token && !session.accessToken)) {
+        window.location.href = LOGIN_PAGE;
+        return;
+      }
+
+      const role = normalizeRole(session);
+      const name = displayName(session);
+      const email = displayEmail(session);
+
+      document.getElementById("navUserName").textContent = name;
+      document.getElementById("navUserEmail").textContent = email;
+      document.getElementById("userAvatar").textContent = initials(name);
+
+      renderSidebar(role);
+
+      document.getElementById("btnLogout").addEventListener("click", logout);
+    }
+
+    init();
+  </script>
+</body>
+</html>
