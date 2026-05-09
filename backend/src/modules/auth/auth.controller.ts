@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { GoogleAuthDto } from './dto/google-auth.dto';
+import { LoginDto } from './dto/login.dto';
 import { GoogleAuthGuard } from './google-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { GoogleUser } from './interfaces/google-user.interface';
@@ -12,6 +13,11 @@ import { RolesGuard } from './roles.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('login')
+  loginLocal(@Body() body: LoginDto) {
+    return this.authService.loginLocal(body.email, body.password);
+  }
 
   @Post('google')
   googleAuthByIdToken(@Body() body: GoogleAuthDto) {

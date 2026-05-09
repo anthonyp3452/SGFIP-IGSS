@@ -48,4 +48,21 @@ export class UsuariosService {
 
     return this.usuariosRepository.save(usuario);
   }
+
+  async createLocal(params: {
+    email: string;
+    nombre: string;
+    passwordHash: string;
+    rolId: number;
+  }): Promise<Usuario> {
+    const usuario = this.usuariosRepository.create({
+      email: params.email,
+      nombre: params.nombre,
+      passwordHash: params.passwordHash,
+      rolId: params.rolId,
+      activo: true,
+    });
+
+    return this.usuariosRepository.save(usuario);
+  }
 }

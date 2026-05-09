@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 import { OAuth2Client } from 'google-auth-library';
 import { Usuario } from '../usuarios/usuario.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
@@ -47,6 +48,38 @@ export class AuthService {
   async loginWithGoogleIdToken(idToken: string) {
     const googleUser = await this.verifyGoogleIdToken(idToken);
     return this.loginWithGoogle(googleUser);
+  }
+
+  async loginLocal(email: string, password: string) {
+    const usuario = await this.usuariosService.findByEmail(email);
+
+    if (!usuario) {
+      throw new UnauthorizedException({ code: 'USER_NOT_FOUND', message: 'Usuario no encontrado' });
+    }
+
+    if (!usuario.passwordHash) {
+      throw new UnauthorizedException({ code: 'INVALID_PASSWORD', message: 'Este usuario no tiene contraseña local. Use Google.' });
+    }
+
+    const passwordValid = await bcrypt.compare(password, usuario.passwordHash);
+    if (!passwordValid) {
+      throw new UnauthorizedException({ code: 'INVALID_PASSWORD', message: 'Contraseña incorrecta' });
+    }
+
+    if (!usuario.activo) {
+      throw new UnauthorizedException({ code: 'USER_INACTIVE', message: 'Usuario inactivo' });
+    }
+
+    return {
+      accessToken: await this.createAccessToken(usuario),
+      user: {
+        usuarioId: usuario.usuarioId,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rolId: usuario.rolId,
+        activo: usuario.activo,
+      },
+    };
   }
 
   private createAccessToken(usuario: Usuario): Promise<string> {
