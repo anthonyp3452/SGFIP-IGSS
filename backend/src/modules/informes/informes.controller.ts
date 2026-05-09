@@ -8,6 +8,8 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import { SolicitarInformeDto } from './dto/solicitar-informe.dto';
 import { InformesService } from './informes.service';
 
@@ -16,7 +18,8 @@ export class InformesController {
   constructor(private readonly informesService: InformesService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(1, 2)
   solicitar(
     @Req() req: Request,
     @Body() dto: SolicitarInformeDto,
