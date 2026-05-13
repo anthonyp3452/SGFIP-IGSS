@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
+import { InformeSecuencia } from './informe-secuencia.entity';
 import { Informe } from './informe.entity';
 import { InformesController } from './informes.controller';
 import { InformesService } from './informes.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Informe]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Informe, InformeSecuencia]), AuthModule],
   controllers: [InformesController],
   providers: [InformesService],
   exports: [InformesService],
