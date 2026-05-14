@@ -50,6 +50,10 @@ export class InformesService {
     return `INF-${anio}-${sufijo}`;
   }
 
+  /**
+   * Crea el registro de informe: correlativo único (`INF-AAAA-NNNN`, atómico en BD),
+   * estado "Pendiente", `inspectorId` del JWT y `createdAt` al persistir.
+   */
   async solicitar(inspectorId: number, dto: SolicitarInformeDto): Promise<Informe> {
     const anio = new Date().getUTCFullYear();
 

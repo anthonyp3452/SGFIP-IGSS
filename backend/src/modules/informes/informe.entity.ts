@@ -29,9 +29,10 @@ export class Informe {
   @Column({ name: 'estado', type: 'varchar', default: 'Pendiente' })
   estado: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  /** Momento exacto de creación del registro (UTC en base de datos). */
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz', precision: 3 })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz', precision: 3 })
   updatedAt: Date;
 }

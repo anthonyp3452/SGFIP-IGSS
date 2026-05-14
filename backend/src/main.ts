@@ -18,6 +18,9 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
+  // El HTML del frontend se sirve en otro origen (p. ej. npx serve); sin esto el navegador bloquea fetch.
+  app.enableCors();
+
   await app.listen(port);
 }
 bootstrap();
