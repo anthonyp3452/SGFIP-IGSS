@@ -17,6 +17,14 @@ export class Informe {
   @Column({ name: 'inspector_id', type: 'integer' })
   inspectorId: number;
 
+  @Column({
+    name: 'tipo_inspeccion',
+    type: 'varchar',
+    length: 80,
+    default: 'Regular',
+  })
+  tipoInspeccion: string;
+
   @Column({ name: 'nombre_patrono', type: 'varchar' })
   nombrePatrono: string;
 

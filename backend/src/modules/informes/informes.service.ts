@@ -64,6 +64,7 @@ export class InformesService {
       const informe = manager.create(Informe, {
         numeroInforme,
         inspectorId,
+        tipoInspeccion: dto.tipoInspeccion,
         nombrePatrono: dto.nombrePatrono,
         nitPatrono: dto.nitPatrono,
         direccionPatrono: dto.direccionPatrono,

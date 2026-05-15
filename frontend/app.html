@@ -259,13 +259,69 @@
       transition: border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .form-group input:focus {
+    .form-group input:focus,
+    .form-group select:focus {
       border-color: var(--celeste-institucional);
       box-shadow: 0 0 0 3px rgba(45, 170, 225, 0.18);
     }
 
     .form-group input.valid {
       border-color: #2e7d32;
+    }
+
+    .form-group select {
+      width: 100%;
+      border: 1px solid var(--gris-claro);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 14px;
+      color: var(--gris-oscuro);
+      outline: none;
+      background: var(--blanco);
+      cursor: pointer;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .form-group .field-hint {
+      margin: 4px 0 0;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--gris-medio);
+    }
+
+    .form-actions {
+      margin-top: 24px;
+    }
+
+    .btn-generar-numero {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #35b8ef 0%, var(--celeste-institucional) 100%);
+      color: var(--blanco);
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      padding: 16px 20px;
+      min-height: 54px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(45, 170, 225, 0.35);
+      transition: filter 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+    }
+
+    .btn-generar-numero:hover:not(:disabled) {
+      filter: brightness(1.03);
+      box-shadow: 0 6px 18px rgba(45, 170, 225, 0.42);
+    }
+
+    .btn-generar-numero:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+
+    .btn-generar-numero:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+      box-shadow: none;
     }
 
     .modal-overlay {
@@ -286,25 +342,131 @@
     .modal-box {
       background: var(--blanco);
       border-radius: 16px;
-      padding: 28px 24px 20px;
-      max-width: 440px;
+      padding: 24px 22px 20px;
+      max-width: 460px;
       width: 100%;
       text-align: center;
       box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
     }
 
+    .modal-box .modal-success-icon {
+      font-size: 44px;
+      line-height: 1;
+    }
+
+    .modal-box .modal-success-title {
+      margin: 12px 0 6px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gris-oscuro);
+    }
+
+    .modal-box .modal-success-sub {
+      margin: 0 0 16px;
+      font-size: 13px;
+      color: var(--gris-medio);
+      line-height: 1.45;
+    }
+
+    .modal-numero-card {
+      background: linear-gradient(180deg, #f0f9fd 0%, #e8f4fa 100%);
+      border: 2px solid rgba(45, 170, 225, 0.35);
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 14px;
+    }
+
+    .modal-numero-card .modal-numero-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gris-medio);
+      margin-bottom: 8px;
+    }
+
     .modal-box .numero-asignado {
-      font-size: 28px;
+      font-family: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+      font-size: clamp(22px, 5vw, 30px);
       font-weight: 800;
       color: var(--celeste-institucional);
-      margin: 16px 0 8px;
-      letter-spacing: 0.02em;
+      margin: 0;
+      letter-spacing: 0.06em;
+      word-break: break-all;
+      user-select: all;
+      line-height: 1.25;
     }
 
     .modal-box .modal-detail {
       font-size: 13px;
       color: var(--gris-medio);
       margin: 4px 0;
+      text-align: left;
+      padding: 0 4px;
+    }
+
+    .modal-detail-wrap {
+      text-align: left;
+      margin-bottom: 18px;
+      padding: 10px 12px;
+      background: #fafbfc;
+      border-radius: 10px;
+      border: 1px solid var(--gris-claro);
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .modal-actions-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-actions-row .btn-primary,
+    .modal-actions-row .btn-outline-modal {
+      flex: 1;
+      min-width: 120px;
+      margin-top: 0;
+      width: auto;
+    }
+
+    .btn-outline-modal {
+      border: 2px solid var(--celeste-institucional);
+      border-radius: 10px;
+      background: var(--blanco);
+      color: var(--celeste-institucional);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .btn-outline-modal:hover {
+      background: rgba(45, 170, 225, 0.08);
+    }
+
+    .btn-link-modal {
+      margin-top: 4px;
+      padding: 8px;
+      border: none;
+      background: none;
+      color: var(--gris-medio);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .btn-link-modal:hover {
+      color: var(--gris-oscuro);
     }
 
     .btn-primary {
@@ -338,7 +500,7 @@
       font-weight: 600;
       padding: 10px 14px;
       cursor: pointer;
-      margin-top: 12px;
+      margin-top: 0;
       width: 100%;
       transition: background 0.15s ease;
     }
@@ -477,6 +639,7 @@
                 <thead>
                   <tr>
                     <th>N° Informe</th>
+                    <th>Tipo</th>
                     <th>Patrono</th>
                     <th>NIT</th>
                     <th>Estado</th>
@@ -485,7 +648,7 @@
                   </tr>
                 </thead>
                 <tbody id="tablaInformesBody">
-                  <tr><td colspan="6" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando informes...</td></tr>
+                  <tr><td colspan="7" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando informes...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -493,25 +656,41 @@
         </div>
 
         <div class="view" id="view-solicitar-informe">
-          <div class="content-card">
+          <div class="content-card" style="max-width: 560px;">
             <h2>Solicitar número de informe</h2>
-            <p style="margin-bottom: 18px;">Complete los datos del patrono para generar un nuevo número de informe patronal.</p>
+            <p style="margin-bottom: 20px;">
+              Indique el tipo de inspección y los datos del patrono. Luego use <strong>Generar número</strong> para obtener el correlativo único del informe.
+            </p>
             <form id="formSolicitarInforme" novalidate>
               <div class="form-group">
+                <label for="tipoInspeccion">Tipo de inspección</label>
+                <select id="tipoInspeccion" name="tipoInspeccion" required aria-required="true">
+                  <option value="" disabled selected>Seleccione un tipo…</option>
+                  <option value="Regular">Inspección regular</option>
+                  <option value="Sorpresiva">Inspección sorpresiva</option>
+                  <option value="Seguimiento">Seguimiento</option>
+                  <option value="Reinspección">Reinspección</option>
+                  <option value="Consulta técnica">Consulta técnica</option>
+                </select>
+                <p class="field-hint">Campo obligatorio para clasificar el informe ante el patrono.</p>
+              </div>
+              <div class="form-group">
                 <label for="nombrePatrono">Nombre del patrono</label>
-                <input id="nombrePatrono" name="nombrePatrono" type="text" placeholder="Nombre completo del patrono" required />
+                <input id="nombrePatrono" name="nombrePatrono" type="text" placeholder="Nombre o razón social" required autocomplete="organization" />
               </div>
               <div class="form-group">
                 <label for="nitPatrono">NIT del patrono</label>
-                <input id="nitPatrono" name="nitPatrono" type="text" placeholder="NIT (sin guiones)" required />
+                <input id="nitPatrono" name="nitPatrono" type="text" placeholder="NIT (sin guiones)" required inputmode="numeric" autocomplete="off" />
               </div>
               <div class="form-group">
                 <label for="direccionPatrono">Dirección <span style="color: var(--gris-medio); font-weight: 400;">(opcional)</span></label>
-                <input id="direccionPatrono" name="direccionPatrono" type="text" placeholder="Dirección del patrono" />
+                <input id="direccionPatrono" name="direccionPatrono" type="text" placeholder="Dirección del establecimiento o patrono" autocomplete="street-address" />
               </div>
-              <button type="submit" class="btn-primary" id="btnSolicitar">
-                <span class="btn-text">Solicitar número</span>
-              </button>
+              <div class="form-actions">
+                <button type="submit" class="btn-generar-numero" id="btnSolicitar">
+                  <span class="btn-text">Generar Número</span>
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -519,13 +698,37 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="modalExito">
+  <div
+    class="modal-overlay"
+    id="modalExito"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalExitoTitulo"
+    aria-describedby="modalExitoDesc"
+  >
     <div class="modal-box">
-      <div style="font-size: 48px; line-height: 1;">✅</div>
-      <div class="numero-asignado" id="modalNumero">INF-2026-000</div>
-      <p class="modal-detail" id="modalFecha"></p>
-      <p class="modal-detail" id="modalEstado"></p>
-      <button type="button" class="btn-primary" id="btnCerrarModal" style="margin-top: 16px;">Cerrar</button>
+      <div class="modal-success-icon" aria-hidden="true">✅</div>
+      <h3 class="modal-success-title" id="modalExitoTitulo">Solicitud exitosa</h3>
+      <p class="modal-success-sub" id="modalExitoDesc">Guarde este número de informe; lo necesitará para el seguimiento y la documentación.</p>
+
+      <div class="modal-numero-card">
+        <span class="modal-numero-label">Número de informe generado</span>
+        <p class="numero-asignado" id="modalNumero" tabindex="0">INF-2026-0000</p>
+      </div>
+
+      <div class="modal-detail-wrap">
+        <p class="modal-detail" id="modalTipoInspeccion"></p>
+        <p class="modal-detail" id="modalFecha"></p>
+        <p class="modal-detail" id="modalEstado"></p>
+      </div>
+
+      <div class="modal-actions">
+        <div class="modal-actions-row">
+          <button type="button" class="btn-outline-modal" id="btnModalCopiar">Copiar número</button>
+          <button type="button" class="btn-primary" id="btnModalVerInformes">Ver mis informes</button>
+        </div>
+        <button type="button" class="btn-link-modal" id="btnCerrarModal">Cerrar</button>
+      </div>
     </div>
   </div>
 
@@ -658,12 +861,48 @@
       }
     }
 
+    function cerrarModalExito() {
+      document.getElementById("modalExito").classList.remove("open");
+    }
+
+    async function copiarNumeroInformeModal() {
+      const el = document.getElementById("modalNumero");
+      const text = el && el.textContent ? el.textContent.trim() : "";
+      if (!text) {
+        showToast("No hay número para copiar.", "warning");
+        return;
+      }
+      try {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+          await navigator.clipboard.writeText(text);
+        } else {
+          throw new Error("clipboard");
+        }
+        showToast("Número copiado al portapapeles.", "success");
+      } catch {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+          showToast("Número copiado al portapapeles.", "success");
+        } catch {
+          showToast("No se pudo copiar. Seleccione el número y use Ctrl+C.", "warning");
+        }
+      }
+    }
+
     async function cargarInformes() {
       const token = getAuthToken();
       if (!token) return;
 
       const tbody = document.getElementById("tablaInformesBody");
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando informes...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando informes...</td></tr>';
 
       try {
         const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiInformesPath, {
@@ -672,21 +911,23 @@
 
         if (!response.ok) {
           if (response.status === 401) { logout(); return; }
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#d93025;padding:24px;">Error al cargar informes.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#d93025;padding:24px;">Error al cargar informes.</td></tr>';
           return;
         }
 
         const data = await response.json();
 
         if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gris-medio);padding:24px;">No hay informes registrados.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gris-medio);padding:24px;">No hay informes registrados.</td></tr>';
           return;
         }
 
         tbody.innerHTML = data.map((inf) => {
           const fecha = new Date(inf.createdAt).toLocaleDateString("es-GT");
+          const tipo = inf.tipoInspeccion != null ? String(inf.tipoInspeccion) : "—";
           return `<tr>
             <td><strong>${inf.numeroInforme}</strong></td>
+            <td>${tipo}</td>
             <td>${inf.nombrePatrono}</td>
             <td>${inf.nitPatrono}</td>
             <td><span class="badge badge-pendiente">${inf.estado}</span></td>
@@ -695,19 +936,20 @@
           </tr>`;
         }).join("");
       } catch {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#d93025;padding:24px;">Error de conexión.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#d93025;padding:24px;">Error de conexión.</td></tr>';
       }
     }
 
     async function solicitarInforme(event) {
       event.preventDefault();
 
+      const tipoInspeccion = document.getElementById("tipoInspeccion").value.trim();
       const nombrePatrono = document.getElementById("nombrePatrono").value.trim();
       const nitPatrono = document.getElementById("nitPatrono").value.trim();
       const direccionPatrono = document.getElementById("direccionPatrono").value.trim();
 
-      if (!nombrePatrono || !nitPatrono) {
-        showToast("Complete los campos obligatorios.", "warning");
+      if (!tipoInspeccion || !nombrePatrono || !nitPatrono) {
+        showToast("Seleccione el tipo de inspección y complete patrono y NIT.", "warning");
         return;
       }
 
@@ -720,7 +962,7 @@
 
       const btn = document.getElementById("btnSolicitar");
       btn.disabled = true;
-      btn.querySelector(".btn-text").textContent = "Procesando...";
+      btn.querySelector(".btn-text").textContent = "Generando número…";
 
       try {
         const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiInformesPath, {
@@ -729,7 +971,12 @@
             "Content-Type": "application/json",
             Authorization: "Bearer " + token
           },
-          body: JSON.stringify({ nombrePatrono, nitPatrono, direccionPatrono: direccionPatrono || undefined })
+          body: JSON.stringify({
+            tipoInspeccion,
+            nombrePatrono,
+            nitPatrono,
+            direccionPatrono: direccionPatrono || undefined
+          })
         });
 
         if (!response.ok) {
@@ -745,21 +992,22 @@
 
         const data = await response.json();
         document.getElementById("modalNumero").textContent = data.numeroInforme;
+        document.getElementById("modalTipoInspeccion").textContent =
+          "Tipo de inspección: " + (data.tipoInspeccion || tipoInspeccion);
         document.getElementById("modalFecha").textContent = "Creado: " + new Date(data.createdAt).toLocaleString("es-GT");
         document.getElementById("modalEstado").textContent = "Estado: " + data.estado;
         document.getElementById("modalExito").classList.add("open");
+        requestAnimationFrame(() => {
+          const n = document.getElementById("modalNumero");
+          if (n) n.focus({ preventScroll: true });
+        });
 
         document.getElementById("formSolicitarInforme").reset();
-
-        document.getElementById("btnCerrarModal").onclick = () => {
-          document.getElementById("modalExito").classList.remove("open");
-          showView("informes");
-        };
       } catch {
         showToast("Error de conexión con el servidor.", "error");
       } finally {
         btn.disabled = false;
-        btn.querySelector(".btn-text").textContent = "Solicitar número";
+        btn.querySelector(".btn-text").textContent = "Generar Número";
       }
     }
 
@@ -783,12 +1031,20 @@
       document.getElementById("btnLogout").addEventListener("click", logout);
       document.getElementById("formSolicitarInforme").addEventListener("submit", solicitarInforme);
       document.getElementById("btnNuevoInforme").addEventListener("click", () => showView("solicitar-informe"));
-      document.getElementById("btnCerrarModal").addEventListener("click", () => {
-        document.getElementById("modalExito").classList.remove("open");
+      document.getElementById("btnModalCopiar").addEventListener("click", () => {
+        void copiarNumeroInformeModal();
+      });
+      document.getElementById("btnModalVerInformes").addEventListener("click", () => {
+        cerrarModalExito();
         showView("informes");
       });
+      document.getElementById("btnCerrarModal").addEventListener("click", cerrarModalExito);
       document.getElementById("modalExito").addEventListener("click", (e) => {
-        if (e.target === e.currentTarget) document.getElementById("modalExito").classList.remove("open");
+        if (e.target === e.currentTarget) cerrarModalExito();
+      });
+      document.addEventListener("keydown", (e) => {
+        const modal = document.getElementById("modalExito");
+        if (e.key === "Escape" && modal.classList.contains("open")) cerrarModalExito();
       });
     }
 
