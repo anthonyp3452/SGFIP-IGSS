@@ -16,6 +16,13 @@ export class UsuariosService {
     });
   }
 
+  findByRol(rolId: number): Promise<Usuario[]> {
+    return this.usuariosRepository.find({
+      where: { rolId, activo: true },
+      order: { nombre: 'ASC' },
+    });
+  }
+
   async findOneById(id: number): Promise<Usuario> {
     const usuario = await this.usuariosRepository.findOne({
       where: { usuarioId: id },

@@ -24,7 +24,10 @@ import { UsuariosModule } from './modules/usuarios/usuarios.module';
           {
             host: configService.get<string>('database.host', 'localhost'),
             port: configService.get<number>('database.port', 5432),
-            username: configService.get<string>('database.username', 'postgres'),
+            username: configService.get<string>(
+              'database.username',
+              'postgres',
+            ),
             password: configService.get<string>('database.password', ''),
             name: configService.get<string>('database.name', 'sgfip'),
           },

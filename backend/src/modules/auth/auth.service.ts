@@ -54,20 +54,32 @@ export class AuthService {
     const usuario = await this.usuariosService.findByEmail(email);
 
     if (!usuario) {
-      throw new UnauthorizedException({ code: 'USER_NOT_FOUND', message: 'Usuario no encontrado' });
+      throw new UnauthorizedException({
+        code: 'USER_NOT_FOUND',
+        message: 'Usuario no encontrado',
+      });
     }
 
     if (!usuario.passwordHash) {
-      throw new UnauthorizedException({ code: 'INVALID_PASSWORD', message: 'Este usuario no tiene contraseña local. Use Google.' });
+      throw new UnauthorizedException({
+        code: 'INVALID_PASSWORD',
+        message: 'Este usuario no tiene contraseña local. Use Google.',
+      });
     }
 
     const passwordValid = await bcrypt.compare(password, usuario.passwordHash);
     if (!passwordValid) {
-      throw new UnauthorizedException({ code: 'INVALID_PASSWORD', message: 'Contraseña incorrecta' });
+      throw new UnauthorizedException({
+        code: 'INVALID_PASSWORD',
+        message: 'Contraseña incorrecta',
+      });
     }
 
     if (!usuario.activo) {
-      throw new UnauthorizedException({ code: 'USER_INACTIVE', message: 'Usuario inactivo' });
+      throw new UnauthorizedException({
+        code: 'USER_INACTIVE',
+        message: 'Usuario inactivo',
+      });
     }
 
     return {
@@ -95,7 +107,10 @@ export class AuthService {
 
   private async verifyGoogleIdToken(idToken: string): Promise<GoogleUser> {
     try {
-      const audience = this.configService.get<string>('auth.googleClientId', '');
+      const audience = this.configService.get<string>(
+        'auth.googleClientId',
+        '',
+      );
       const ticket = await this.oauthClient.verifyIdToken({
         idToken,
         audience,

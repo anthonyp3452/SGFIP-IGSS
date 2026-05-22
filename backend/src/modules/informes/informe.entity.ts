@@ -17,6 +17,9 @@ export class Informe {
   @Column({ name: 'inspector_id', type: 'integer' })
   inspectorId: number;
 
+  @Column({ name: 'supervisor_id', type: 'integer', nullable: true })
+  supervisorId?: number;
+
   @Column({
     name: 'tipo_inspeccion',
     type: 'varchar',
@@ -37,7 +40,17 @@ export class Informe {
   @Column({ name: 'estado', type: 'varchar', default: 'Pendiente' })
   estado: string;
 
-  /** Momento exacto de creación del registro (UTC en base de datos). */
+  @Column({
+    name: 'observacion',
+    type: 'varchar',
+    nullable: true,
+    length: 1000,
+  })
+  observacion?: string;
+
+  @Column({ name: 'fecha_limite', type: 'timestamptz', nullable: true })
+  fechaLimite?: Date;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz', precision: 3 })
   createdAt: Date;
 

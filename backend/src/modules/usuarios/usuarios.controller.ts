@@ -11,6 +11,11 @@ export class UsuariosController {
     return this.usuariosService.findAll();
   }
 
+  @Get('inspectores')
+  findInspectores(): Promise<Usuario[]> {
+    return this.usuariosService.findByRol(2);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<Usuario> {
     return this.usuariosService.findOneById(id);

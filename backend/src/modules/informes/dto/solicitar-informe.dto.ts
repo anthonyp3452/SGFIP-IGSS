@@ -1,4 +1,13 @@
-import { IsIn, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  IsDateString,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 /** Valores permitidos alineados con la interfaz de solicitud (inspección patronal). */
 export const TIPOS_INSPECCION_VALIDOS = [
@@ -29,4 +38,13 @@ export class SolicitarInformeDto {
   @IsOptional()
   @MaxLength(500)
   direccionPatrono?: string;
+
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  inspectorId?: number;
+
+  @IsDateString()
+  @IsOptional()
+  fechaLimite?: string;
 }

@@ -358,7 +358,7 @@
       wrongPassword: "Contraseña incorrecta. Intente nuevamente o contacte al administrador."
     };
 
-    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
     const clearFieldError = (input, errorBox) => {
       errorBox.style.display = "none";
