@@ -4,21 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SGFIP | Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --celeste-institucional: #2DAAE1;
-      --celeste-claro: #A7D8F5;
-      --blanco: #FFFFFF;
-      --gris-oscuro: #333333;
-      --gris-claro: #E0E0E0;
+      --primary: #1a3a5c;
+      --primary-light: #2D5F8A;
+      --white: #FFFFFF;
+      --gray-900: #1a1a2e;
+      --gray-600: #5c5c5c;
+      --gray-200: #e8ecf0;
+      --gray-100: #f4f7f9;
       --error-bg: #ffe6ea;
       --error-border: #d93025;
       --success-border: #2e7d32;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -26,87 +29,87 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(140deg, var(--celeste-institucional), var(--celeste-claro));
-      color: var(--gris-oscuro);
-      padding: 24px;
+      font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: linear-gradient(145deg, var(--primary) 0%, #0d2a47 60%, var(--primary-light) 100%);
+      color: var(--gray-900);
+      padding: 20px;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .login-card {
       width: 100%;
-      max-width: 460px;
-      background: var(--blanco);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 24px;
+      padding: 40px 32px 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      animation: cardIn 0.45s ease-out;
+      backdrop-filter: blur(8px);
     }
 
-    .card-header {
-      background: var(--celeste-institucional);
-      color: var(--blanco);
-      padding: 18px 20px;
+    .login-logo {
+      text-align: center;
+      margin-bottom: 8px;
     }
 
-    .header-row {
-      display: flex;
-      gap: 12px;
-      align-items: center;
+    .login-logo img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
     }
 
-    .logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.22);
-      display: grid;
-      place-items: center;
+    .login-title {
+      text-align: center;
+      margin: 0 0 4px;
       font-size: 22px;
-      flex-shrink: 0;
-    }
-
-    .institution {
-      margin: 0;
-      font-size: 13px;
-      line-height: 1.3;
-      opacity: 0.95;
-    }
-
-    .system-name {
-      margin: 4px 0 0;
-      font-size: 18px;
       font-weight: 700;
-      line-height: 1.35;
+      color: var(--primary);
+      letter-spacing: -0.02em;
     }
 
-    .card-body {
-      padding: 22px 20px 24px;
+    .login-subtitle {
+      text-align: center;
+      margin: 0 0 28px;
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.4;
     }
 
     .field-group {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     label {
       display: block;
       margin-bottom: 6px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
+      color: var(--gray-900);
     }
 
     .input-control {
       width: 100%;
-      border: 1px solid var(--gris-claro);
-      border-radius: 10px;
-      padding: 11px 12px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 12px 14px;
       font-size: 14px;
-      color: var(--gris-oscuro);
+      color: var(--gray-900);
       outline: none;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      background: var(--gray-100);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      font-family: inherit;
     }
 
     .input-control:focus {
-      border-color: var(--celeste-institucional);
-      box-shadow: 0 0 0 3px rgba(45, 170, 225, 0.18);
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 4px rgba(45, 95, 138, 0.12);
+      background: var(--white);
     }
 
     .input-control.valid {
@@ -119,40 +122,39 @@
 
     .toggle-password {
       position: absolute;
-      right: 8px;
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
       border: none;
       background: transparent;
-      color: var(--celeste-institucional);
+      color: var(--primary-light);
       font-weight: 600;
       cursor: pointer;
-      padding: 4px 6px;
+      padding: 4px 8px;
       border-radius: 6px;
       font-size: 12px;
     }
 
-    .toggle-password:focus-visible {
-      outline: 2px solid var(--celeste-claro);
-      outline-offset: 1px;
+    .toggle-password:hover {
+      background: rgba(45, 95, 138, 0.08);
     }
 
     .field-error {
       display: none;
-      margin-top: 7px;
+      margin-top: 6px;
       padding: 8px 10px;
       background: var(--error-bg);
       border-left: 4px solid var(--error-border);
-      border-radius: 7px;
+      border-radius: 8px;
       color: #7a1f18;
-      font-size: 12.5px;
+      font-size: 12px;
     }
 
     .row-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 10px 0 16px;
+      margin: 8px 0 20px;
       font-size: 14px;
     }
 
@@ -161,180 +163,158 @@
       align-items: center;
       gap: 8px;
       user-select: none;
+      font-size: 13px;
+      color: var(--gray-600);
+      cursor: pointer;
     }
 
     .remember-session input {
       width: 16px;
       height: 16px;
-      accent-color: var(--celeste-institucional);
+      accent-color: var(--primary-light);
       cursor: pointer;
     }
 
     .submit-btn {
       width: 100%;
       border: none;
-      border-radius: 10px;
-      background: var(--celeste-institucional);
-      color: var(--blanco);
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: var(--white);
       font-size: 15px;
       font-weight: 700;
-      padding: 12px 14px;
+      padding: 14px;
       cursor: pointer;
       display: inline-flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
-      transition: filter 0.18s ease;
+      transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 4px 14px rgba(26, 58, 92, 0.3);
+      font-family: inherit;
     }
 
     .submit-btn:hover:not(:disabled) {
-      filter: brightness(0.96);
+      filter: brightness(1.08);
+      box-shadow: 0 6px 20px rgba(26, 58, 92, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     .submit-btn:disabled {
-      opacity: 0.75;
+      opacity: 0.7;
       cursor: not-allowed;
     }
 
     .spinner {
       width: 18px;
       height: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.45);
-      border-top-color: var(--blanco);
+      border: 2.5px solid rgba(255, 255, 255, 0.4);
+      border-top-color: var(--white);
       border-radius: 50%;
-      animation: spin 0.75s linear infinite;
+      animation: spin 0.7s linear infinite;
       display: none;
     }
 
-    .submit-btn.loading .spinner {
-      display: inline-block;
-    }
-
-    .submit-btn.loading .btn-text {
-      opacity: 0.95;
-    }
-
-    .separator {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 16px 0 12px;
-      color: #667085;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .separator::before,
-    .separator::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: var(--gris-claro);
-    }
-
-    .google-btn {
-      width: 100%;
-      border: 1px solid var(--gris-claro);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--gris-oscuro);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 10px 12px;
-      cursor: pointer;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      transition: background-color 0.2s ease, border-color 0.2s ease;
-    }
-
-    .google-btn:hover:not(:disabled) {
-      background: #f7f9fc;
-      border-color: #c9d0d8;
-    }
-
-    .google-btn:disabled {
-      opacity: 0.75;
-      cursor: not-allowed;
-    }
+    .submit-btn.loading .spinner { display: inline-block; }
+    .submit-btn.loading .btn-text { opacity: 0.9; }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+
+    .login-footer a {
+      color: var(--primary-light);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .login-footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <div class="login-card">
-    <header class="card-header">
-      <div class="header-row">
-        <div class="logo" aria-hidden="true">🏛️</div>
-        <div>
-          <p class="institution">IGSS — Delegación Retalhuleu, área de Inspección Patronal</p>
-          <h1 class="system-name">SGFIP | Sistema de Gestión de Flujo de Informes Patronales</h1>
-        </div>
-      </div>
-    </header>
+    <div class="login-logo">
+      <img src="images/logo.jpg" alt="IGSS" />
+    </div>
+    <h1 class="login-title">SGFIP</h1>
+    <p class="login-subtitle">
+      Delegación Retalhuleu<br />
+      Sistema de Gestión de Flujo de Informes Patronales
+    </p>
 
-    <div class="card-body">
-      <form id="loginForm" novalidate>
-        <div class="field-group">
-          <label for="email">Correo electrónico</label>
+    <form id="loginForm" novalidate>
+      <div class="field-group">
+        <label for="email">Correo electrónico</label>
+        <input
+          class="input-control"
+          id="email"
+          name="email"
+          type="email"
+          placeholder="nombre@igss.gob.gt"
+          autocomplete="username"
+        />
+        <div class="field-error" id="emailError"></div>
+      </div>
+
+      <div class="field-group">
+        <label for="password">Contraseña</label>
+        <div class="password-wrapper">
           <input
             class="input-control"
-            id="email"
-            name="email"
-            type="email"
-            placeholder="nombre@igss.gob.gt"
-            autocomplete="username"
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Ingrese su contraseña"
+            autocomplete="current-password"
           />
-          <div class="field-error" id="emailError"></div>
+          <button class="toggle-password" type="button" id="togglePassword" aria-label="Mostrar u ocultar contraseña">
+            Mostrar
+          </button>
         </div>
+        <div class="field-error" id="passwordError"></div>
+      </div>
 
-        <div class="field-group">
-          <label for="password">Contraseña</label>
-          <div class="password-wrapper">
-            <input
-              class="input-control"
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Ingrese su contraseña"
-              autocomplete="current-password"
-            />
-            <button class="toggle-password" type="button" id="togglePassword" aria-label="Mostrar u ocultar contraseña">
-              Mostrar
-            </button>
-          </div>
-          <div class="field-error" id="passwordError"></div>
-        </div>
+      <div class="row-actions">
+        <label class="remember-session" for="remember">
+          <input type="checkbox" id="remember" name="remember" />
+          <span>Recordar sesión</span>
+        </label>
+      </div>
 
-        <div class="row-actions">
-          <label class="remember-session" for="remember">
-            <input type="checkbox" id="remember" name="remember" />
-            <span>Recordar sesión</span>
-          </label>
-        </div>
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="btn-text">Ingresar</span>
+      </button>
 
-        <button type="submit" class="submit-btn" id="submitBtn">
-          <span class="spinner" aria-hidden="true"></span>
-          <span class="btn-text">Ingresar</span>
-        </button>
+      <!--
+      <div class="separator">o</div>
+      <button type="button" class="google-btn" id="googleBtn">
+        <span aria-hidden="true">G</span>
+        <span>Continuar con Google</span>
+      </button>
+      -->
 
-        <div class="separator">o</div>
-
-        <button type="button" class="google-btn" id="googleBtn">
-          <span aria-hidden="true">G</span>
-          <span>Continuar con Google</span>
-        </button>
-      </form>
-    </div>
+      <div class="login-footer">
+        ¿No tiene cuenta? <a href="register.html">Crear cuenta</a>
+      </div>
+    </form>
   </div>
 
   <script src="js/toast.js"></script>
+  <script src="js/config.js"></script>
   <script>
     const loginForm = document.getElementById("loginForm");
     const emailInput = document.getElementById("email");
@@ -343,13 +323,9 @@
     const emailError = document.getElementById("emailError");
     const passwordError = document.getElementById("passwordError");
     const submitBtn = document.getElementById("submitBtn");
-    const googleBtn = document.getElementById("googleBtn");
+    // const googleBtn = document.getElementById("googleBtn");
     const togglePasswordBtn = document.getElementById("togglePassword");
-    const CONFIG = {
-      apiBaseUrl: "http://localhost:3000",
-      apiLoginPath: "/api/auth/login",
-      googleAuthPath: "/api/auth/google"
-    };
+    const CONFIG = SGFIP_CONFIG;
 
     const messages = {
       required: "El campo es obligatorio.",
@@ -404,7 +380,7 @@
 
     const setLoading = (isLoading) => {
       submitBtn.disabled = isLoading;
-      googleBtn.disabled = isLoading;
+      // googleBtn.disabled = isLoading;
       submitBtn.classList.toggle("loading", isLoading);
       submitBtn.querySelector(".btn-text").textContent = isLoading ? "Validando..." : "Ingresar";
     };
@@ -460,7 +436,7 @@
         token: data.accessToken || data.token,
         userName: user.nombre || user.name || data.userName,
         email: user.email || data.email,
-        role: user.rolId === 1 ? 'admin' : user.rolId === 2 ? 'inspector' : user.rolId === 3 ? 'consulta' : data.role,
+        role: user.rolId === 1 ? 'admin' : user.rolId === 2 ? 'inspector' : user.rolId === 3 ? 'supervisor' : data.role,
       };
     };
 
@@ -479,6 +455,7 @@
       }, 1600);
     };
 
+    /*
     const setupGoogleAuth = () => {
       if (!CONFIG.apiBaseUrl || !CONFIG.googleAuthPath) {
         googleBtn.disabled = true;
@@ -493,6 +470,7 @@
         window.location.href = googleUrl;
       });
     };
+    */
 
     emailInput.addEventListener("blur", validateEmailField);
     passwordInput.addEventListener("blur", validatePasswordField);
@@ -551,7 +529,7 @@
     });
 
     window.addEventListener("load", () => {
-      setupGoogleAuth();
+      // setupGoogleAuth();
       const params = new URLSearchParams(window.location.search);
       if (params.get("logout") === "1") {
         showToast("Sesión cerrada correctamente", "info");

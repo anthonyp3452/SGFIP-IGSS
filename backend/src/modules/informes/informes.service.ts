@@ -10,6 +10,8 @@ import type { EntityManager } from 'typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { ESTADO, TRANSICIONES } from './const/informe-estados';
 import type { EstadoInforme } from './const/informe-estados';
+import { AprobarInformeDto } from './dto/aprobar-informe.dto';
+import { EnviarRevisionDto } from './dto/enviar-revision.dto';
 import { SolicitarInformeDto } from './dto/solicitar-informe.dto';
 import { Informe } from './informe.entity';
 
@@ -59,9 +61,6 @@ export class InformesService {
     const anio = new Date().getUTCFullYear();
     const inspectorAsignado =
       rolId === 1 && dto.inspectorId ? dto.inspectorId : solicitanteId;
-    const fechaLimite = dto.fechaLimite
-      ? new Date(dto.fechaLimite)
-      : undefined;
 
     return this.dataSource.transaction(async (manager) => {
       const secuencia = await this.reservarSiguienteNumero(manager, anio);
@@ -70,12 +69,7 @@ export class InformesService {
       const informe = manager.create(Informe, {
         numeroInforme,
         inspectorId: inspectorAsignado,
-        tipoInspeccion: dto.tipoInspeccion,
-        nombrePatrono: dto.nombrePatrono,
-        nitPatrono: dto.nitPatrono,
-        direccionPatrono: dto.direccionPatrono,
         estado: ESTADO.PENDIENTE,
-        fechaLimite,
       });
 
       return manager.save(Informe, informe);
@@ -167,33 +161,56 @@ export class InformesService {
     informeId: number,
     inspectorId: number,
   ): Promise<Informe> {
-    return this.transitarEstado(
+    const informe = await this.transitarEstado(
       informeId,
       inspectorId,
       ESTADO.EN_PROCESO,
       true,
     );
+    if (!informe.iniciadoAt) {
+      informe.iniciadoAt = new Date();
+      await this.informesRepository.save(informe);
+    }
+    return informe;
   }
 
   async enviarARevision(
     informeId: number,
     inspectorId: number,
+    dto: EnviarRevisionDto,
   ): Promise<Informe> {
-    return this.transitarEstado(
+    const informe = await this.transitarEstado(
       informeId,
       inspectorId,
       ESTADO.EN_REVISION,
       true,
     );
+    informe.fechaInforme = dto.fechaInforme;
+    informe.descripcion = dto.descripcion;
+    informe.noAfiliacionRiesgo = dto.noAfiliacionRiesgo;
+    informe.nombrePatrono = dto.nombrePatrono;
+    informe.nitPatrono = dto.nitPatrono;
+    informe.direccionPatrono = dto.direccionPatrono;
+    informe.enviadoRevisionAt = new Date();
+    return this.informesRepository.save(informe);
   }
 
-  async aprobar(informeId: number, supervisorId: number): Promise<Informe> {
-    return this.transitarEstado(
+  async aprobar(
+    informeId: number,
+    supervisorId: number,
+    dto: AprobarInformeDto,
+  ): Promise<Informe> {
+    const informe = await this.transitarEstado(
       informeId,
       supervisorId,
       ESTADO.FINALIZADO,
       false,
     );
+    informe.noOficio = dto.noOficio;
+    informe.fechaOficio = dto.fechaOficio;
+    informe.envio = dto.envio;
+    informe.finalizadoAt = new Date();
+    return this.informesRepository.save(informe);
   }
 
   async devolver(

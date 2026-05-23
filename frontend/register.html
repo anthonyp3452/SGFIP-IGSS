@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SGFIP | Registro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #1a3a5c;
+      --primary-light: #2D5F8A;
+      --white: #FFFFFF;
+      --gray-900: #1a1a2e;
+      --gray-600: #5c5c5c;
+      --gray-200: #e8ecf0;
+      --gray-100: #f4f7f9;
+      --error-bg: #ffe6ea;
+      --error-border: #d93025;
+      --success-border: #2e7d32;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: linear-gradient(145deg, var(--primary) 0%, #0d2a47 60%, var(--primary-light) 100%);
+      color: var(--gray-900);
+      padding: 20px;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .register-card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 24px;
+      padding: 40px 32px 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      animation: cardIn 0.45s ease-out;
+      backdrop-filter: blur(8px);
+    }
+
+    .register-logo {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .register-logo img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+    }
+
+    .register-title {
+      text-align: center;
+      margin: 0 0 4px;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.02em;
+    }
+
+    .register-subtitle {
+      text-align: center;
+      margin: 0 0 28px;
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.4;
+    }
+
+    .field-group { margin-bottom: 16px; }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .input-control {
+      width: 100%;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--gray-900);
+      outline: none;
+      background: var(--gray-100);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      font-family: inherit;
+    }
+
+    .input-control:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 4px rgba(45, 95, 138, 0.12);
+      background: var(--white);
+    }
+
+    .password-wrapper { position: relative; }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: var(--primary-light);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .toggle-password:hover {
+      background: rgba(45, 95, 138, 0.08);
+    }
+
+    .field-error {
+      display: none;
+      margin-top: 6px;
+      padding: 8px 10px;
+      background: var(--error-bg);
+      border-left: 4px solid var(--error-border);
+      border-radius: 8px;
+      color: #7a1f18;
+      font-size: 12px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 4px 14px rgba(26, 58, 92, 0.3);
+      font-family: inherit;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      filter: brightness(1.08);
+      box-shadow: 0 6px 20px rgba(26, 58, 92, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.4);
+      border-top-color: var(--white);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .submit-btn.loading .spinner { display: inline-block; }
+    .submit-btn.loading .btn-text { opacity: 0.9; }
+
+    .field-hint {
+      margin: 4px 0 0;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--gray-600);
+    }
+
+    .register-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+
+    .register-footer a {
+      color: var(--primary-light);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .register-footer a:hover { text-decoration: underline; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="register-card">
+    <div class="register-logo">
+      <img src="images/logo.jpg" alt="IGSS" />
+    </div>
+    <h1 class="register-title">Crear cuenta</h1>
+    <p class="register-subtitle">
+      Delegación Retalhuleu<br />
+      Registro de nuevos usuarios
+    </p>
+
+    <form id="registerForm" novalidate>
+      <div class="field-group">
+        <label for="nombre">Nombre completo</label>
+        <input class="input-control" id="nombre" type="text" placeholder="Ej: Juan Pérez" required autocomplete="name" />
+        <div class="field-error" id="nombreError"></div>
+      </div>
+
+      <div class="field-group">
+        <label for="email">Correo electrónico</label>
+        <input class="input-control" id="email" type="email" placeholder="nombre@igss.gob.gt" required autocomplete="email" />
+        <div class="field-error" id="emailError"></div>
+      </div>
+
+      <div class="field-group">
+        <label for="password">Contraseña</label>
+        <div class="password-wrapper">
+          <input class="input-control" id="password" type="password" placeholder="Mínimo 6 caracteres" required autocomplete="new-password" />
+          <button class="toggle-password" type="button" id="togglePassword" aria-label="Mostrar u ocultar contraseña">Mostrar</button>
+        </div>
+        <p class="field-hint">Mínimo 6 caracteres</p>
+        <div class="field-error" id="passwordError"></div>
+      </div>
+
+      <div class="field-group">
+        <label for="rol">Rol</label>
+        <select class="input-control" id="rol" required>
+          <option value="" disabled selected>Seleccione un rol…</option>
+          <option value="2">Inspector</option>
+          <option value="3">Supervisor</option>
+        </select>
+        <div class="field-error" id="rolError"></div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="btn-text">Crear cuenta</span>
+      </button>
+
+      <div class="register-footer">
+        ¿Ya tiene cuenta? <a href="login.html">Iniciar sesión</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/toast.js"></script>
+  <script src="js/config.js"></script>
+  <script>
+    const registerForm = document.getElementById("registerForm");
+    const nombreInput = document.getElementById("nombre");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const rolSelect = document.getElementById("rol");
+    const nombreError = document.getElementById("nombreError");
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+    const rolError = document.getElementById("rolError");
+    const submitBtn = document.getElementById("submitBtn");
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const CONFIG = SGFIP_CONFIG;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    const clearError = (input, errorBox) => {
+      errorBox.style.display = "none";
+      errorBox.textContent = "";
+    };
+
+    const showError = (input, errorBox, msg) => {
+      errorBox.style.display = "block";
+      errorBox.textContent = msg;
+    };
+
+    const setLoading = (loading) => {
+      submitBtn.disabled = loading;
+      submitBtn.classList.toggle("loading", loading);
+      submitBtn.querySelector(".btn-text").textContent = loading ? "Creando cuenta…" : "Crear cuenta";
+    };
+
+    togglePasswordBtn.addEventListener("click", () => {
+      const hidden = passwordInput.type === "password";
+      passwordInput.type = hidden ? "text" : "password";
+      togglePasswordBtn.textContent = hidden ? "Ocultar" : "Mostrar";
+    });
+
+    registerForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      let valid = true;
+      const nombre = nombreInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const rolId = parseInt(rolSelect.value, 10);
+
+      if (!nombre) { showError(nombreInput, nombreError, "El nombre es obligatorio."); valid = false; }
+      else { clearError(nombreInput, nombreError); }
+
+      if (!email) { showError(emailInput, emailError, "El correo es obligatorio."); valid = false; }
+      else if (!emailRegex.test(email)) { showError(emailInput, emailError, "Formato de correo inválido."); valid = false; }
+      else { clearError(emailInput, emailError); }
+
+      if (!password) { showError(passwordInput, passwordError, "La contraseña es obligatoria."); valid = false; }
+      else if (password.length < 6) { showError(passwordInput, passwordError, "Mínimo 6 caracteres."); valid = false; }
+      else { clearError(passwordInput, passwordError); }
+
+      if (!rolId || isNaN(rolId)) { showError(rolSelect, rolError, "Seleccione un rol."); valid = false; }
+      else { clearError(rolSelect, rolError); }
+
+      if (!valid) { showToast("Revise los datos del formulario.", "warning"); return; }
+
+      setLoading(true);
+
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + "/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre, email, password, rolId })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          if (response.status === 409) {
+            showToast("El correo electrónico ya está registrado.", "error");
+          } else {
+            showToast(data.message || "Error al crear la cuenta.", "error");
+          }
+          return;
+        }
+
+        showToast("Cuenta creada con éxito. Redirigiendo…", "success");
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1800);
+      } catch {
+        showToast("Error de conexión con el servidor.", "error");
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</body>
+</html>

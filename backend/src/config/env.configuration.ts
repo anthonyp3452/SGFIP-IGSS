@@ -3,6 +3,7 @@ export default () => ({
     name: process.env.APP_NAME ?? 'nest-backend',
     port: Number(process.env.PORT ?? 3000),
     env: process.env.NODE_ENV ?? 'development',
+    frontendUrl: process.env.FRONTEND_URL ?? 'http://localhost:3000',
   },
   database: {
     host: process.env.DB_HOST ?? 'localhost',

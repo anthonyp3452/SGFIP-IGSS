@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
@@ -48,6 +52,39 @@ export class AuthService {
   async loginWithGoogleIdToken(idToken: string) {
     const googleUser = await this.verifyGoogleIdToken(idToken);
     return this.loginWithGoogle(googleUser);
+  }
+
+  async register(params: {
+    nombre: string;
+    email: string;
+    password: string;
+    rolId: number;
+    supervisorId?: number;
+  }) {
+    const existe = await this.usuariosService.findByEmail(params.email);
+    if (existe) {
+      throw new ConflictException('El email ya está registrado');
+    }
+
+    const passwordHash = await bcrypt.hash(params.password, 10);
+    const usuario = await this.usuariosService.createLocal({
+      nombre: params.nombre,
+      email: params.email,
+      passwordHash,
+      rolId: params.rolId,
+      supervisorId: params.supervisorId,
+    });
+
+    return {
+      accessToken: await this.createAccessToken(usuario),
+      user: {
+        usuarioId: usuario.usuarioId,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rolId: usuario.rolId,
+        activo: usuario.activo,
+      },
+    };
   }
 
   async loginLocal(email: string, password: string) {

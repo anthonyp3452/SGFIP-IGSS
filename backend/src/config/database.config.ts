@@ -20,4 +20,9 @@ export const buildDatabaseConfig = (
   database: db.name,
   autoLoadEntities: true,
   synchronize: nodeEnv === 'development',
+  ssl: nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
+  extra:
+    nodeEnv === 'production'
+      ? { ssl: { rejectUnauthorized: false } }
+      : undefined,
 });

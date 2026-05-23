@@ -20,19 +20,11 @@ export class Informe {
   @Column({ name: 'supervisor_id', type: 'integer', nullable: true })
   supervisorId?: number;
 
-  @Column({
-    name: 'tipo_inspeccion',
-    type: 'varchar',
-    length: 80,
-    default: 'Regular',
-  })
-  tipoInspeccion: string;
+  @Column({ name: 'nombre_patrono', type: 'varchar', nullable: true })
+  nombrePatrono?: string;
 
-  @Column({ name: 'nombre_patrono', type: 'varchar' })
-  nombrePatrono: string;
-
-  @Column({ name: 'nit_patrono', type: 'varchar' })
-  nitPatrono: string;
+  @Column({ name: 'nit_patrono', type: 'varchar', nullable: true })
+  nitPatrono?: string;
 
   @Column({ name: 'direccion_patrono', type: 'varchar', nullable: true })
   direccionPatrono?: string;
@@ -50,6 +42,33 @@ export class Informe {
 
   @Column({ name: 'fecha_limite', type: 'timestamptz', nullable: true })
   fechaLimite?: Date;
+
+  @Column({ name: 'fecha_informe', type: 'date', nullable: true })
+  fechaInforme?: string;
+
+  @Column({ name: 'descripcion', type: 'text', nullable: true })
+  descripcion?: string;
+
+  @Column({ name: 'no_afiliacion_riesgo', type: 'varchar', length: 100, nullable: true })
+  noAfiliacionRiesgo?: string;
+
+  @Column({ name: 'no_oficio', type: 'varchar', length: 100, nullable: true })
+  noOficio?: string;
+
+  @Column({ name: 'fecha_oficio', type: 'date', nullable: true })
+  fechaOficio?: string;
+
+  @Column({ name: 'envio', type: 'varchar', length: 500, nullable: true })
+  envio?: string;
+
+  @Column({ name: 'iniciado_at', type: 'timestamptz', nullable: true })
+  iniciadoAt?: Date;
+
+  @Column({ name: 'enviado_revision_at', type: 'timestamptz', nullable: true })
+  enviadoRevisionAt?: Date;
+
+  @Column({ name: 'finalizado_at', type: 'timestamptz', nullable: true })
+  finalizadoAt?: Date;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz', precision: 3 })
   createdAt: Date;

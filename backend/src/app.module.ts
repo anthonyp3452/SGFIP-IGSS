@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { buildDatabaseConfig } from './config/database.config';
 import envConfiguration from './config/env.configuration';
+import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
 import { InformesModule } from './modules/informes/informes.module';
@@ -34,6 +35,7 @@ import { UsuariosModule } from './modules/usuarios/usuarios.module';
           configService.get<string>('app.env', 'development'),
         ),
     }),
+    AdminModule,
     AuthModule,
     HealthModule,
     InformesModule,

@@ -20,6 +20,9 @@ export class Usuario {
   @Column({ name: 'rol_id', type: 'integer' })
   rolId: number;
 
+  @Column({ name: 'supervisor_id', type: 'integer', nullable: true })
+  supervisorId?: number;
+
   @Column({ name: 'password_hash', type: 'varchar', nullable: true })
   passwordHash?: string;
 
