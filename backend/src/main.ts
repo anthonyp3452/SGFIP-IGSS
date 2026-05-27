@@ -3,7 +3,41 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 
+function validateEnv() {
+  const requiredVars: { key: string; name: string }[] = [
+    { key: 'JWT_SECRET', name: 'JWT_SECRET' },
+    { key: 'DB_HOST', name: 'DB_HOST' },
+    { key: 'DB_USER', name: 'DB_USER' },
+    { key: 'DB_PASSWORD', name: 'DB_PASSWORD' },
+    { key: 'DB_NAME', name: 'DB_NAME' },
+  ];
+
+  const missing = requiredVars.filter(
+    (v) => !process.env[v.key] || process.env[v.key] === '',
+  );
+
+  if (missing.length > 0) {
+    const list = missing.map((v) => `  - ${v.name}`).join('\n');
+    console.error(
+      `[SGFIP] Error crítico: variables de entorno requeridas no configuradas:\n${list}\n`,
+    );
+    process.exit(1);
+  }
+
+  if (
+    process.env.NODE_ENV === 'production' &&
+    (!process.env.FRONTEND_URL || process.env.FRONTEND_URL === '')
+  ) {
+    console.error(
+      '[SGFIP] Error crítico: FRONTEND_URL es requerida en producción.\n',
+    );
+    process.exit(1);
+  }
+}
+
 async function bootstrap() {
+  validateEnv();
+
   const [helmetModule, rateLimitModule] = await Promise.all([
     import('helmet'),
     import('express-rate-limit'),

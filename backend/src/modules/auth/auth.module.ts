@@ -5,7 +5,6 @@ import { PassportModule } from '@nestjs/passport';
 import { UsuariosModule } from '../usuarios/usuarios.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { GoogleStrategy } from './google.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { RolesGuard } from './roles.guard';
 
@@ -27,7 +26,7 @@ import { RolesGuard } from './roles.guard';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, JwtStrategy, RolesGuard],
+  providers: [AuthService, JwtStrategy, RolesGuard],
   exports: [JwtModule, PassportModule, RolesGuard],
 })
 export class AuthModule {}

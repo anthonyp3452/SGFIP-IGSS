@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS informes (
   inspector_id INTEGER NOT NULL REFERENCES usuarios(usuario_id),
   supervisor_id INTEGER REFERENCES usuarios(usuario_id),
   tipo_inspeccion VARCHAR(80) NOT NULL DEFAULT 'Regular',
-  nombre_patrono VARCHAR(255) NOT NULL,
-  nit_patrono VARCHAR(20) NOT NULL,
+  nombre_patrono VARCHAR(255),
+  nit_patrono VARCHAR(20),
   direccion_patrono VARCHAR(500),
   estado VARCHAR(50) NOT NULL DEFAULT 'Pendiente',
   observacion VARCHAR(1000),
@@ -49,13 +49,36 @@ CREATE TABLE IF NOT EXISTS informes (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 3. Secuencia anual para correlativos INF-AAAA-NNNN
+-- 3. Números de informe anulados por el administrador
+CREATE TABLE IF NOT EXISTS informe_anulados (
+  anio INTEGER NOT NULL,
+  numero INTEGER NOT NULL,
+  PRIMARY KEY (anio, numero)
+);
+
+-- 4. Secuencia anual para correlativos INF-AAAA-NNNN
 CREATE TABLE IF NOT EXISTS informe_secuencia (
   anio INTEGER PRIMARY KEY,
   ultimo_numero INTEGER NOT NULL
 );
 
--- 4. Índices para búsquedas frecuentes
+-- 4. Auditoría de cambios (conservación mínima 1 año)
+CREATE TABLE IF NOT EXISTS auditoria_informes (
+  auditoria_id BIGSERIAL PRIMARY KEY,
+  informe_id INTEGER NOT NULL,
+  numero_informe VARCHAR(50) NOT NULL,
+  usuario_id INTEGER,
+  accion VARCHAR(50) NOT NULL,
+  estado_anterior VARCHAR(50),
+  estado_nuevo VARCHAR(50),
+  detalle TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_auditoria_informe ON auditoria_informes(informe_id);
+CREATE INDEX IF NOT EXISTS idx_auditoria_created ON auditoria_informes(created_at);
+
+-- 5. Índices para búsquedas frecuentes
 CREATE INDEX IF NOT EXISTS idx_informes_estado ON informes(estado);
 CREATE INDEX IF NOT EXISTS idx_informes_inspector ON informes(inspector_id);
 CREATE INDEX IF NOT EXISTS idx_informes_numero ON informes(numero_informe);

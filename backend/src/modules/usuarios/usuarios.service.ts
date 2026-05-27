@@ -41,21 +41,6 @@ export class UsuariosService {
     });
   }
 
-  async createFromGoogle(params: {
-    email: string;
-    nombre: string;
-    rolId: number;
-  }): Promise<Usuario> {
-    const usuario = this.usuariosRepository.create({
-      email: params.email,
-      nombre: params.nombre,
-      rolId: params.rolId,
-      activo: true,
-    });
-
-    return this.usuariosRepository.save(usuario);
-  }
-
   async createLocal(params: {
     email: string;
     nombre: string;

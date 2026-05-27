@@ -950,13 +950,14 @@
                       <th>Patrono</th>
                       <th>NIT</th>
                       <th>Estado</th>
+                      <th>Urgencia</th>
                       <th>Solicitado por</th>
                       <th>Fecha</th>
                       <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody id="tablaInformesBody">
-                  <tr><td colspan="7" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando informes...</td></tr>
+                  <tr><td colspan="8" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando informes...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1469,22 +1470,21 @@
         const data = await response.json();
 
         if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gris-medio);padding:24px;">No hay informes registrados.</td></tr>';
-          return;
-        }
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gris-medio);padding:24px;">No hay informes registrados.</td></tr>';
 
-        tbody.innerHTML = data.map((inf) => {
-          const fecha = new Date(inf.createdAt).toLocaleDateString("es-GT");
-          return `<tr>
-            <td><strong>${inf.numeroInforme}</strong></td>
-            <td>${inf.nombrePatrono || "—"}</td>
-            <td>${inf.nitPatrono || "—"}</td>
-            <td>${badgeEstado(inf.estado)}</td>
-            <td>Inspector #${inf.inspectorId}</td>
-            <td>${fecha}</td>
-            <td><button class="btn-accion btn-iniciar" onclick="verDetalle(${inf.informeId})">Ver detalle</button></td>
-          </tr>`;
-        }).join("");
+          tbody.innerHTML = data.map((inf) => {
+            const fecha = new Date(inf.createdAt).toLocaleDateString("es-GT");
+            return `<tr>
+              <td><strong>${inf.numeroInforme}</strong></td>
+              <td>${inf.nombrePatrono || "—"}</td>
+              <td>${inf.nitPatrono || "—"}</td>
+              <td>${badgeEstado(inf.estado)}</td>
+              <td>${badgeUrgencia(inf.nivelUrgencia)}</td>
+              <td>Inspector #${inf.inspectorId}</td>
+              <td>${fecha}</td>
+              <td><button class="btn-accion btn-iniciar" onclick="verDetalle(${inf.informeId})">Ver detalle</button></td>
+            </tr>`;
+          }).join("");
       } catch {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#d93025;padding:24px;">Error de conexión.</td></tr>';
       }
@@ -1550,6 +1550,13 @@
       };
       const cls = classMap[estado] || "badge-pendiente";
       return `<span class="badge ${cls}">${estado}</span>`;
+    }
+
+    function badgeUrgencia(urgencia) {
+      if (!urgencia) return '<span class="badge badge-pendiente">—</span>';
+      const classMap = { "Baja": "badge-finalizado", "Media": "badge-en-revision", "Alta": "badge-devuelto" };
+      const cls = classMap[urgencia] || "badge-pendiente";
+      return `<span class="badge ${cls}">${urgencia}</span>`;
     }
 
     async function cargarMisInformes() {
@@ -1878,6 +1885,7 @@
           <table style="width:100%;border-collapse:collapse;">
             ${renderDetalleFila("N° Informe", inf.numeroInforme)}
             ${renderDetalleFila("Estado", inf.estado)}
+            ${renderDetalleFila("Urgencia", inf.nivelUrgencia || "—")}
             ${renderDetalleFila("Patrono", inf.nombrePatrono)}
             ${renderDetalleFila("NIT", inf.nitPatrono)}
             ${renderDetalleFila("Dirección", inf.direccionPatrono || "—")}

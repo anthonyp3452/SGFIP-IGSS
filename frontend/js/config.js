@@ -22,7 +22,6 @@ const SGFIP_CONFIG = {
   // Rutas de la API
   apiLoginPath: '/api/auth/login',
   apiRegisterPath: '/api/auth/register',
-  googleAuthPath: '/api/auth/google',
   apiInformesPath: '/api/informes',
   apiUsuariosPath: '/api/usuarios',
   apiAdminPath: '/api/admin',

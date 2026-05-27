@@ -43,8 +43,8 @@ export class InformesController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll() {
-    return this.informesService.findAll();
+  findAll(@Query() filtros: FiltrarInformesDto) {
+    return this.informesService.findAll(filtros);
   }
 
   @Get('en-revision')
@@ -90,11 +90,7 @@ export class InformesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: EnviarRevisionDto,
   ) {
-    return this.informesService.enviarARevision(
-      id,
-      req.user.usuario_id,
-      dto,
-    );
+    return this.informesService.enviarARevision(id, req.user.usuario_id, dto);
   }
 
   @Patch(':id/aprobar')

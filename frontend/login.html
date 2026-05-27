@@ -299,13 +299,7 @@
         <span class="btn-text">Ingresar</span>
       </button>
 
-      <!--
-      <div class="separator">o</div>
-      <button type="button" class="google-btn" id="googleBtn">
-        <span aria-hidden="true">G</span>
-        <span>Continuar con Google</span>
-      </button>
-      -->
+
 
       <div class="login-footer">
         ¿No tiene cuenta? <a href="register.html">Crear cuenta</a>
@@ -323,7 +317,6 @@
     const emailError = document.getElementById("emailError");
     const passwordError = document.getElementById("passwordError");
     const submitBtn = document.getElementById("submitBtn");
-    // const googleBtn = document.getElementById("googleBtn");
     const togglePasswordBtn = document.getElementById("togglePassword");
     const CONFIG = SGFIP_CONFIG;
 
@@ -380,7 +373,6 @@
 
     const setLoading = (isLoading) => {
       submitBtn.disabled = isLoading;
-      // googleBtn.disabled = isLoading;
       submitBtn.classList.toggle("loading", isLoading);
       submitBtn.querySelector(".btn-text").textContent = isLoading ? "Validando..." : "Ingresar";
     };
@@ -455,23 +447,6 @@
       }, 1600);
     };
 
-    /*
-    const setupGoogleAuth = () => {
-      if (!CONFIG.apiBaseUrl || !CONFIG.googleAuthPath) {
-        googleBtn.disabled = true;
-        googleBtn.title = "Configura apiBaseUrl y googleAuthPath para habilitar Google.";
-        return;
-      }
-
-      googleBtn.addEventListener("click", () => {
-        const remember = rememberInput.checked ? "1" : "0";
-        const redirectUri = encodeURIComponent(window.location.href);
-        const googleUrl = `${CONFIG.apiBaseUrl}${CONFIG.googleAuthPath}?remember=${remember}&redirect_uri=${redirectUri}`;
-        window.location.href = googleUrl;
-      });
-    };
-    */
-
     emailInput.addEventListener("blur", validateEmailField);
     passwordInput.addEventListener("blur", validatePasswordField);
 
@@ -529,7 +504,6 @@
     });
 
     window.addEventListener("load", () => {
-      // setupGoogleAuth();
       const params = new URLSearchParams(window.location.search);
       if (params.get("logout") === "1") {
         showToast("Sesión cerrada correctamente", "info");

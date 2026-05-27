@@ -7,11 +7,14 @@ import {
 } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import type { EntityManager } from 'typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Between, DataSource, FindOptionsWhere, Repository } from 'typeorm';
+import { AuditoriaInforme } from './auditoria-informe.entity';
+import { InformeAnulado } from './informe-anulado.entity';
 import { ESTADO, TRANSICIONES } from './const/informe-estados';
 import type { EstadoInforme } from './const/informe-estados';
 import { AprobarInformeDto } from './dto/aprobar-informe.dto';
 import { EnviarRevisionDto } from './dto/enviar-revision.dto';
+import { FiltrarInformesDto } from './dto/filtrar-informes.dto';
 import { SolicitarInformeDto } from './dto/solicitar-informe.dto';
 import { Informe } from './informe.entity';
 
@@ -22,6 +25,10 @@ export class InformesService {
   constructor(
     @InjectRepository(Informe)
     private readonly informesRepository: Repository<Informe>,
+    @InjectRepository(AuditoriaInforme)
+    private readonly auditoriaRepository: Repository<AuditoriaInforme>,
+    @InjectRepository(InformeAnulado)
+    private readonly anuladosRepository: Repository<InformeAnulado>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -30,22 +37,31 @@ export class InformesService {
     manager: EntityManager,
     anio: number,
   ): Promise<number> {
-    const rows = await manager.query<{ ultimo_numero: string | number }[]>(
-      `INSERT INTO informe_secuencia (anio, ultimo_numero)
-       VALUES ($1, 1)
-       ON CONFLICT (anio) DO UPDATE
-       SET ultimo_numero = informe_secuencia.ultimo_numero + 1
-       RETURNING ultimo_numero`,
-      [anio],
-    );
-    const raw = rows[0]?.ultimo_numero;
-    const n = typeof raw === 'string' ? parseInt(raw, 10) : Number(raw);
-    if (!Number.isFinite(n) || n < 1) {
-      throw new InternalServerErrorException(
-        'No se pudo obtener el correlativo del informe',
+    const maxIter = 1000;
+    for (let i = 0; i < maxIter; i++) {
+      const rows = await manager.query<{ ultimo_numero: string | number }[]>(
+        `INSERT INTO informe_secuencia (anio, ultimo_numero)
+         VALUES ($1, 1)
+         ON CONFLICT (anio) DO UPDATE
+         SET ultimo_numero = informe_secuencia.ultimo_numero + 1
+         RETURNING ultimo_numero`,
+        [anio],
       );
+      const raw = rows[0]?.ultimo_numero;
+      const n = typeof raw === 'string' ? parseInt(raw, 10) : Number(raw);
+      if (!Number.isFinite(n) || n < 1) {
+        throw new InternalServerErrorException(
+          'No se pudo obtener el correlativo del informe',
+        );
+      }
+      const anulado = await manager.findOne(InformeAnulado, {
+        where: { anio, numero: n },
+      });
+      if (!anulado) return n;
     }
-    return n;
+    throw new InternalServerErrorException(
+      'No se encontró un número de informe disponible después de varios intentos',
+    );
   }
 
   private formatearNumeroInforme(anio: number, secuencia: number): string {
@@ -72,14 +88,64 @@ export class InformesService {
         estado: ESTADO.PENDIENTE,
       });
 
-      return manager.save(Informe, informe);
+      const saved = await manager.save(Informe, informe);
+
+      await manager.insert(AuditoriaInforme, {
+        informeId: saved.informeId,
+        numeroInforme: saved.numeroInforme,
+        usuarioId: solicitanteId,
+        accion: 'creacion',
+        estadoNuevo: ESTADO.PENDIENTE,
+      });
+
+      return saved;
     });
   }
 
-  findAll(): Promise<Informe[]> {
-    return this.informesRepository.find({
+  async findAll(filtros?: FiltrarInformesDto): Promise<Informe[]> {
+    const where: FindOptionsWhere<Informe> = {};
+
+    if (filtros?.estado) where.estado = filtros.estado;
+    if (filtros?.inspectorId) where.inspectorId = filtros.inspectorId;
+    if (filtros?.fechaInicio || filtros?.fechaFin) {
+      where.createdAt = Between(
+        filtros.fechaInicio
+          ? new Date(filtros.fechaInicio)
+          : new Date('1900-01-01'),
+        filtros.fechaFin
+          ? new Date(filtros.fechaFin + 'T23:59:59.999Z')
+          : new Date('2100-01-01'),
+      );
+    }
+
+    if (filtros?.urgencia) {
+      const now = Date.now();
+      const dias = { Baja: 2, Media: 5, Alta: 6 } as const;
+      const limite = dias[filtros.urgencia];
+      if (filtros.urgencia === 'Alta') {
+        where.createdAt = Between(
+          new Date('1900-01-01'),
+          new Date(now - limite * 86400000),
+        );
+      } else if (filtros.urgencia === 'Media') {
+        where.createdAt = Between(
+          new Date(now - 5 * 86400000),
+          new Date(now - 2 * 86400000),
+        );
+      } else {
+        where.createdAt = Between(
+          new Date(now - 2 * 86400000),
+          new Date(now + 86400000),
+        );
+      }
+    }
+
+    const informes = await this.informesRepository.find({
+      where,
       order: { createdAt: 'DESC' },
     });
+
+    return informes;
   }
 
   async findById(id: number): Promise<Informe> {
@@ -105,6 +171,25 @@ export class InformesService {
     return this.informesRepository.find({
       where: { estado: ESTADO.EN_REVISION },
       order: { createdAt: 'DESC' },
+    });
+  }
+
+  private async registrarAuditoria(params: {
+    informe: Informe;
+    usuarioId?: number;
+    accion: string;
+    estadoAnterior?: string;
+    estadoNuevo?: string;
+    detalle?: string;
+  }) {
+    await this.auditoriaRepository.insert({
+      informeId: params.informe.informeId,
+      numeroInforme: params.informe.numeroInforme,
+      usuarioId: params.usuarioId,
+      accion: params.accion,
+      estadoAnterior: params.estadoAnterior,
+      estadoNuevo: params.estadoNuevo,
+      detalle: params.detalle,
     });
   }
 
@@ -154,7 +239,18 @@ export class InformesService {
       informe.observacion = undefined;
     }
 
-    return this.informesRepository.save(informe);
+    const saved = await this.informesRepository.save(informe);
+
+    await this.registrarAuditoria({
+      informe: saved,
+      usuarioId: actorId,
+      accion: `transicion: ${estadoActual} → ${estadoDestino}`,
+      estadoAnterior: estadoActual,
+      estadoNuevo: estadoDestino,
+      detalle: observacion,
+    });
+
+    return saved;
   }
 
   async iniciarProceso(

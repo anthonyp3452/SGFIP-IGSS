@@ -1,12 +1,18 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
-import { GoogleAuthDto } from './dto/google-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { GoogleAuthGuard } from './google-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { GoogleUser } from './interfaces/google-user.interface';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { Roles } from './roles.decorator';
 import { RolesGuard } from './roles.guard';
@@ -24,23 +30,6 @@ export class AuthController {
   @Post('login')
   loginLocal(@Body() body: LoginDto) {
     return this.authService.loginLocal(body.email, body.password);
-  }
-
-  @Post('google')
-  googleAuthByIdToken(@Body() body: GoogleAuthDto) {
-    return this.authService.loginWithGoogleIdToken(body.id_token);
-  }
-
-  @Get('google')
-  @UseGuards(GoogleAuthGuard)
-  googleAuth() {
-    return;
-  }
-
-  @Get('google/callback')
-  @UseGuards(GoogleAuthGuard)
-  googleAuthCallback(@Req() req: Request & { user: GoogleUser }) {
-    return this.authService.loginWithGoogle(req.user);
   }
 
   @Get('me')
