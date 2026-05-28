@@ -1,5 +1,4 @@
 import {
-  IsEmail,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -15,9 +14,10 @@ export class RegisterDto {
   @MaxLength(255)
   nombre: string;
 
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
-  email: string;
+  @MinLength(3)
+  username: string;
 
   @IsString()
   @IsNotEmpty()

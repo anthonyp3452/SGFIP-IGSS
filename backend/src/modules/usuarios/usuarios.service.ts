@@ -41,15 +41,21 @@ export class UsuariosService {
     });
   }
 
+  findByUsername(username: string): Promise<Usuario | null> {
+    return this.usuariosRepository.findOne({
+      where: { username },
+    });
+  }
+
   async createLocal(params: {
-    email: string;
+    username: string;
     nombre: string;
     passwordHash: string;
     rolId: number;
     supervisorId?: number;
   }): Promise<Usuario> {
     const usuario = this.usuariosRepository.create({
-      email: params.email,
+      username: params.username,
       nombre: params.nombre,
       passwordHash: params.passwordHash,
       rolId: params.rolId,

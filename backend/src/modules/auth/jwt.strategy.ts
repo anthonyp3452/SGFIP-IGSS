@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   validate(payload: JwtPayload): JwtPayload {
-    if (!payload?.usuario_id || !payload?.email || !payload?.rol_id) {
+    if (!payload?.usuario_id || !payload?.username || !payload?.rol_id) {
       throw new UnauthorizedException('Token JWT invalido');
     }
 

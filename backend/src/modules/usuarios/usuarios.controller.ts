@@ -55,7 +55,7 @@ export class UsuariosController {
     @Body()
     body: {
       nombre: string;
-      email: string;
+      username: string;
       passwordHash: string;
       rolId: number;
       supervisorId?: number;

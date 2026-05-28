@@ -16,22 +16,29 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  private buildUsername(raw: string): string {
+    const clean = raw.trim().toLowerCase();
+    return clean.endsWith('.igss') ? clean : `${clean}.igss`;
+  }
+
   async register(params: {
     nombre: string;
-    email: string;
+    username: string;
     password: string;
     rolId: number;
     supervisorId?: number;
   }) {
-    const existe = await this.usuariosService.findByEmail(params.email);
+    const fullUsername = this.buildUsername(params.username);
+
+    const existe = await this.usuariosService.findByUsername(fullUsername);
     if (existe) {
-      throw new ConflictException('El email ya está registrado');
+      throw new ConflictException('El usuario ya está registrado');
     }
 
     const passwordHash = await bcrypt.hash(params.password, 10);
     const usuario = await this.usuariosService.createLocal({
       nombre: params.nombre,
-      email: params.email,
+      username: fullUsername,
       passwordHash,
       rolId: params.rolId,
       supervisorId: params.supervisorId,
@@ -42,15 +49,16 @@ export class AuthService {
       user: {
         usuarioId: usuario.usuarioId,
         nombre: usuario.nombre,
-        email: usuario.email,
+        username: usuario.username,
         rolId: usuario.rolId,
         activo: usuario.activo,
       },
     };
   }
 
-  async loginLocal(email: string, password: string) {
-    const usuario = await this.usuariosService.findByEmail(email);
+  async loginLocal(username: string, password: string) {
+    const fullUsername = this.buildUsername(username);
+    const usuario = await this.usuariosService.findByUsername(fullUsername);
 
     if (!usuario) {
       throw new UnauthorizedException({
@@ -87,7 +95,7 @@ export class AuthService {
       user: {
         usuarioId: usuario.usuarioId,
         nombre: usuario.nombre,
-        email: usuario.email,
+        username: usuario.username,
         rolId: usuario.rolId,
         activo: usuario.activo,
       },
@@ -97,7 +105,7 @@ export class AuthService {
   private createAccessToken(usuario: Usuario): Promise<string> {
     const payload: JwtPayload = {
       usuario_id: usuario.usuarioId,
-      email: usuario.email,
+      username: usuario.username,
       rol_id: usuario.rolId,
       sub: usuario.usuarioId,
     };

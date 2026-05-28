@@ -257,16 +257,16 @@
 
     <form id="loginForm" novalidate>
       <div class="field-group">
-        <label for="email">Correo electrónico</label>
+        <label for="username">Usuario</label>
         <input
           class="input-control"
-          id="email"
-          name="email"
-          type="email"
-          placeholder="nombre@igss.gob.gt"
+          id="username"
+          name="username"
+          type="text"
+          placeholder="ej: admin"
           autocomplete="username"
         />
-        <div class="field-error" id="emailError"></div>
+        <div class="field-error" id="usernameError"></div>
       </div>
 
       <div class="field-group">
@@ -311,10 +311,10 @@
   <script src="js/config.js"></script>
   <script>
     const loginForm = document.getElementById("loginForm");
-    const emailInput = document.getElementById("email");
+    const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
     const rememberInput = document.getElementById("remember");
-    const emailError = document.getElementById("emailError");
+    const usernameError = document.getElementById("usernameError");
     const passwordError = document.getElementById("passwordError");
     const submitBtn = document.getElementById("submitBtn");
     const togglePasswordBtn = document.getElementById("togglePassword");
@@ -322,12 +322,10 @@
 
     const messages = {
       required: "El campo es obligatorio.",
-      invalidEmail: "Formato de correo inválido. Ej: nombre@igss.gob.gt",
-      userNotFound: "Usuario no encontrado. Verifique el correo electrónico ingresado.",
+      invalidUsername: "El usuario debe tener al menos 3 caracteres.",
+      userNotFound: "Usuario no encontrado. Verifique el usuario ingresado.",
       wrongPassword: "Contraseña incorrecta. Intente nuevamente o contacte al administrador."
     };
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
     const clearFieldError = (input, errorBox) => {
       errorBox.style.display = "none";
@@ -347,17 +345,17 @@
       input.classList.add("valid");
     };
 
-    const validateEmailField = () => {
-      const email = emailInput.value.trim();
-      if (!email) {
-        showFieldError(emailInput, emailError, messages.required);
+    const validateUsernameField = () => {
+      const username = usernameInput.value.trim();
+      if (!username) {
+        showFieldError(usernameInput, usernameError, messages.required);
         return false;
       }
-      if (!emailRegex.test(email)) {
-        showFieldError(emailInput, emailError, messages.invalidEmail);
+      if (username.length < 3) {
+        showFieldError(usernameInput, usernameError, messages.invalidUsername);
         return false;
       }
-      markValid(emailInput, emailError);
+      markValid(usernameInput, usernameError);
       return true;
     };
 
@@ -401,13 +399,13 @@
       return { ok: false, reason: "generic" };
     };
 
-    const loginWithApi = async ({ email, password, remember }) => {
+    const loginWithApi = async ({ username, password }) => {
       const loginUrl = `${CONFIG.apiBaseUrl}${CONFIG.apiLoginPath}`;
       try {
         const response = await fetch(loginUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ username, password })
         });
         return normalizeApiResult(response);
       } catch {
@@ -427,7 +425,7 @@
         accessToken: data.accessToken || data.token,
         token: data.accessToken || data.token,
         userName: user.nombre || user.name || data.userName,
-        email: user.email || data.email,
+        username: user.username || data.username,
         role: user.rolId === 1 ? 'admin' : user.rolId === 2 ? 'inspector' : user.rolId === 3 ? 'supervisor' : data.role,
       };
     };
@@ -447,10 +445,10 @@
       }, 1600);
     };
 
-    emailInput.addEventListener("blur", validateEmailField);
+    usernameInput.addEventListener("blur", validateUsernameField);
     passwordInput.addEventListener("blur", validatePasswordField);
 
-    emailInput.addEventListener("input", () => clearFieldError(emailInput, emailError));
+    usernameInput.addEventListener("input", () => clearFieldError(usernameInput, usernameError));
     passwordInput.addEventListener("input", () => clearFieldError(passwordInput, passwordError));
 
     togglePasswordBtn.addEventListener("click", () => {
@@ -462,9 +460,9 @@
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      const emailIsValid = validateEmailField();
+      const usernameIsValid = validateUsernameField();
       const passwordIsValid = validatePasswordField();
-      if (!emailIsValid || !passwordIsValid) {
+      if (!usernameIsValid || !passwordIsValid) {
         showToast("Revise los datos ingresados en el formulario.", "warning");
         return;
       }
@@ -473,9 +471,8 @@
 
       try {
         const result = await loginWithApi({
-          email: emailInput.value.trim(),
-          password: passwordInput.value,
-          remember: rememberInput.checked
+          username: usernameInput.value.trim(),
+          password: passwordInput.value
         });
 
         if (!result.ok) {
@@ -483,8 +480,8 @@
             showToast("Error al conectar con el servidor. Verifique su conexión e intente de nuevo.", "error");
           } else if (result.reason === "userNotFound") {
             showToast(messages.userNotFound, "error");
-            emailInput.classList.remove("valid");
-            emailInput.focus();
+            usernameInput.classList.remove("valid");
+            usernameInput.focus();
           } else if (result.reason === "wrongPassword") {
             showToast(messages.wrongPassword, "error");
             passwordInput.classList.remove("valid");

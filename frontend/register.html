@@ -229,9 +229,10 @@
       </div>
 
       <div class="field-group">
-        <label for="email">Correo electrónico</label>
-        <input class="input-control" id="email" type="email" placeholder="nombre@igss.gob.gt" required autocomplete="email" />
-        <div class="field-error" id="emailError"></div>
+        <label for="username">Usuario</label>
+        <input class="input-control" id="username" type="text" placeholder="ej: juan" required autocomplete="username" />
+        <p class="field-hint">Se guardará como <strong>usuario.igss</strong></p>
+        <div class="field-error" id="usernameError"></div>
       </div>
 
       <div class="field-group">
@@ -270,18 +271,16 @@
   <script>
     const registerForm = document.getElementById("registerForm");
     const nombreInput = document.getElementById("nombre");
-    const emailInput = document.getElementById("email");
+    const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
     const rolSelect = document.getElementById("rol");
     const nombreError = document.getElementById("nombreError");
-    const emailError = document.getElementById("emailError");
+    const usernameError = document.getElementById("usernameError");
     const passwordError = document.getElementById("passwordError");
     const rolError = document.getElementById("rolError");
     const submitBtn = document.getElementById("submitBtn");
     const togglePasswordBtn = document.getElementById("togglePassword");
     const CONFIG = SGFIP_CONFIG;
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
     const clearError = (input, errorBox) => {
       errorBox.style.display = "none";
@@ -310,16 +309,16 @@
 
       let valid = true;
       const nombre = nombreInput.value.trim();
-      const email = emailInput.value.trim();
+      const username = usernameInput.value.trim();
       const password = passwordInput.value;
       const rolId = parseInt(rolSelect.value, 10);
 
       if (!nombre) { showError(nombreInput, nombreError, "El nombre es obligatorio."); valid = false; }
       else { clearError(nombreInput, nombreError); }
 
-      if (!email) { showError(emailInput, emailError, "El correo es obligatorio."); valid = false; }
-      else if (!emailRegex.test(email)) { showError(emailInput, emailError, "Formato de correo inválido."); valid = false; }
-      else { clearError(emailInput, emailError); }
+      if (!username) { showError(usernameInput, usernameError, "El usuario es obligatorio."); valid = false; }
+      else if (username.length < 3) { showError(usernameInput, usernameError, "Mínimo 3 caracteres."); valid = false; }
+      else { clearError(usernameInput, usernameError); }
 
       if (!password) { showError(passwordInput, passwordError, "La contraseña es obligatoria."); valid = false; }
       else if (password.length < 6) { showError(passwordInput, passwordError, "Mínimo 6 caracteres."); valid = false; }
@@ -336,14 +335,14 @@
         const response = await fetch(CONFIG.apiBaseUrl + "/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nombre, email, password, rolId })
+          body: JSON.stringify({ nombre, username, password, rolId })
         });
 
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
           if (response.status === 409) {
-            showToast("El correo electrónico ya está registrado.", "error");
+            showToast("El usuario ya está registrado.", "error");
           } else {
             showToast(data.message || "Error al crear la cuenta.", "error");
           }

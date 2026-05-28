@@ -29,7 +29,7 @@ export class AuthController {
 
   @Post('login')
   loginLocal(@Body() body: LoginDto) {
-    return this.authService.loginLocal(body.email, body.password);
+    return this.authService.loginLocal(body.username, body.password);
   }
 
   @Get('me')

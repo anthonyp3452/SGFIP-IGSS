@@ -147,14 +147,20 @@ npx serve frontend
 
 ### 5. Primer usuario administrador
 
+> ⚠️ **Cambio importante**: ahora se inicia sesión con **usuario** (no email).
+> El usuario escribe solo su nombre (ej: `admin`) y el backend agrega `.igss` automáticamente.
+> En BD se almacena como `admin.igss`.
+
 Como `synchronize` está deshabilitado en producción, debes insertar manualmente
 el primer admin en la base de datos desde la consola SQL de Neon:
 
 ```sql
 -- Contraseña: Admin123! (cambiar después)
-INSERT INTO usuarios (nombre, email, rol_id, password_hash, activo)
+-- username se guarda como 'admin.igss' (el usuario escribe solo 'admin')
+INSERT INTO usuarios (nombre, username, email, rol_id, password_hash, activo)
 VALUES (
   'Administrador',
+  'admin.igss',
   'admin@igss.gob.gt',
   1,
   '$2a$10$K8ZpX2Y1K8ZpX2Y1K8ZpXOabcdefghij123456789ABCDEFGHIJ123456',

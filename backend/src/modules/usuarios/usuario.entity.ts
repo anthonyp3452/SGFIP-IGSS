@@ -14,8 +14,11 @@ export class Usuario {
   @Column({ name: 'nombre', type: 'varchar' })
   nombre: string;
 
-  @Column({ name: 'email', type: 'varchar' })
-  email: string;
+  @Column({ name: 'email', type: 'varchar', nullable: true })
+  email?: string;
+
+  @Column({ name: 'username', type: 'varchar', unique: true })
+  username: string;
 
   @Column({ name: 'rol_id', type: 'integer' })
   rolId: number;

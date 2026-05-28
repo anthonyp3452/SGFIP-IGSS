@@ -920,7 +920,7 @@
           <div class="user-avatar" id="userAvatar" aria-hidden="true">?</div>
           <div class="user-meta">
             <span class="user-name" id="navUserName">Usuario</span>
-            <span class="user-email" id="navUserEmail"></span>
+            <span class="user-email" id="navUserUsername"></span>
           </div>
         </div>
         <button type="button" class="btn-logout" id="btnLogout">Cerrar sesión</button>
@@ -1334,14 +1334,14 @@
         session.userName ||
         session.name ||
         (session.user && (session.user.name || session.user.fullName)) ||
-        session.email ||
+        session.username ||
         "Usuario"
       );
     }
 
-    function displayEmail(session) {
+    function displayUsername(session) {
       if (!session) return "";
-      return session.email || (session.user && session.user.email) || "";
+      return session.username || (session.user && session.user.username) || "";
     }
 
     function initials(name) {
@@ -1975,10 +1975,10 @@
 
       const role = normalizeRole(session);
       const name = displayName(session);
-      const email = displayEmail(session);
+      const username = displayUsername(session);
 
       document.getElementById("navUserName").textContent = name;
-      document.getElementById("navUserEmail").textContent = email;
+      document.getElementById("navUserUsername").textContent = username;
       document.getElementById("userAvatar").textContent = initials(name);
 
       renderSidebar(role);
