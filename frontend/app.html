@@ -1471,7 +1471,7 @@
 
         if (data.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gris-medio);padding:24px;">No hay informes registrados.</td></tr>';
-
+        } else {
           tbody.innerHTML = data.map((inf) => {
             const fecha = new Date(inf.createdAt).toLocaleDateString("es-GT");
             return `<tr>
@@ -1485,6 +1485,7 @@
               <td><button class="btn-accion btn-iniciar" onclick="verDetalle(${inf.informeId})">Ver detalle</button></td>
             </tr>`;
           }).join("");
+        }
       } catch {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#d93025;padding:24px;">Error de conexión.</td></tr>';
       }
