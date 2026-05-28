@@ -21,7 +21,7 @@
 |---|----------|---------|
 | 4 | **SQL Injection surface** | `admin.controller.ts` usa `query()` con concatenación de columnas. |
 | 5 | **XSS en frontend** | `app.html` usa `innerHTML` extensivamente para renderizar datos de usuarios. |
-| 6 | **URL de backend hardcodeada** | `frontend/js/config.js` línea 19: `https://sgfip-back.onrender.com` fijo. |
+| 6 | **URL de backend hardcodeada** | `frontend/js/config.js` línea 19: `https://sgfip-igss.onrender.com` fijo. |
 | 7 | **SSL sin verificar certificado** | `rejectUnauthorized: false` — acepta cualquier certificado (man-in-the-middle). |
 | 8 | **Sin validación de entorno al iniciar** | No se verifica que `JWT_SECRET`, `DB_PASSWORD`, etc. estén configurados. |
 | 9 | **Health check no verifica BD** | Solo responde `{status: "ok"}`, no verifica conectividad con PostgreSQL. |

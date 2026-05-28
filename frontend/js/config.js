@@ -16,7 +16,7 @@ const SGFIP_CONFIG = {
     if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       return 'http://localhost:3000';
     }
-    return 'https://sgfip-back.onrender.com';
+    return 'https://sgfip-igss.onrender.com';
   })(),
 
   // Rutas de la API

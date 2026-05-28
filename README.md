@@ -108,10 +108,10 @@ npx serve frontend
    | `AUTH_DEFAULT_ROLE_ID` | `2` |
    | `GOOGLE_CLIENT_ID` | Tu Client ID de Google OAuth |
    | `GOOGLE_CLIENT_SECRET` | Tu Client Secret de Google |
-   | `GOOGLE_CALLBACK_URL` | `https://sgfip-back.onrender.com/api/auth/google/callback` |
+    | `GOOGLE_CALLBACK_URL` | `https://sgfip-igss.onrender.com/api/auth/google/callback` |
 
 6. Click **Create Web Service** — esperar ~3 min a que termine el build
-7. Una vez desplegado, Render asigna una URL como: `https://sgfip-back.onrender.com`
+7. Una vez desplegado, Render asigna una URL como: `https://sgfip-igss.onrender.com`
 
 ### 3. Vercel — Frontend
 
@@ -142,7 +142,7 @@ npx serve frontend
    ```
 4. En **Authorized redirect URIs** agregar:
    ```
-   https://sgfip-back.onrender.com/api/auth/google/callback
+    https://sgfip-igss.onrender.com/api/auth/google/callback
    ```
 
 ### 5. Primer usuario administrador
