@@ -84,6 +84,14 @@ export class Informe {
   @Column({ name: 'finalizado_at', type: 'timestamptz', nullable: true })
   finalizadoAt?: Date;
 
+  @Column({
+    name: 'motivo_anulacion',
+    type: 'varchar',
+    nullable: true,
+    length: 1000,
+  })
+  motivoAnulacion?: string;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz', precision: 3 })
   createdAt: Date;
 

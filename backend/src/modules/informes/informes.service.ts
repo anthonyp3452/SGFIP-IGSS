@@ -322,4 +322,63 @@ export class InformesService {
       observacion,
     );
   }
+
+  async anular(
+    informeId: number,
+    supervisorId: number,
+    motivo: string,
+  ): Promise<Informe> {
+    const informe = await this.findById(informeId);
+    const estadoActual = informe.estado as EstadoInforme;
+    const transicionesPermitidas = TRANSICIONES.get(estadoActual);
+
+    if (
+      !transicionesPermitidas ||
+      !transicionesPermitidas.includes(ESTADO.ANULADO)
+    ) {
+      throw new BadRequestException(
+        `No se puede anular un informe en estado "${estadoActual}"`,
+      );
+    }
+
+    informe.estado = ESTADO.ANULADO;
+    informe.supervisorId = supervisorId;
+    informe.motivoAnulacion = motivo;
+
+    const saved = await this.informesRepository.save(informe);
+
+    await this.registrarAuditoria({
+      informe: saved,
+      usuarioId: supervisorId,
+      accion: 'anulacion',
+      estadoAnterior: estadoActual,
+      estadoNuevo: ESTADO.ANULADO,
+      detalle: motivo,
+    });
+
+    return saved;
+  }
+
+  async findAuditoria(informeId: number): Promise<any[]> {
+    const rows = await this.dataSource.query(
+      `SELECT
+        a.auditoria_id AS "auditoriaId",
+        a.informe_id AS "informeId",
+        a.numero_informe AS "numeroInforme",
+        a.usuario_id AS "usuarioId",
+        a.accion,
+        a.estado_anterior AS "estadoAnterior",
+        a.estado_nuevo AS "estadoNuevo",
+        a.detalle,
+        a.created_at AS "createdAt",
+        u.nombre AS "usuarioNombre",
+        u.username AS "usuarioUsername"
+      FROM auditoria_informes a
+      LEFT JOIN usuarios u ON u.usuario_id = a.usuario_id
+      WHERE a.informe_id = $1
+      ORDER BY a.created_at ASC`,
+      [informeId],
+    );
+    return rows;
+  }
 }

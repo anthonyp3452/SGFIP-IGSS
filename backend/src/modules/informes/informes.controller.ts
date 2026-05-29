@@ -17,6 +17,7 @@ import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
+import { AnularInformeDto } from './dto/anular-informe.dto';
 import { AprobarInformeDto } from './dto/aprobar-informe.dto';
 import { DevolverInformeDto } from './dto/devolver-informe.dto';
 import { EnviarRevisionDto } from './dto/enviar-revision.dto';
@@ -66,8 +67,10 @@ export class InformesController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.informesService.findById(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const informe = await this.informesService.findById(id);
+    const auditoria = await this.informesService.findAuditoria(id);
+    return { ...informe, auditoria };
   }
 
   @Patch(':id/iniciar')
@@ -118,6 +121,22 @@ export class InformesController {
       id,
       req.user.usuario_id,
       dto.observacion,
+    );
+  }
+
+  @Patch(':id/anular')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(3)
+  anular(
+    @Req() req: Request & { user: JwtPayload },
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: AnularInformeDto,
+  ) {
+    return this.informesService.anular(
+      id,
+      req.user.usuario_id,
+      dto.motivo,
     );
   }
 }

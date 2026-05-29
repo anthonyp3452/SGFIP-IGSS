@@ -815,6 +815,93 @@
       color: #b71c1c;
     }
 
+    .btn-anular {
+      background: #eceff1;
+      color: #546e7a;
+    }
+
+    .badge-anulado {
+      background: #eceff1;
+      color: #546e7a;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+      margin: 12px 0 4px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: var(--gris-claro);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -20px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px var(--gris-claro);
+    }
+
+    .timeline-content {
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--gris-claro);
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+
+    .timeline-action {
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: capitalize;
+    }
+
+    .timeline-date {
+      font-size: 11px;
+      color: var(--gris-medio);
+    }
+
+    .timeline-user {
+      font-size: 12px;
+      color: var(--gris-medio);
+    }
+
+    .timeline-detail {
+      font-size: 12px;
+      color: var(--gris-oscuro);
+      margin-top: 6px;
+      padding: 6px 8px;
+      background: var(--gray-100);
+      border-radius: 4px;
+      border-left: 3px solid var(--primary-lighter);
+    }
+
     .table-empty-state {
       text-align: center;
       padding: 36px 24px;
@@ -1299,11 +1386,29 @@
   </div>
 
   <div class="modal-overlay" id="modalDetalle" role="dialog" aria-modal="true" aria-labelledby="modalDetalleTitulo">
-    <div class="modal-box" style="text-align:left;max-width:600px;">
+    <div class="modal-box" style="text-align:left;max-width:700px;">
       <h3 class="modal-success-title" id="modalDetalleTitulo">Detalle del informe</h3>
       <div id="detalleContenido" style="font-size:13px;line-height:1.6;"></div>
       <div class="modal-actions">
         <button type="button" class="btn-primary" id="btnCerrarDetalle">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalAnular" role="dialog" aria-modal="true" aria-labelledby="modalAnularTitulo">
+    <div class="modal-box" style="text-align:left;max-width:440px;">
+      <h3 class="modal-success-title" id="modalAnularTitulo">Anular informe</h3>
+      <p style="margin:0 0 16px;font-size:13px;color:var(--gris-medio);">
+        Escriba el motivo por el cual se anula este informe. Esta acción no se puede deshacer.
+      </p>
+      <input type="hidden" id="anularInformeId" />
+      <div class="form-group">
+        <label for="anularMotivo">Motivo de anulación <span style="color:#d93025;">*</span></label>
+        <textarea id="anularMotivo" rows="4" style="width:100%;border:1px solid var(--gris-claro);border-radius:10px;padding:11px 12px;font-size:14px;font-family:inherit;resize:vertical;" placeholder="Describa el motivo de la anulación..." maxlength="1000"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" style="background:#d32f2f;" id="btnConfirmarAnular" onclick="anularInforme()">Anular informe</button>
+        <button type="button" class="btn-link-modal" onclick="cerrarModal('modalAnular')">Cancelar</button>
       </div>
     </div>
   </div>
@@ -1635,7 +1740,8 @@
         "En Proceso": "badge-en-proceso",
         "En Revisión": "badge-en-revision",
         "Finalizado": "badge-finalizado",
-        "Devuelto": "badge-devuelto"
+        "Devuelto": "badge-devuelto",
+        "Anulado": "badge-anulado"
       };
       const cls = classMap[estado] || "badge-pendiente";
       return `<span class="badge ${cls}">${estado}</span>`;
@@ -1769,6 +1875,7 @@
             <td>
               <button class="btn-accion btn-aprobar" onclick="abrirModalAprobar(${inf.informeId})">Aprobar</button>
               <button class="btn-accion btn-devolver" onclick="abrirModalDevolver(${inf.informeId})">Devolver</button>
+              <button class="btn-accion btn-anular" onclick="abrirModalAnular(${inf.informeId})">Anular</button>
               <button class="btn-accion btn-iniciar" onclick="verDetalle(${inf.informeId})">Ver detalle</button>
             </td>
           </tr>`;
@@ -1970,30 +2077,59 @@
           return;
         }
         const inf = await response.json();
-        const html = `
-          <table style="width:100%;border-collapse:collapse;">
-            ${renderDetalleFila("N° Informe", inf.numeroInforme)}
-            ${renderDetalleFila("Estado", inf.estado)}
-            ${renderDetalleFila("Urgencia", inf.nivelUrgencia || "—")}
-            ${renderDetalleFila("Patrono", inf.nombrePatrono)}
-            ${renderDetalleFila("NIT", inf.nitPatrono)}
-            ${renderDetalleFila("Dirección", inf.direccionPatrono || "—")}
-            ${renderDetalleFila("Inspector ID", inf.inspectorId)}
-            ${renderDetalleFila("Supervisor ID", inf.supervisorId || "—")}
-            ${inf.fechaInforme ? renderDetalleFila("Fecha del informe", inf.fechaInforme) : ""}
+
+        const accionLabels = {
+          creacion: "Creación",
+          anulacion: "Anulación",
+        };
+
+        function accionLabel(accion) {
+          if (accionLabels[accion]) return accionLabels[accion];
+          if (accion.startsWith("transicion:")) {
+            const partes = accion.replace("transicion:", "").trim().split("→");
+            return `${partes[0]?.trim()} → ${partes[1]?.trim()}`;
+          }
+          return accion;
+        }
+
+        const infoHtml = `
+          <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+            ${renderDetalleFila("N° Informe", `<strong>${inf.numeroInforme}</strong>`)}
+            ${renderDetalleFila("Estado", badgeEstado(inf.estado))}
+            ${renderDetalleFila("Urgencia", badgeUrgencia(inf.nivelUrgencia))}
+            ${inf.nombrePatrono ? renderDetalleFila("Patrono", inf.nombrePatrono) : ""}
+            ${inf.nitPatrono ? renderDetalleFila("NIT", inf.nitPatrono) : ""}
+            ${inf.direccionPatrono ? renderDetalleFila("Dirección", inf.direccionPatrono) : ""}
             ${inf.descripcion ? renderDetalleFila("Descripción", inf.descripcion) : ""}
             ${inf.noAfiliacionRiesgo ? renderDetalleFila("No. afiliación y riesgo", inf.noAfiliacionRiesgo) : ""}
             ${inf.noOficio ? renderDetalleFila("No. oficio", inf.noOficio) : ""}
             ${inf.fechaOficio ? renderDetalleFila("Fecha oficio", inf.fechaOficio) : ""}
             ${inf.envio ? renderDetalleFila("Envío", inf.envio) : ""}
-            ${inf.observacion ? renderDetalleFila("Observación", inf.observacion) : ""}
-            ${renderDetalleFila("Creado", new Date(inf.createdAt).toLocaleString("es-GT"))}
-            ${inf.iniciadoAt ? renderDetalleFila("Iniciado", new Date(inf.iniciadoAt).toLocaleString("es-GT")) : ""}
-            ${inf.enviadoRevisionAt ? renderDetalleFila("Enviado a revisión", new Date(inf.enviadoRevisionAt).toLocaleString("es-GT")) : ""}
-            ${inf.finalizadoAt ? renderDetalleFila("Finalizado", new Date(inf.finalizadoAt).toLocaleString("es-GT")) : ""}
+            ${inf.motivoAnulacion ? renderDetalleFila("Motivo de anulación", inf.motivoAnulacion) : ""}
+            ${inf.fechaInforme ? renderDetalleFila("Fecha del informe", inf.fechaInforme) : ""}
           </table>
         `;
-        document.getElementById("detalleContenido").innerHTML = html;
+
+        let timelineHtml = "";
+        if (inf.auditoria && inf.auditoria.length > 0) {
+          timelineHtml = '<h4 style="margin:16px 0 8px;font-size:14px;">⏱ Historial del informe</h4><div class="timeline">';
+          inf.auditoria.forEach((a) => {
+            const fecha = new Date(a.createdAt).toLocaleString("es-GT");
+            const usuario = a.usuarioNombre || a.usuarioUsername || "Usuario #" + a.usuarioId;
+            timelineHtml += '<div class="timeline-item">';
+            timelineHtml += '<div class="timeline-dot"></div>';
+            timelineHtml += '<div class="timeline-content">';
+            timelineHtml += `<div class="timeline-header"><span class="timeline-action">${accionLabel(a.accion)}</span><span class="timeline-date">${fecha}</span></div>`;
+            timelineHtml += `<div class="timeline-user">${usuario}</div>`;
+            if (a.detalle) {
+              timelineHtml += `<div class="timeline-detail">${a.detalle}</div>`;
+            }
+            timelineHtml += '</div></div>';
+          });
+          timelineHtml += '</div>';
+        }
+
+        document.getElementById("detalleContenido").innerHTML = infoHtml + timelineHtml;
         document.getElementById("modalDetalle").classList.add("open");
       } catch {
         showToast("Error de conexión.", "error");
@@ -2193,6 +2329,39 @@
         }
         showToast("Usuario eliminado.", "success");
         cargarUsuarios();
+      } catch {
+        showToast("Error de conexión.", "error");
+      }
+    }
+
+    function abrirModalAnular(id) {
+      document.getElementById("anularInformeId").value = id;
+      document.getElementById("anularMotivo").value = "";
+      document.getElementById("modalAnular").classList.add("open");
+    }
+
+    async function anularInforme() {
+      const id = parseInt(document.getElementById("anularInformeId").value);
+      const motivo = document.getElementById("anularMotivo").value.trim();
+      if (!motivo) {
+        showToast("El motivo de anulación es requerido.", "error");
+        return;
+      }
+      const token = getAuthToken();
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiInformesPath + "/" + id + "/anular", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+          body: JSON.stringify({ motivo })
+        });
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          showToast(err.message || "Error al anular informe.", "error");
+          return;
+        }
+        showToast("Informe anulado exitosamente.", "success");
+        cerrarModal("modalAnular");
+        cargarBandejaSupervisor();
       } catch {
         showToast("Error de conexión.", "error");
       }
