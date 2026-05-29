@@ -1464,7 +1464,10 @@
       <div id="giResultado" style="display:none;margin-bottom:16px;padding:12px;background:#e8f5e9;border-radius:10px;text-align:center;">
         <p style="margin:0 0 4px;font-size:12px;color:#2e7d32;">Código generado:</p>
         <p id="giCodigoTexto" style="margin:0;font-size:16px;font-weight:700;font-family:monospace;word-break:break-all;"></p>
-        <button class="btn-sm" style="margin-top:8px;" onclick="copiarCodigoInvitacion()">Copiar código</button>
+        <div style="margin-top:8px;display:flex;gap:6px;justify-content:center;">
+          <button class="btn-sm" onclick="copiarCodigoInvitacion()">Copiar código</button>
+          <button class="btn-sm" id="btnCompartirInvitacion" onclick="compartirCodigo()">Compartir</button>
+        </div>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn-primary" id="btnGenerarCodigo" onclick="generarInvitacion()">Generar código</button>
@@ -2455,7 +2458,7 @@
             <td>${inv.usado ? '<span style="color:#d93025;font-weight:600;">Usado</span>' : '<span style="color:#137333;font-weight:600;">Disponible</span>'}</td>
             <td>${new Date(inv.createdAt).toLocaleDateString("es-GT")}</td>
             <td>${inv.usedAt ? new Date(inv.usedAt).toLocaleString("es-GT") : "—"}</td>
-            <td>${inv.usado ? "—" : '<button class="btn-sm btn-danger" onclick="eliminarInvitacion(' + inv.id + ')">Eliminar</button>'}</td>
+            <td>${inv.usado ? "—" : '<button class="btn-sm btn-danger" onclick="eliminarInvitacion(' + inv.id + ')" style="margin-right:4px;">Eliminar</button><button class="btn-sm" onclick="compartirCodigo(\'' + inv.codigo + '\',' + inv.rolId + ')">Compartir</button>'}</td>
           </tr>`).join("");
         }
       } catch {
@@ -2510,6 +2513,8 @@
         }
         const data = await response.json();
         document.getElementById("giCodigoTexto").textContent = data.codigo;
+        document.getElementById("btnCompartirInvitacion").dataset.rolId = rolId;
+        document.getElementById("btnCompartirInvitacion").dataset.codigo = data.codigo;
         document.getElementById("giResultado").style.display = "block";
         cargarInvitaciones();
         showToast("Código de invitación generado.", "success");
@@ -2518,6 +2523,32 @@
       } finally {
         btn.disabled = false;
         btn.textContent = "Generar código";
+      }
+    }
+
+    async function compartirCodigo(codigo, rolId) {
+      const rolLabels = { 2: "Inspector", 3: "Supervisor" };
+      if (!codigo) codigo = document.getElementById("giCodigoTexto").textContent;
+      if (!rolId) rolId = parseInt(document.getElementById("btnCompartirInvitacion").dataset.rolId);
+      const textoCompartir = "SGFIP - Código de invitación\n\nUtiliza este código para registrarte bajo el rol de " + (rolLabels[rolId] || "Rol #" + rolId) + " en el sistema SGFIP:\n\n" + codigo;
+      if (navigator.share && typeof navigator.share === "function") {
+        try {
+          await navigator.share({ title: "SGFIP - Código de invitación", text: textoCompartir });
+        } catch (err) {
+          if (err.name !== "AbortError") showToast("No se pudo compartir.", "error");
+        }
+      } else {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+          await navigator.clipboard.writeText(textoCompartir);
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = textoCompartir;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+        showToast("Texto copiado al portapapeles para compartir.", "success");
       }
     }
 
