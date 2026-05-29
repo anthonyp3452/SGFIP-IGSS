@@ -238,10 +238,10 @@
       <div class="field-group">
         <label for="password">Contraseña</label>
         <div class="password-wrapper">
-          <input class="input-control" id="password" type="password" placeholder="Mínimo 6 caracteres" required autocomplete="new-password" />
+          <input class="input-control" id="password" type="password" placeholder="Mínimo 8 caracteres, 1 número y 1 carácter especial" required autocomplete="new-password" />
           <button class="toggle-password" type="button" id="togglePassword" aria-label="Mostrar u ocultar contraseña">Mostrar</button>
         </div>
-        <p class="field-hint">Mínimo 6 caracteres</p>
+        <p class="field-hint">Mínimo 8 caracteres, al menos 1 número y 1 carácter especial</p>
         <div class="field-error" id="passwordError"></div>
       </div>
 
@@ -321,7 +321,9 @@
       else { clearError(usernameInput, usernameError); }
 
       if (!password) { showError(passwordInput, passwordError, "La contraseña es obligatoria."); valid = false; }
-      else if (password.length < 6) { showError(passwordInput, passwordError, "Mínimo 6 caracteres."); valid = false; }
+      else if (password.length < 8) { showError(passwordInput, passwordError, "Mínimo 8 caracteres."); valid = false; }
+      else if (!/\d/.test(password)) { showError(passwordInput, passwordError, "Debe contener al menos un número."); valid = false; }
+      else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) { showError(passwordInput, passwordError, "Debe contener al menos un carácter especial."); valid = false; }
       else { clearError(passwordInput, passwordError); }
 
       const codigo = codigoInput.value.trim();

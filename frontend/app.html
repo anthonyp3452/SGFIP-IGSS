@@ -1490,7 +1490,8 @@
       </div>
       <div class="form-group">
         <label for="cuPassword">Contraseña <span style="color:#d93025;">*</span></label>
-        <input type="password" id="cuPassword" class="input-control" placeholder="Contraseña" required />
+        <input type="password" id="cuPassword" class="input-control" placeholder="Mínimo 8 caracteres, 1 número y 1 carácter especial" required />
+        <p class="field-hint" style="margin-top:4px;">Mínimo 8 caracteres, al menos 1 número y 1 carácter especial</p>
       </div>
       <div class="form-group">
         <label for="cuRol">Rol <span style="color:#d93025;">*</span></label>
@@ -2313,6 +2314,9 @@
         showToast("Todos los campos son obligatorios.", "error");
         return;
       }
+      if (password.length < 8) { showToast("La contraseña debe tener al menos 8 caracteres.", "error"); return; }
+      if (!/\d/.test(password)) { showToast("La contraseña debe contener al menos un número.", "error"); return; }
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) { showToast("La contraseña debe contener al menos un carácter especial.", "error"); return; }
       const token = getAuthToken();
       try {
         const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiUsuariosPath, {
