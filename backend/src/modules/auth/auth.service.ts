@@ -27,11 +27,9 @@ export class AuthService {
     nombre: string;
     username: string;
     password: string;
-    rolId: number;
-    supervisorId?: number;
     codigo: string;
   }) {
-    await this.invitacionesService.validar(params.codigo, params.rolId);
+    const inv = await this.invitacionesService.validar(params.codigo);
 
     const fullUsername = this.buildUsername(params.username);
 
@@ -45,8 +43,8 @@ export class AuthService {
       nombre: params.nombre,
       username: fullUsername,
       passwordHash,
-      rolId: params.rolId,
-      supervisorId: params.supervisorId,
+      rolId: inv.rolId,
+      supervisorId: inv.supervisorId,
     });
 
     await this.invitacionesService.usar(params.codigo);

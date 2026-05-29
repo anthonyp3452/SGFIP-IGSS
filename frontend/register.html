@@ -246,16 +246,6 @@
       </div>
 
       <div class="field-group">
-        <label for="rol">Rol</label>
-        <select class="input-control" id="rol" required>
-          <option value="" disabled selected>Seleccione un rol…</option>
-          <option value="2">Inspector</option>
-          <option value="3">Supervisor</option>
-        </select>
-        <div class="field-error" id="rolError"></div>
-      </div>
-
-      <div class="field-group">
         <label for="codigo">Código de invitación</label>
         <input class="input-control" id="codigo" type="text" placeholder="Código proporcionado por el administrador" required autocomplete="off" />
         <p class="field-hint">Solicite un código al administrador del sistema</p>
@@ -280,12 +270,10 @@
     const nombreInput = document.getElementById("nombre");
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
-    const rolSelect = document.getElementById("rol");
     const codigoInput = document.getElementById("codigo");
     const nombreError = document.getElementById("nombreError");
     const usernameError = document.getElementById("usernameError");
     const passwordError = document.getElementById("passwordError");
-    const rolError = document.getElementById("rolError");
     const codigoError = document.getElementById("codigoError");
     const submitBtn = document.getElementById("submitBtn");
     const togglePasswordBtn = document.getElementById("togglePassword");
@@ -320,7 +308,6 @@
       const nombre = nombreInput.value.trim();
       const username = usernameInput.value.trim();
       const password = passwordInput.value;
-      const rolId = parseInt(rolSelect.value, 10);
 
       if (!nombre) { showError(nombreInput, nombreError, "El nombre es obligatorio."); valid = false; }
       else { clearError(nombreInput, nombreError); }
@@ -332,9 +319,6 @@
       if (!password) { showError(passwordInput, passwordError, "La contraseña es obligatoria."); valid = false; }
       else if (password.length < 6) { showError(passwordInput, passwordError, "Mínimo 6 caracteres."); valid = false; }
       else { clearError(passwordInput, passwordError); }
-
-      if (!rolId || isNaN(rolId)) { showError(rolSelect, rolError, "Seleccione un rol."); valid = false; }
-      else { clearError(rolSelect, rolError); }
 
       const codigo = codigoInput.value.trim();
       if (!codigo) { showError(codigoInput, codigoError, "El código de invitación es obligatorio."); valid = false; }
@@ -348,7 +332,7 @@
         const response = await fetch(CONFIG.apiBaseUrl + "/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nombre, username, password, rolId, codigo })
+          body: JSON.stringify({ nombre, username, password, codigo })
         });
 
         const data = await response.json().catch(() => ({}));

@@ -1,9 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
   Req,
   UseGuards,
@@ -36,5 +39,13 @@ export class InvitacionesController {
   @Roles(1)
   listar() {
     return this.invitacionesService.listar();
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(1)
+  async eliminar(@Param('id', ParseIntPipe) id: number) {
+    await this.invitacionesService.eliminar(id);
+    return { message: 'Invitación eliminada' };
   }
 }

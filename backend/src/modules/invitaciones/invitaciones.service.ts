@@ -25,7 +25,7 @@ export class InvitacionesService {
     return this.repository.find({ order: { createdAt: 'DESC' } });
   }
 
-  async validar(codigo: string, rolId: number): Promise<Invitacion> {
+  async validar(codigo: string): Promise<Invitacion> {
     const inv = await this.repository.findOne({ where: { codigo } });
     if (!inv) {
       throw new NotFoundException('Código de invitación inválido');
@@ -33,13 +33,18 @@ export class InvitacionesService {
     if (inv.usado) {
       throw new BadRequestException('El código de invitación ya fue usado');
     }
-    if (inv.rolId !== rolId) {
-      throw new BadRequestException('El código de invitación no corresponde al rol seleccionado');
-    }
     return inv;
   }
 
   async usar(codigo: string): Promise<void> {
     await this.repository.update({ codigo }, { usado: true, usedAt: new Date() });
+  }
+
+  async eliminar(id: number): Promise<void> {
+    const inv = await this.repository.findOne({ where: { id } });
+    if (!inv) {
+      throw new NotFoundException('Invitación no encontrada');
+    }
+    await this.repository.remove(inv);
   }
 }

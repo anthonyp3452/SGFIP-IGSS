@@ -1277,10 +1277,11 @@
                       <th>Usado</th>
                       <th>Creado</th>
                       <th>Usado el</th>
+                      <th>Acciones</th>
                     </tr>
                   </thead>
                   <tbody id="tablaInvitacionesBody">
-                    <tr><td colspan="5" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando invitaciones...</td></tr>
+                    <tr><td colspan="6" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando invitaciones...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -2433,19 +2434,19 @@
       if (!token) return;
       const tbody = document.getElementById("tablaInvitacionesBody");
       if (!tbody) return;
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando...</td></tr>';
       try {
         const response = await fetch(CONFIG.apiBaseUrl + "/api/invitaciones", {
           headers: { Authorization: "Bearer " + token }
         });
         if (!response.ok) {
           if (response.status === 401) { logout(); return; }
-          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#d93025;padding:24px;">Error al cargar invitaciones.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#d93025;padding:24px;">Error al cargar invitaciones.</td></tr>';
           return;
         }
         const data = await response.json();
         if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gris-medio);padding:24px;">No hay códigos de invitación.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gris-medio);padding:24px;">No hay códigos de invitación.</td></tr>';
         } else {
           const rolLabels = { 2: "Inspector", 3: "Supervisor" };
           tbody.innerHTML = data.map((inv) => `<tr>
@@ -2454,10 +2455,32 @@
             <td>${inv.usado ? '<span style="color:#d93025;font-weight:600;">Usado</span>' : '<span style="color:#137333;font-weight:600;">Disponible</span>'}</td>
             <td>${new Date(inv.createdAt).toLocaleDateString("es-GT")}</td>
             <td>${inv.usedAt ? new Date(inv.usedAt).toLocaleString("es-GT") : "—"}</td>
+            <td>${inv.usado ? "—" : '<button class="btn-sm btn-danger" onclick="eliminarInvitacion(' + inv.id + ')">Eliminar</button>'}</td>
           </tr>`).join("");
         }
       } catch {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#d93025;padding:24px;">Error de conexión.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#d93025;padding:24px;">Error de conexión.</td></tr>';
+      }
+    }
+
+    async function eliminarInvitacion(id) {
+      if (!confirm("¿Eliminar este código de invitación?")) return;
+      const token = getAuthToken();
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + "/api/invitaciones/" + id, {
+          method: "DELETE",
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (!response.ok) {
+          if (response.status === 401) { logout(); return; }
+          const err = await response.json().catch(() => ({}));
+          showToast(err.message || "Error al eliminar.", "error");
+          return;
+        }
+        showToast("Invitación eliminada.", "success");
+        cargarInvitaciones();
+      } catch {
+        showToast("Error de conexión.", "error");
       }
     }
 
