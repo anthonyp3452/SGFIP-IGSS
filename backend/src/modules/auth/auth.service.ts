@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { Usuario } from '../usuarios/usuario.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
+import { InvitacionesService } from '../invitaciones/invitaciones.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class AuthService {
   constructor(
     private readonly usuariosService: UsuariosService,
     private readonly jwtService: JwtService,
+    private readonly invitacionesService: InvitacionesService,
   ) {}
 
   private buildUsername(raw: string): string {
@@ -27,7 +29,10 @@ export class AuthService {
     password: string;
     rolId: number;
     supervisorId?: number;
+    codigo: string;
   }) {
+    await this.invitacionesService.validar(params.codigo, params.rolId);
+
     const fullUsername = this.buildUsername(params.username);
 
     const existe = await this.usuariosService.findByUsername(fullUsername);
@@ -43,6 +48,8 @@ export class AuthService {
       rolId: params.rolId,
       supervisorId: params.supervisorId,
     });
+
+    await this.invitacionesService.usar(params.codigo);
 
     return {
       accessToken: await this.createAccessToken(usuario),

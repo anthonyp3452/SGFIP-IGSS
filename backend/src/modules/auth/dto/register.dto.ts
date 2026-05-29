@@ -31,4 +31,8 @@ export class RegisterDto {
   @IsInt()
   @IsOptional()
   supervisorId?: number;
+
+  @IsString()
+  @IsNotEmpty({ message: 'El código de invitación es requerido' })
+  codigo: string;
 }

@@ -8,6 +8,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
 import { InformesModule } from './modules/informes/informes.module';
+import { InvitacionesModule } from './modules/invitaciones/invitaciones.module';
 import { UsuariosModule } from './modules/usuarios/usuarios.module';
 
 @Module({
@@ -39,6 +40,7 @@ import { UsuariosModule } from './modules/usuarios/usuarios.module';
     AuthModule,
     HealthModule,
     InformesModule,
+    InvitacionesModule,
     UsuariosModule,
   ],
 })

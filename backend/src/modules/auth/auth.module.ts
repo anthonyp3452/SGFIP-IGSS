@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UsuariosModule } from '../usuarios/usuarios.module';
+import { InvitacionesModule } from '../invitaciones/invitaciones.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
@@ -11,6 +12,7 @@ import { RolesGuard } from './roles.guard';
 @Module({
   imports: [
     UsuariosModule,
+    forwardRef(() => InvitacionesModule),
     PassportModule.register({ session: false }),
     JwtModule.registerAsync({
       inject: [ConfigService],

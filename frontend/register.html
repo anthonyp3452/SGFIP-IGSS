@@ -255,6 +255,13 @@
         <div class="field-error" id="rolError"></div>
       </div>
 
+      <div class="field-group">
+        <label for="codigo">Código de invitación</label>
+        <input class="input-control" id="codigo" type="text" placeholder="Código proporcionado por el administrador" required autocomplete="off" />
+        <p class="field-hint">Solicite un código al administrador del sistema</p>
+        <div class="field-error" id="codigoError"></div>
+      </div>
+
       <button type="submit" class="submit-btn" id="submitBtn">
         <span class="spinner" aria-hidden="true"></span>
         <span class="btn-text">Crear cuenta</span>
@@ -274,10 +281,12 @@
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
     const rolSelect = document.getElementById("rol");
+    const codigoInput = document.getElementById("codigo");
     const nombreError = document.getElementById("nombreError");
     const usernameError = document.getElementById("usernameError");
     const passwordError = document.getElementById("passwordError");
     const rolError = document.getElementById("rolError");
+    const codigoError = document.getElementById("codigoError");
     const submitBtn = document.getElementById("submitBtn");
     const togglePasswordBtn = document.getElementById("togglePassword");
     const CONFIG = SGFIP_CONFIG;
@@ -327,6 +336,10 @@
       if (!rolId || isNaN(rolId)) { showError(rolSelect, rolError, "Seleccione un rol."); valid = false; }
       else { clearError(rolSelect, rolError); }
 
+      const codigo = codigoInput.value.trim();
+      if (!codigo) { showError(codigoInput, codigoError, "El código de invitación es obligatorio."); valid = false; }
+      else { clearError(codigoInput, codigoError); }
+
       if (!valid) { showToast("Revise los datos del formulario.", "warning"); return; }
 
       setLoading(true);
@@ -335,7 +348,7 @@
         const response = await fetch(CONFIG.apiBaseUrl + "/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nombre, username, password, rolId })
+          body: JSON.stringify({ nombre, username, password, rolId, codigo })
         });
 
         const data = await response.json().catch(() => ({}));
