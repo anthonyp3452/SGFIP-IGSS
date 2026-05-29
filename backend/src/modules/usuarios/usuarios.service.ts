@@ -12,6 +12,7 @@ export class UsuariosService {
 
   findAll(): Promise<Usuario[]> {
     return this.usuariosRepository.find({
+      select: ['usuarioId', 'nombre', 'username', 'rolId', 'supervisorId', 'activo', 'createdAt', 'updatedAt'],
       order: { usuarioId: 'ASC' },
     });
   }
@@ -26,6 +27,7 @@ export class UsuariosService {
   async findOneById(id: number): Promise<Usuario> {
     const usuario = await this.usuariosRepository.findOne({
       where: { usuarioId: id },
+      select: ['usuarioId', 'nombre', 'username', 'rolId', 'supervisorId', 'activo', 'createdAt', 'updatedAt'],
     });
 
     if (!usuario) {

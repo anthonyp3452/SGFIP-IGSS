@@ -10,6 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import type { Request } from 'express';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -56,12 +57,21 @@ export class UsuariosController {
     body: {
       nombre: string;
       username: string;
-      passwordHash: string;
+      password: string;
       rolId: number;
       supervisorId?: number;
     },
   ) {
-    return this.usuariosService.createLocal(body);
+    const fullUsername = body.username.trim().toLowerCase();
+    const username = fullUsername.endsWith('.igss') ? fullUsername : `${fullUsername}.igss`;
+    const passwordHash = await bcrypt.hash(body.password, 10);
+    return this.usuariosService.createLocal({
+      nombre: body.nombre,
+      username,
+      passwordHash,
+      rolId: body.rolId,
+      supervisorId: body.supervisorId,
+    });
   }
 
   @Patch(':id')

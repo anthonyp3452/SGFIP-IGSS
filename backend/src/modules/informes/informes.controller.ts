@@ -31,7 +31,7 @@ export class InformesController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(1, 2)
+  @Roles(2)
   crear(
     @Req() req: Request & { user: JwtPayload },
     @Body() dto: SolicitarInformeDto,

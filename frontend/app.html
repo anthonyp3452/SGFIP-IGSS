@@ -810,6 +810,11 @@
       color: #c62828;
     }
 
+    .btn-eliminar {
+      background: #fce4ec;
+      color: #b71c1c;
+    }
+
     .table-empty-state {
       text-align: center;
       padding: 36px 24px;
@@ -1138,6 +1143,32 @@
             </div>
           </div>
         </div>
+
+        <div class="view" id="view-usuarios">
+          <div class="content-card" style="max-width: 100%;">
+            <div class="header-row">
+              <h2>Gestión de usuarios</h2>
+              <button class="btn-sm" onclick="abrirModalCrearUsuario()">+ Crear usuario</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Activo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaUsuariosBody">
+                  <tr><td colspan="6" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando usuarios...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   </div>
@@ -1277,6 +1308,62 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modalCrearUsuario" role="dialog" aria-modal="true" aria-labelledby="modalCrearTitulo">
+    <div class="modal-box" style="text-align:left;max-width:440px;">
+      <h3 class="modal-success-title" id="modalCrearTitulo">Crear usuario</h3>
+      <div class="form-group">
+        <label for="cuNombre">Nombre completo <span style="color:#d93025;">*</span></label>
+        <input type="text" id="cuNombre" class="input-control" placeholder="Nombre completo" required />
+      </div>
+      <div class="form-group">
+        <label for="cuUsername">Usuario (sin .igss) <span style="color:#d93025;">*</span></label>
+        <input type="text" id="cuUsername" class="input-control" placeholder="Ej: juan" required />
+        <p class="field-hint">Se agregará automáticamente .igss</p>
+      </div>
+      <div class="form-group">
+        <label for="cuPassword">Contraseña <span style="color:#d93025;">*</span></label>
+        <input type="password" id="cuPassword" class="input-control" placeholder="Contraseña" required />
+      </div>
+      <div class="form-group">
+        <label for="cuRol">Rol <span style="color:#d93025;">*</span></label>
+        <select id="cuRol" class="input-control">
+          <option value="2">Inspector</option>
+          <option value="3">Supervisor</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" onclick="crearUsuario()">Crear usuario</button>
+        <button type="button" class="btn-link-modal" onclick="cerrarModal('modalCrearUsuario')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalEditarUsuario" role="dialog" aria-modal="true" aria-labelledby="modalEditarTitulo">
+    <div class="modal-box" style="text-align:left;max-width:440px;">
+      <h3 class="modal-success-title" id="modalEditarTitulo">Editar usuario</h3>
+      <input type="hidden" id="euId" />
+      <div class="form-group">
+        <label for="euNombre">Nombre completo</label>
+        <input type="text" id="euNombre" class="input-control" />
+      </div>
+      <div class="form-group">
+        <label for="euRol">Rol</label>
+        <select id="euRol" class="input-control">
+          <option value="2">Inspector</option>
+          <option value="3">Supervisor</option>
+        </select>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" id="euActivo" style="width:18px;height:18px;" />
+        <label for="euActivo" style="margin:0;">Usuario activo</label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" onclick="editarUsuario()">Guardar cambios</button>
+        <button type="button" class="btn-link-modal" onclick="cerrarModal('modalEditarUsuario')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/toast.js"></script>
   <script src="js/config.js"></script>
   <script>
@@ -1297,9 +1384,9 @@
       { id: "mis-informes", label: "Mi cola de trabajo", icon: "📋", view: "mis-informes", roles: [ROLE.INSPECTOR] },
       { id: "bandeja-supervisor", label: "Bandeja de supervisor", icon: "✅", view: "bandeja-supervisor", roles: [ROLE.SUPERVISOR] },
       { id: "informes", label: "Informes patronales", icon: "📂", view: "informes", roles: [ROLE.ADMIN, ROLE.SUPERVISOR] },
-      { id: "solicitar-informe", label: "Nuevo informe", icon: "➕", view: "solicitar-informe", roles: [ROLE.ADMIN, ROLE.INSPECTOR] },
+      { id: "solicitar-informe", label: "Nuevo informe", icon: "➕", view: "solicitar-informe", roles: [ROLE.INSPECTOR] },
       { id: "monitoreo", label: "Monitoreo", icon: "📊", view: "monitoreo", roles: [ROLE.ADMIN] },
-      { id: "usuarios", label: "Usuarios", icon: "👤", href: "#usuarios", roles: [ROLE.ADMIN] },
+      { id: "usuarios", label: "Usuarios", icon: "👤", view: "usuarios", roles: [ROLE.ADMIN] },
     ];
 
     const ROLE_LABELS = {
@@ -1364,6 +1451,7 @@
       if (viewId === "mis-informes") cargarMisInformes();
       if (viewId === "bandeja-supervisor") cargarBandejaSupervisor();
       if (viewId === "monitoreo") cargarMonitoreo();
+      if (viewId === "usuarios") cargarUsuarios();
     }
 
     function renderSidebar(role) {
@@ -1964,6 +2052,149 @@
         </tr>`;
       } catch {
         showToast("Error al cargar monitoreo.", "error");
+      }
+    }
+
+    function cerrarModal(id) {
+      document.getElementById(id).classList.remove("open");
+    }
+
+    async function cargarUsuarios() {
+      const token = getAuthToken();
+      if (!token) return;
+      const tbody = document.getElementById("tablaUsuariosBody");
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gris-medio);padding:24px;">Cargando usuarios...</td></tr>';
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiUsuariosPath, {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (!response.ok) {
+          if (response.status === 401) { logout(); return; }
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#d93025;padding:24px;">Error al cargar usuarios.</td></tr>';
+          return;
+        }
+        const data = await response.json();
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gris-medio);padding:24px;">No hay usuarios registrados.</td></tr>';
+        } else {
+          const rolLabels = { 1: "Administrador", 2: "Inspector", 3: "Supervisor" };
+          tbody.innerHTML = data.map((u) => `<tr>
+            <td>${u.usuarioId}</td>
+            <td>${u.nombre}</td>
+            <td>${u.username}</td>
+            <td>${rolLabels[u.rolId] || "Rol #" + u.rolId}</td>
+            <td>${u.activo ? '<span style="color:#137333;font-weight:600;">Activo</span>' : '<span style="color:#d93025;font-weight:600;">Inactivo</span>'}</td>
+            <td>
+              <button class="btn-accion btn-iniciar" onclick="abrirModalEditarUsuario(${u.usuarioId})">Editar</button>
+              <button class="btn-accion btn-eliminar" onclick="eliminarUsuario(${u.usuarioId})">Eliminar</button>
+            </td>
+          </tr>`).join("");
+        }
+      } catch {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#d93025;padding:24px;">Error de conexión.</td></tr>';
+      }
+    }
+
+    function abrirModalCrearUsuario() {
+      document.getElementById("cuNombre").value = "";
+      document.getElementById("cuUsername").value = "";
+      document.getElementById("cuPassword").value = "";
+      document.getElementById("cuRol").value = "2";
+      document.getElementById("modalCrearUsuario").classList.add("open");
+    }
+
+    async function crearUsuario() {
+      const nombre = document.getElementById("cuNombre").value.trim();
+      const username = document.getElementById("cuUsername").value.trim();
+      const password = document.getElementById("cuPassword").value.trim();
+      const rolId = parseInt(document.getElementById("cuRol").value);
+      if (!nombre || !username || !password) {
+        showToast("Todos los campos son obligatorios.", "error");
+        return;
+      }
+      const token = getAuthToken();
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiUsuariosPath, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+          body: JSON.stringify({ nombre, username, password, rolId })
+        });
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          showToast(err.message || "Error al crear usuario.", "error");
+          return;
+        }
+        showToast("Usuario creado exitosamente.", "success");
+        cerrarModal("modalCrearUsuario");
+        cargarUsuarios();
+      } catch {
+        showToast("Error de conexión.", "error");
+      }
+    }
+
+    async function abrirModalEditarUsuario(id) {
+      const token = getAuthToken();
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiUsuariosPath + "/" + id, {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (!response.ok) throw new Error("Not found");
+        const u = await response.json();
+        document.getElementById("euId").value = u.usuarioId;
+        document.getElementById("euNombre").value = u.nombre;
+        document.getElementById("euRol").value = u.rolId;
+        document.getElementById("euActivo").checked = u.activo;
+        document.getElementById("modalEditarUsuario").classList.add("open");
+      } catch {
+        showToast("Error al cargar datos del usuario.", "error");
+      }
+    }
+
+    async function editarUsuario() {
+      const id = parseInt(document.getElementById("euId").value);
+      const nombre = document.getElementById("euNombre").value.trim();
+      const rolId = parseInt(document.getElementById("euRol").value);
+      const activo = document.getElementById("euActivo").checked;
+      if (!nombre) {
+        showToast("El nombre no puede estar vacío.", "error");
+        return;
+      }
+      const token = getAuthToken();
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiUsuariosPath + "/" + id, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+          body: JSON.stringify({ nombre, rolId, activo })
+        });
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          showToast(err.message || "Error al actualizar usuario.", "error");
+          return;
+        }
+        showToast("Usuario actualizado exitosamente.", "success");
+        cerrarModal("modalEditarUsuario");
+        cargarUsuarios();
+      } catch {
+        showToast("Error de conexión.", "error");
+      }
+    }
+
+    async function eliminarUsuario(id) {
+      if (!confirm("¿Está seguro de eliminar este usuario?")) return;
+      const token = getAuthToken();
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiUsuariosPath + "/" + id, {
+          method: "DELETE",
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (!response.ok) {
+          showToast("Error al eliminar usuario.", "error");
+          return;
+        }
+        showToast("Usuario eliminado.", "success");
+        cargarUsuarios();
+      } catch {
+        showToast("Error de conexión.", "error");
       }
     }
 
