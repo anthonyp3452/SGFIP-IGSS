@@ -2530,7 +2530,8 @@
       const rolLabels = { 2: "Inspector", 3: "Supervisor" };
       if (!codigo) codigo = document.getElementById("giCodigoTexto").textContent;
       if (!rolId) rolId = parseInt(document.getElementById("btnCompartirInvitacion").dataset.rolId);
-      const textoCompartir = "SGFIP - Código de invitación\n\nUtiliza este código para registrarte bajo el rol de " + (rolLabels[rolId] || "Rol #" + rolId) + " en el sistema SGFIP:\n\n" + codigo;
+      const urlRegistro = "https://sgfip-igss.vercel.app/register.html";
+      const textoCompartir = "SGFIP - Código de invitación\n\nUtiliza este código para registrarte bajo el rol de " + (rolLabels[rolId] || "Rol #" + rolId) + " en el sistema SGFIP:\n\n" + codigo + "\n\nIngresa aquí:\n" + urlRegistro;
       if (navigator.share && typeof navigator.share === "function") {
         try {
           await navigator.share({ title: "SGFIP - Código de invitación", text: textoCompartir });
