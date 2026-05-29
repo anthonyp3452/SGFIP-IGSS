@@ -1673,7 +1673,7 @@
               <td>${inf.nitPatrono || "—"}</td>
               <td>${badgeEstado(inf.estado)}</td>
               <td>${badgeUrgencia(inf.nivelUrgencia)}</td>
-              <td>Inspector #${inf.inspectorId}</td>
+              <td>${inf.inspectorNombre || "Inspector #" + inf.inspectorId}</td>
               <td>${fecha}</td>
               <td><button class="btn-accion btn-iniciar" onclick="verDetalle(${inf.informeId})">Ver detalle</button></td>
             </tr>`;
@@ -1870,7 +1870,7 @@
             <td><strong>${inf.numeroInforme}</strong></td>
             <td>${inf.nombrePatrono || "—"}</td>
             <td>${inf.nitPatrono || "—"}</td>
-            <td>Inspector #${inf.inspectorId}</td>
+            <td>${inf.inspectorNombre || "Inspector #" + inf.inspectorId}</td>
             <td>${fecha}</td>
             <td>
               <button class="btn-accion btn-aprobar" onclick="abrirModalAprobar(${inf.informeId})">Aprobar</button>
@@ -2099,6 +2099,8 @@
             ${renderDetalleFila("Urgencia", badgeUrgencia(inf.nivelUrgencia))}
             ${inf.nombrePatrono ? renderDetalleFila("Patrono", inf.nombrePatrono) : ""}
             ${inf.nitPatrono ? renderDetalleFila("NIT", inf.nitPatrono) : ""}
+            ${renderDetalleFila("Inspector", inf.inspectorNombre || "Inspector #" + inf.inspectorId)}
+            ${inf.supervisorId ? renderDetalleFila("Supervisor", inf.supervisorNombre || "Supervisor #" + inf.supervisorId) : ""}
             ${inf.direccionPatrono ? renderDetalleFila("Dirección", inf.direccionPatrono) : ""}
             ${inf.descripcion ? renderDetalleFila("Descripción", inf.descripcion) : ""}
             ${inf.noAfiliacionRiesgo ? renderDetalleFila("No. afiliación y riesgo", inf.noAfiliacionRiesgo) : ""}

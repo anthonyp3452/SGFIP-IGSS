@@ -102,6 +102,25 @@ export class InformesService {
     });
   }
 
+  private async enriquecerConInspectores(informes: Informe[]): Promise<Informe[]> {
+    if (informes.length === 0) return informes;
+    const ids = [...new Set([
+      ...informes.map((i) => i.inspectorId),
+      ...informes.filter((i) => i.supervisorId).map((i) => i.supervisorId!),
+    ])];
+    const rows = await this.dataSource.query<{ usuario_id: number; nombre: string }[]>(
+      `SELECT usuario_id, nombre FROM usuarios WHERE usuario_id = ANY($1)`,
+      [ids],
+    );
+    const map = new Map<number, string>();
+    for (const r of rows) map.set(r.usuario_id, r.nombre);
+    for (const informe of informes) {
+      (informe as any).inspectorNombre = map.get(informe.inspectorId) || null;
+      (informe as any).supervisorNombre = informe.supervisorId ? map.get(informe.supervisorId) || null : null;
+    }
+    return informes;
+  }
+
   async findAll(filtros?: FiltrarInformesDto): Promise<Informe[]> {
     const where: FindOptionsWhere<Informe> = {};
 
@@ -145,7 +164,7 @@ export class InformesService {
       order: { createdAt: 'DESC' },
     });
 
-    return informes;
+    return this.enriquecerConInspectores(informes);
   }
 
   async findById(id: number): Promise<Informe> {
@@ -155,23 +174,26 @@ export class InformesService {
     if (!informe) {
       throw new NotFoundException(`Informe #${id} no encontrado`);
     }
-    return informe;
+    const [enriquecido] = await this.enriquecerConInspectores([informe]);
+    return enriquecido;
   }
 
-  findByInspector(inspectorId: number, estado?: string): Promise<Informe[]> {
+  async findByInspector(inspectorId: number, estado?: string): Promise<Informe[]> {
     const where: Record<string, unknown> = { inspectorId };
     if (estado) where.estado = estado;
-    return this.informesRepository.find({
+    const informes = await this.informesRepository.find({
       where: where,
       order: { createdAt: 'DESC' },
     });
+    return this.enriquecerConInspectores(informes);
   }
 
-  findEnRevision(): Promise<Informe[]> {
-    return this.informesRepository.find({
+  async findEnRevision(): Promise<Informe[]> {
+    const informes = await this.informesRepository.find({
       where: { estado: ESTADO.EN_REVISION },
       order: { createdAt: 'DESC' },
     });
+    return this.enriquecerConInspectores(informes);
   }
 
   private async registrarAuditoria(params: {
