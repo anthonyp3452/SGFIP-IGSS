@@ -115,51 +115,91 @@ export class AdminController {
     );
   }
 
+  private buildDateClause(desde?: string, hasta?: string): string {
+    const parts: string[] = [];
+    if (desde && /^\d{4}-\d{2}-\d{2}$/.test(desde)) {
+      parts.push(`i.created_at >= '${desde}'::date`);
+    }
+    if (hasta && /^\d{4}-\d{2}-\d{2}$/.test(hasta)) {
+      parts.push(`i.created_at < ('${hasta}'::date + INTERVAL '1 day')`);
+    }
+    return parts.length > 0 ? ' AND ' + parts.join(' AND ') : '';
+  }
+
   @Get('tiempos/inspectores')
-  async tiemposInspectores() {
+  async tiemposInspectores(
+    @Query('desde') desde?: string,
+    @Query('hasta') hasta?: string,
+  ) {
+    const dateClause = this.buildDateClause(desde, hasta);
     const raw: Record<string, unknown>[] = await this.informesRepository.query(
       `SELECT
         i.inspector_id,
         u.nombre AS inspector_nombre,
-        COUNT(i.informe_id) AS total_informes,
-        AVG(
-          EXTRACT(EPOCH FROM (i.finalizado_at - i.iniciado_at)) / 86400.0
+        COUNT(*)::int AS total_asignados,
+        COUNT(*) FILTER (WHERE i.estado = 'Pendiente')::int AS pendientes,
+        COUNT(*) FILTER (WHERE i.estado = 'En Proceso')::int AS en_proceso,
+        COUNT(*) FILTER (WHERE i.estado = 'Devuelto')::int AS devueltos,
+        COUNT(*) FILTER (WHERE i.estado = 'En Revisi\u00f3n')::int AS en_revision,
+        COUNT(*) FILTER (WHERE i.estado = 'Finalizado')::int AS finalizados,
+        COUNT(*) FILTER (WHERE i.estado = 'Anulado')::int AS anulados,
+        ROUND(
+          AVG(EXTRACT(EPOCH FROM (i.finalizado_at - i.iniciado_at)) / 86400.0)::numeric, 1
         ) AS dias_promedio,
-        SUM(
-          EXTRACT(EPOCH FROM (i.finalizado_at - i.iniciado_at)) / 86400.0
-        ) AS dias_total
+        ROUND(
+          MAX(EXTRACT(EPOCH FROM (i.finalizado_at - i.iniciado_at)) / 86400.0)::numeric, 1
+        ) AS dias_maximo,
+        ROUND(
+          MIN(EXTRACT(EPOCH FROM (i.finalizado_at - i.iniciado_at)) / 86400.0)::numeric, 1
+        ) AS dias_minimo,
+        CASE WHEN COUNT(*) FILTER (WHERE i.estado IN ('Finalizado','Devuelto')) > 0 THEN
+          ROUND(
+            COUNT(*) FILTER (WHERE i.estado = 'Devuelto')::numeric /
+            NULLIF(COUNT(*) FILTER (WHERE i.estado IN ('Finalizado','Devuelto')), 0) * 100, 1
+          )
+        ELSE 0 END AS tasa_devolucion
       FROM informes i
       LEFT JOIN usuarios u ON u.usuario_id = i.inspector_id
-      WHERE i.estado = 'Finalizado'
-        AND i.iniciado_at IS NOT NULL
-        AND i.finalizado_at IS NOT NULL
+      WHERE u.rol_id = 2${dateClause}
       GROUP BY i.inspector_id, u.nombre
-      ORDER BY dias_promedio DESC`,
+      ORDER BY total_asignados DESC`,
     );
     return raw;
   }
 
   @Get('tiempos/supervisores')
-  async tiemposSupervisores() {
+  async tiemposSupervisores(
+    @Query('desde') desde?: string,
+    @Query('hasta') hasta?: string,
+  ) {
+    const dateClause = this.buildDateClause(desde, hasta);
     const raw: Record<string, unknown>[] = await this.informesRepository.query(
       `SELECT
         i.supervisor_id,
         u.nombre AS supervisor_nombre,
-        COUNT(i.informe_id) AS total_aprobados,
-        AVG(
-          EXTRACT(EPOCH FROM (i.finalizado_at - i.enviado_revision_at)) / 86400.0
-        ) AS dias_promedio_revision,
-        SUM(
-          EXTRACT(EPOCH FROM (i.finalizado_at - i.enviado_revision_at)) / 86400.0
-        ) AS dias_total_revision
+        COUNT(*)::int AS total_revisados,
+        COUNT(*) FILTER (WHERE i.estado = 'Finalizado')::int AS aprobados,
+        COUNT(*) FILTER (WHERE i.estado = 'Devuelto')::int AS devueltos,
+        ROUND(
+          AVG(EXTRACT(EPOCH FROM (i.finalizado_at - i.enviado_revision_at)) / 86400.0)::numeric, 1
+        ) AS dias_promedio,
+        ROUND(
+          MAX(EXTRACT(EPOCH FROM (i.finalizado_at - i.enviado_revision_at)) / 86400.0)::numeric, 1
+        ) AS dias_maximo,
+        ROUND(
+          MIN(EXTRACT(EPOCH FROM (i.finalizado_at - i.enviado_revision_at)) / 86400.0)::numeric, 1
+        ) AS dias_minimo,
+        CASE WHEN COUNT(*) > 0 THEN
+          ROUND(
+            COUNT(*) FILTER (WHERE i.estado = 'Finalizado')::numeric / COUNT(*) * 100, 1
+          )
+        ELSE 0 END AS tasa_aprobacion
       FROM informes i
       LEFT JOIN usuarios u ON u.usuario_id = i.supervisor_id
-      WHERE i.estado = 'Finalizado'
-        AND i.supervisor_id IS NOT NULL
-        AND i.enviado_revision_at IS NOT NULL
-        AND i.finalizado_at IS NOT NULL
+      WHERE i.supervisor_id IS NOT NULL
+        AND i.estado IN ('Finalizado','Devuelto')${dateClause}
       GROUP BY i.supervisor_id, u.nombre
-      ORDER BY dias_promedio_revision DESC`,
+      ORDER BY total_revisados DESC`,
     );
     return raw;
   }
@@ -226,20 +266,45 @@ export class AdminController {
   }
 
   @Get('tiempos/general')
-  async tiemposGenerales() {
+  async tiemposGenerales(
+    @Query('desde') desde?: string,
+    @Query('hasta') hasta?: string,
+  ) {
+    const dateClause = this.buildDateClause(desde, hasta);
+    const whereClause = dateClause ? ' WHERE 1=1' + dateClause : '';
     const raw: Record<string, unknown>[] = await this.informesRepository.query(
       `SELECT
-        COUNT(*) AS total_finalizados,
-        AVG(
-          EXTRACT(EPOCH FROM (finalizado_at - iniciado_at)) / 86400.0
+        COUNT(*)::int AS total,
+        COUNT(*) FILTER (WHERE estado = 'Pendiente')::int AS pendientes,
+        COUNT(*) FILTER (WHERE estado = 'En Proceso')::int AS en_proceso,
+        COUNT(*) FILTER (WHERE estado = 'Devuelto')::int AS devueltos,
+        COUNT(*) FILTER (WHERE estado = 'En Revisi\u00f3n')::int AS en_revision,
+        COUNT(*) FILTER (WHERE estado = 'Finalizado')::int AS finalizados,
+        COUNT(*) FILTER (WHERE estado = 'Anulado')::int AS anulados,
+        ROUND(
+          CASE WHEN COUNT(*) > 0 THEN
+            COUNT(*) FILTER (WHERE estado = 'Finalizado')::numeric / COUNT(*) * 100
+          ELSE 0 END, 1
+        ) AS tasa_finalizacion,
+        ROUND(
+          CASE WHEN COUNT(*) FILTER (WHERE estado IN ('Finalizado','Devuelto')) > 0 THEN
+            COUNT(*) FILTER (WHERE estado = 'Devuelto')::numeric /
+            NULLIF(COUNT(*) FILTER (WHERE estado IN ('Finalizado','Devuelto')), 0) * 100
+          ELSE 0 END, 1
+        ) AS tasa_devolucion,
+        ROUND(
+          AVG(EXTRACT(EPOCH FROM (finalizado_at - iniciado_at)) / 86400.0)::numeric, 1
         ) AS dias_promedio_global,
-        AVG(
-          EXTRACT(EPOCH FROM (finalizado_at - enviado_revision_at)) / 86400.0
-        ) AS dias_promedio_revision
-      FROM informes
-      WHERE estado = 'Finalizado'
-        AND iniciado_at IS NOT NULL
-        AND finalizado_at IS NOT NULL`,
+        ROUND(
+          AVG(EXTRACT(EPOCH FROM (finalizado_at - enviado_revision_at)) / 86400.0)::numeric, 1
+        ) AS dias_promedio_revision,
+        ROUND(
+          MAX(EXTRACT(EPOCH FROM (finalizado_at - iniciado_at)) / 86400.0)::numeric, 1
+        ) AS dias_maximo_global,
+        ROUND(
+          MIN(EXTRACT(EPOCH FROM (finalizado_at - iniciado_at)) / 86400.0)::numeric, 1
+        ) AS dias_minimo_global
+      FROM informes${whereClause}`,
     );
     return raw;
   }

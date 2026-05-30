@@ -1378,6 +1378,144 @@
         padding-top: 8px;
       }
     }
+
+    .monitor-filtros {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .monitor-input {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .btn-secondary {
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover {
+      background: var(--gray-200);
+    }
+    .monitor-kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .monitor-kpi {
+      background: var(--gray-50);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .monitor-kpi-label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-500);
+      margin-bottom: 4px;
+    }
+    .monitor-kpi-value {
+      display: block;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .mk-finalizados { color: #16a34a; }
+    .mk-pendientes { color: #ca8a04; }
+    .mk-proceso { color: #2563eb; }
+    .mk-devuelto { color: #dc2626; }
+    .mk-anulado { color: var(--gray-400); }
+    .monitor-progress-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .monitor-progress-item {
+      background: var(--gray-50);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+    .monitor-progress-label {
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+    .monitor-progress-pct {
+      float: right;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .monitor-progress-bar {
+      margin-top: 8px;
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .monitor-progress-fill {
+      height: 100%;
+      background: #16a34a;
+      border-radius: 4px;
+      transition: width .4s ease;
+    }
+    .monitor-progress-fill.warn {
+      background: #dc2626;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .timeline-item:last-child { border-bottom: none; }
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+    .timeline-dot.created { background: #2563eb; }
+    .timeline-dot.finalizado { background: #16a34a; }
+    .timeline-dot.devuelto { background: #dc2626; }
+    .timeline-dot.revision { background: #ca8a04; }
+    .timeline-dot.anulado { background: var(--gray-400); }
+    .timeline-content {
+      flex: 1;
+      font-size: 13px;
+    }
+    .timeline-content strong {
+      font-weight: 600;
+    }
+    .timeline-time {
+      font-size: 11px;
+      color: var(--gray-400);
+    }
+    .estado-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .estado-badge.pendiente { background: #fef9c3; color: #854d0e; }
+    .estado-badge.proceso { background: #dbeafe; color: #1e40af; }
+    .estado-badge.revision { background: #fef9c3; color: #854d0e; }
+    .estado-badge.devuelto { background: #fee2e2; color: #991b1b; }
+    .estado-badge.finalizado { background: #dcfce7; color: #166534; }
+    .estado-badge.anulado { background: var(--gray-200); color: var(--gray-500); }
+    .valor-alto { color: #dc2626; font-weight: 600; }
+    .valor-bajo { color: #16a34a; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -1603,63 +1741,123 @@
           <div class="content-card" style="max-width: 100%;">
             <div class="header-row">
               <h2>Monitoreo de tiempos</h2>
+              <div class="monitor-filtros">
+                <input type="date" id="monitorFechaInicio" class="monitor-input" />
+                <input type="date" id="monitorFechaFin" class="monitor-input" />
+                <button class="btn-sm" onclick="cargarMonitoreo()">Filtrar</button>
+                <button class="btn-sm btn-secondary" onclick="document.getElementById('monitorFechaInicio').value='';document.getElementById('monitorFechaFin').value='';cargarMonitoreo()">Limpiar</button>
+              </div>
             </div>
             <div class="tabs" id="tabsMonitoreo">
               <button class="tab-btn active" data-tab="inspectores">Inspectores</button>
               <button class="tab-btn" data-tab="supervisores">Supervisores</button>
               <button class="tab-btn" data-tab="general">General</button>
+              <button class="tab-btn" data-tab="timeline">Actividad reciente</button>
             </div>
+
+            <!-- Tab: Inspectores -->
             <div class="tab-content active" id="tab-inspectores">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Tiempos por inspector</h3>
+              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Desempe&amp;ntilde;o por inspector</h3>
               <div class="table-wrap">
                 <table>
                   <thead>
                     <tr>
                       <th>Inspector</th>
-                      <th>Total informes</th>
-                      <th>Días promedio</th>
-                      <th>Días total</th>
+                      <th>Asignados</th>
+                      <th>Pend.</th>
+                      <th>Proceso</th>
+                      <th>Revisi&amp;oacute;n</th>
+                      <th>Devueltos</th>
+                      <th>Finalizados</th>
+                      <th>Anulados</th>
+                      <th>Tasa dev.</th>
+                      <th>Prom. d&amp;iacute;as</th>
+                      <th>M&amp;aacute;s r&amp;aacute;pido</th>
+                      <th>M&amp;aacute;s lento</th>
                     </tr>
                   </thead>
                   <tbody id="tablaTiemposInspectores">
-                    <tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
+                    <tr><td colspan="12" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
                   </tbody>
                 </table>
               </div>
             </div>
+
+            <!-- Tab: Supervisores -->
             <div class="tab-content" id="tab-supervisores">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Tiempos por supervisor</h3>
+              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Desempe&amp;ntilde;o por supervisor</h3>
               <div class="table-wrap">
                 <table>
                   <thead>
                     <tr>
                       <th>Supervisor</th>
-                      <th>Total aprobados</th>
-                      <th>Días promedio revisión</th>
-                      <th>Días total revisión</th>
+                      <th>Revisados</th>
+                      <th>Aprobados</th>
+                      <th>Devueltos</th>
+                      <th>Tasa aprob.</th>
+                      <th>Prom. d&amp;iacute;as</th>
+                      <th>M&amp;aacute;s r&amp;aacute;pido</th>
+                      <th>M&amp;aacute;s lento</th>
                     </tr>
                   </thead>
                   <tbody id="tablaTiemposSupervisores">
+                    <tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tab: General -->
+            <div class="tab-content" id="tab-general">
+              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Resumen general del sistema</h3>
+
+              <!-- Mini KPIs -->
+              <div class="monitor-kpis" id="monitorKpis">
+                <div class="monitor-kpi"><span class="monitor-kpi-label">Total</span><span class="monitor-kpi-value" id="mkTotal">—</span></div>
+                <div class="monitor-kpi"><span class="monitor-kpi-label">Finalizados</span><span class="monitor-kpi-value mk-finalizados" id="mkFinalizados">—</span></div>
+                <div class="monitor-kpi"><span class="monitor-kpi-label">Pendientes</span><span class="monitor-kpi-value mk-pendientes" id="mkPendientes">—</span></div>
+                <div class="monitor-kpi"><span class="monitor-kpi-label">En proceso</span><span class="monitor-kpi-value mk-proceso" id="mkProceso">—</span></div>
+                <div class="monitor-kpi"><span class="monitor-kpi-label">Devueltos</span><span class="monitor-kpi-value mk-devuelto" id="mkDevuelto">—</span></div>
+                <div class="monitor-kpi"><span class="monitor-kpi-label">Anulados</span><span class="monitor-kpi-value mk-anulado" id="mkAnulado">—</span></div>
+              </div>
+
+              <!-- Barras de progreso -->
+              <div class="monitor-progress-section">
+                <div class="monitor-progress-item">
+                  <span class="monitor-progress-label">Tasa de finalizaci&amp;oacute;n</span>
+                  <span class="monitor-progress-pct" id="mpTasaFinalizacion">0%</span>
+                  <div class="monitor-progress-bar"><div class="monitor-progress-fill" id="mpBarFinalizacion" style="width:0%"></div></div>
+                </div>
+                <div class="monitor-progress-item">
+                  <span class="monitor-progress-label">Tasa de devoluci&amp;oacute;n</span>
+                  <span class="monitor-progress-pct" id="mpTasaDevolucion">0%</span>
+                  <div class="monitor-progress-bar"><div class="monitor-progress-fill warn" id="mpBarDevolucion" style="width:0%"></div></div>
+                </div>
+              </div>
+
+              <!-- Tiempos tabla -->
+              <div class="table-wrap" style="margin-top:16px;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Indicador</th>
+                      <th>Promedio</th>
+                      <th>M&amp;aacute;s r&amp;aacute;pido</th>
+                      <th>M&amp;aacute;s lento</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tablaTiemposGenerales">
                     <tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
                   </tbody>
                 </table>
               </div>
             </div>
-            <div class="tab-content" id="tab-general">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Resumen general</h3>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Total finalizados</th>
-                      <th>Días promedio global</th>
-                      <th>Días promedio revisión</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tablaTiemposGenerales">
-                    <tr><td colspan="3" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
-                  </tbody>
-                </table>
+
+            <!-- Tab: Actividad reciente -->
+            <div class="tab-content" id="tab-timeline">
+              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Actividad reciente del sistema</h3>
+              <div id="timelineList" style="max-height:500px;overflow-y:auto;">
+                <p style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</p>
               </div>
             </div>
           </div>
@@ -2717,7 +2915,7 @@
         }
 
         // Rendimiento por inspector (barras horizontales)
-        const inspMax = Math.max(...inspectores.map(r => r.total_informes), 1);
+        const inspMax = Math.max(...inspectores.map(r => r.total_asignados), 1);
         const rendEl = document.getElementById("rendimientoBarras");
         if (inspectores.length === 0) {
           rendEl.innerHTML = '<p style="color:var(--gray-400);font-size:13px;">Sin datos de rendimiento.</p>';
@@ -2725,8 +2923,8 @@
           rendEl.innerHTML = inspectores.map(r =>
             `<div class="bar-horizontal">
               <span class="bar-label">${esc(r.inspector_nombre) || "Inspector #" + r.inspector_id}</span>
-              <div class="bar-track"><div class="bar-fill bar-azul" style="width:${(r.total_informes / inspMax * 100).toFixed(1)}%"></div></div>
-              <span class="bar-count">${r.total_informes}</span>
+              <div class="bar-track"><div class="bar-fill bar-azul" style="width:${(r.total_asignados / inspMax * 100).toFixed(1)}%"></div></div>
+              <span class="bar-count">${r.total_asignados}</span>
             </div>`
           ).join("");
         }
@@ -2756,52 +2954,128 @@
       }
     }
 
+    function badgeEstado(est) {
+      const map = { 'Pendiente':'pendiente','En Proceso':'proceso','En Revisi\u00f3n':'revision','Devuelto':'devuelto','Finalizado':'finalizado','Anulado':'anulado' };
+      const cls = map[est] || '';
+      return `<span class="estado-badge ${cls}">${esc(est)}</span>`;
+    }
+
     async function cargarMonitoreo() {
       const token = getAuthToken();
       if (!token) { logout(); return; }
+      const fi = document.getElementById("monitorFechaInicio").value;
+      const ff = document.getElementById("monitorFechaFin").value;
+      const params = new URLSearchParams();
+      if (fi) params.set("desde", fi);
+      if (ff) params.set("hasta", ff);
+      const qs = params.toString() ? "?" + params.toString() : "";
       try {
-        const [resInsp, resSup, resGen] = await Promise.all([
-          fetch(CONFIG.apiBaseUrl + "/api/admin/tiempos/inspectores", { headers: { Authorization: "Bearer " + token } }),
-          fetch(CONFIG.apiBaseUrl + "/api/admin/tiempos/supervisores", { headers: { Authorization: "Bearer " + token } }),
-          fetch(CONFIG.apiBaseUrl + "/api/admin/tiempos/general", { headers: { Authorization: "Bearer " + token } })
+        const [resInsp, resSup, resGen, resAud] = await Promise.all([
+          fetch(CONFIG.apiBaseUrl + "/api/admin/tiempos/inspectores" + qs, { headers: { Authorization: "Bearer " + token } }),
+          fetch(CONFIG.apiBaseUrl + "/api/admin/tiempos/supervisores" + qs, { headers: { Authorization: "Bearer " + token } }),
+          fetch(CONFIG.apiBaseUrl + "/api/admin/tiempos/general" + qs, { headers: { Authorization: "Bearer " + token } }),
+          fetch(CONFIG.apiBaseUrl + "/api/admin/auditoria?limit=20", { headers: { Authorization: "Bearer " + token } })
         ]);
         if (resInsp.status === 401 || resSup.status === 401 || resGen.status === 401) { logout(); return; }
 
+        // --- Inspectores ---
         const dataInsp = resInsp.ok ? await resInsp.json() : [];
-        const dataSup = resSup.ok ? await resSup.json() : [];
-        const dataGen = resGen.ok ? await resGen.json() : [];
-
         const tbodyInsp = document.getElementById("tablaTiemposInspectores");
         if (dataInsp.length === 0) {
-          tbodyInsp.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
+          tbodyInsp.innerHTML = '<tr><td colspan="12" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
         } else {
           tbodyInsp.innerHTML = dataInsp.map(r => `<tr>
-            <td>${esc(r.inspector_nombre) || "Inspector #" + r.inspector_id}</td>
-            <td>${r.total_informes}</td>
-            <td>${r.dias_promedio ? parseFloat(r.dias_promedio).toFixed(1) : "—"}</td>
-            <td>${r.dias_total ? parseFloat(r.dias_total).toFixed(1) : "—"}</td>
+            <td><strong>${esc(r.inspector_nombre) || "Inspector #" + r.inspector_id}</strong></td>
+            <td>${r.total_asignados}</td>
+            <td>${r.pendientes}</td>
+            <td>${r.en_proceso}</td>
+            <td>${r.en_revision || 0}</td>
+            <td class="${parseFloat(r.tasa_devolucion||0) > 50 ? 'valor-alto' : ''}">${r.devueltos}</td>
+            <td>${r.finalizados}</td>
+            <td>${r.anulados || 0}</td>
+            <td>${r.tasa_devolucion || 0}%</td>
+            <td>${r.dias_promedio || "—"}</td>
+            <td>${r.dias_minimo || "—"}</td>
+            <td>${r.dias_maximo || "—"}</td>
           </tr>`).join("");
         }
 
+        // --- Supervisores ---
+        const dataSup = resSup.ok ? await resSup.json() : [];
         const tbodySup = document.getElementById("tablaTiemposSupervisores");
         if (dataSup.length === 0) {
-          tbodySup.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
+          tbodySup.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
         } else {
           tbodySup.innerHTML = dataSup.map(r => `<tr>
-            <td>${esc(r.supervisor_nombre) || "Supervisor #" + r.supervisor_id}</td>
-            <td>${r.total_aprobados}</td>
-            <td>${r.dias_promedio_revision ? parseFloat(r.dias_promedio_revision).toFixed(1) : "—"}</td>
-            <td>${r.dias_total_revision ? parseFloat(r.dias_total_revision).toFixed(1) : "—"}</td>
+            <td><strong>${esc(r.supervisor_nombre) || "Supervisor #" + r.supervisor_id}</strong></td>
+            <td>${r.total_revisados}</td>
+            <td>${r.aprobados}</td>
+            <td>${r.devueltos}</td>
+            <td>${r.tasa_aprobacion || 0}%</td>
+            <td>${r.dias_promedio || "—"}</td>
+            <td>${r.dias_minimo || "—"}</td>
+            <td>${r.dias_maximo || "—"}</td>
           </tr>`).join("");
         }
 
-        const tbodyGen = document.getElementById("tablaTiemposGenerales");
+        // --- General ---
+        const dataGen = resGen.ok ? await resGen.json() : [];
         const g = dataGen[0] || {};
-        tbodyGen.innerHTML = `<tr>
-          <td>${g.total_finalizados || 0}</td>
-          <td>${g.dias_promedio_global ? parseFloat(g.dias_promedio_global).toFixed(1) : "—"}</td>
-          <td>${g.dias_promedio_revision ? parseFloat(g.dias_promedio_revision).toFixed(1) : "—"}</td>
-        </tr>`;
+
+        // KPIs
+        document.getElementById("mkTotal").textContent = g.total || 0;
+        document.getElementById("mkFinalizados").textContent = g.finalizados || 0;
+        document.getElementById("mkPendientes").textContent = g.pendientes || 0;
+        document.getElementById("mkProceso").textContent = (g.en_proceso || 0) + (g.en_revision || 0);
+        document.getElementById("mkDevuelto").textContent = g.devueltos || 0;
+        document.getElementById("mkAnulado").textContent = g.anulados || 0;
+
+        // Progress bars
+        const tf = parseFloat(g.tasa_finalizacion || 0);
+        document.getElementById("mpTasaFinalizacion").textContent = tf + "%";
+        document.getElementById("mpBarFinalizacion").style.width = Math.min(tf, 100) + "%";
+
+        const td = parseFloat(g.tasa_devolucion || 0);
+        document.getElementById("mpTasaDevolucion").textContent = td + "%";
+        document.getElementById("mpBarDevolucion").style.width = Math.min(td, 100) + "%";
+
+        // Tiempos table
+        const tbodyGen = document.getElementById("tablaTiemposGenerales");
+        tbodyGen.innerHTML = `
+          <tr><td><strong>Global (creaci\u00f3n a finalizaci\u00f3n)</strong></td>
+            <td>${g.dias_promedio_global || "—"}</td>
+            <td>${g.dias_minimo_global || "—"}</td>
+            <td>${g.dias_maximo_global || "—"}</td></tr>
+          <tr><td><strong>Revisi\u00f3n (env\u00edo a supervisor a finalizaci\u00f3n)</strong></td>
+            <td>${g.dias_promedio_revision || "—"}</td>
+            <td>—</td><td>—</td></tr>
+        `;
+
+        // --- Timeline ---
+        const dataAud = resAud.ok ? await resAud.json() : [];
+        const tl = document.getElementById("timelineList");
+        if (dataAud.length === 0) {
+          tl.innerHTML = '<p style="text-align:center;color:var(--gray-400);padding:24px;">Sin actividad reciente.</p>';
+        } else {
+          const accionLabels = {
+            creacion: 'creado', anulacion: 'anulado'
+          };
+          tl.innerHTML = dataAud.map(a => {
+            const desc = accionLabels[a.accion] || a.accion;
+            const dotClass = a.accion === 'creacion' ? 'created' : a.accion === 'anulacion' ? 'anulado' : 'revision';
+            const ts = a.createdAt ? new Date(a.createdAt).toLocaleString('es-GT', { timeZone: 'America/Guatemala' }) : '';
+            return `<div class="timeline-item">
+              <div class="timeline-dot ${dotClass}"></div>
+              <div class="timeline-content">
+                <strong>${desc}</strong>
+                ${a.usuarioId ? ' por usuario #' + a.usuarioId : ''}
+                ${a.informeId ? ' — informe #' + a.informeId : ''}
+                ${a.observacion ? ': ' + esc(a.observacion) : ''}
+                <div class="timeline-time">${ts}</div>
+              </div>
+            </div>`;
+          }).join("");
+        }
       } catch {
         showToast("Error al cargar monitoreo.", "error");
       }
