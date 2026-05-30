@@ -1766,10 +1766,12 @@
                       <th>Asignados</th>
                       <th>Pendiente</th>
                       <th>Devueltos</th>
+                      <th>Anulados</th>
+                      <th>Prom. días</th>
                     </tr>
                   </thead>
                   <tbody id="tablaTiemposInspectores">
-                    <tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
+                    <tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -2974,13 +2976,15 @@
         const dataInsp = resInsp.ok ? await resInsp.json() : [];
         const tbodyInsp = document.getElementById("tablaTiemposInspectores");
         if (dataInsp.length === 0) {
-          tbodyInsp.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
+          tbodyInsp.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
         } else {
           tbodyInsp.innerHTML = dataInsp.map(r => `<tr>
             <td><strong>${esc(r.inspector_nombre) || "Inspector #" + r.inspector_id}</strong></td>
             <td>${r.total_asignados}</td>
             <td>${r.en_proceso}</td>
             <td>${r.devueltos}</td>
+            <td>${r.anulados || 0}</td>
+            <td>${r.dias_promedio || "—"}</td>
           </tr>`).join("");
         }
 
