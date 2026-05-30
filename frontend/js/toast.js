@@ -1,7 +1,3 @@
-/**
- * SGFIP — alertas visuales (toasts).
- * Uso: showToast("Mensaje", "success" | "error" | "warning" | "info", { duration: 4000 });
- */
 (function (global) {
   const HOST_CLASS = "sgfip-toast-host";
   let host = null;
@@ -28,54 +24,58 @@
         display: flex;
         align-items: flex-start;
         gap: 12px;
-        padding: 12px 14px;
-        background: #fff;
+        padding: 14px 16px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
-        border-left: 4px solid #2DAAE1;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 14px;
-        line-height: 1.4;
-        color: #333;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04);
+        border-left: 4px solid #2d5f8a;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #1e293b;
         opacity: 0;
-        transform: translateX(12px);
-        transition: opacity 0.25s ease, transform 0.25s ease;
+        transform: translateX(16px);
+        transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .sgfip-toast--visible {
         opacity: 1;
         transform: translateX(0);
       }
-      .sgfip-toast--success { border-left-color: #2e7d32; }
-      .sgfip-toast--error { border-left-color: #d93025; }
-      .sgfip-toast--warning { border-left-color: #e65100; }
-      .sgfip-toast--info { border-left-color: #2DAAE1; }
+      .sgfip-toast--success { border-left-color: #16a34a; }
+      .sgfip-toast--error { border-left-color: #dc2626; }
+      .sgfip-toast--warning { border-left-color: #b45309; }
+      .sgfip-toast--info { border-left-color: #2d5f8a; }
       .sgfip-toast__icon {
         flex-shrink: 0;
-        width: 22px;
-        height: 22px;
-        border-radius: 6px;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
         display: grid;
         place-items: center;
         font-size: 13px;
         font-weight: 700;
+        font-family: "Inter", sans-serif;
       }
-      .sgfip-toast--success .sgfip-toast__icon { background: #e8f5e9; color: #2e7d32; }
-      .sgfip-toast--error .sgfip-toast__icon { background: #ffebee; color: #c62828; }
-      .sgfip-toast--warning .sgfip-toast__icon { background: #fff3e0; color: #e65100; }
-      .sgfip-toast--info .sgfip-toast__icon { background: #e3f2fd; color: #1565c0; }
+      .sgfip-toast--success .sgfip-toast__icon { background: #e8f5e9; color: #16a34a; }
+      .sgfip-toast--error .sgfip-toast__icon { background: #fef2f2; color: #dc2626; }
+      .sgfip-toast--warning .sgfip-toast__icon { background: #fef3c7; color: #b45309; }
+      .sgfip-toast--info .sgfip-toast__icon { background: #e3f2fd; color: #2d5f8a; }
       .sgfip-toast__body { flex: 1; min-width: 0; }
       .sgfip-toast__close {
         flex-shrink: 0;
         border: none;
         background: transparent;
-        color: #667085;
+        color: #94a3b8;
         cursor: pointer;
-        padding: 2px 4px;
+        padding: 2px 6px;
         border-radius: 6px;
         font-size: 18px;
         line-height: 1;
+        transition: color 0.15s ease, background 0.15s ease;
       }
-      .sgfip-toast__close:hover { background: #f4f7f9; color: #333; }
+      .sgfip-toast__close:hover { background: #f1f5f9; color: #475569; }
       @media (prefers-reduced-motion: reduce) {
         .sgfip-toast { transition: opacity 0.15s ease; transform: none; }
         .sgfip-toast--visible { transform: none; }

@@ -8,69 +8,134 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --primary: #1a3a5c;
-      --primary-light: #2D5F8A;
+      --primary: #0f1729;
+      --primary-light: #1e3a5f;
+      --primary-mid: #2d5f8a;
+      --accent: #C8A84E;
       --white: #FFFFFF;
-      --gray-900: #1a1a2e;
-      --gray-600: #5c5c5c;
-      --gray-200: #e8ecf0;
-      --gray-100: #f4f7f9;
-      --error-bg: #ffe6ea;
-      --error-border: #d93025;
-      --success-border: #2e7d32;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-400: #94a3b8;
+      --gray-600: #64748b;
+      --gray-900: #0f1729;
+      --error-bg: #fef2f2;
+      --error-text: #dc2626;
+      --error-border: #fca5a5;
+      --success: #16a34a;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+      --shadow-2xl: 0 25px 50px -12px rgba(0,0,0,0.25);
     }
 
-    * { box-sizing: border-box; }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
     body {
-      margin: 0;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      background: linear-gradient(145deg, var(--primary) 0%, #0d2a47 60%, var(--primary-light) 100%);
+      background: linear-gradient(-45deg, #0f1729, #1e3a5f, #0f1729, #162d50);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
       color: var(--gray-900);
       padding: 20px;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(200, 168, 78, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(45, 95, 138, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 40% 80%, rgba(200, 168, 78, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .register-card {
+      position: relative;
+      z-index: 1;
       width: 100%;
       max-width: 440px;
-      background: rgba(255, 255, 255, 0.97);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: 24px;
       padding: 40px 32px 32px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-      animation: cardIn 0.45s ease-out;
-      backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.15),
+        var(--shadow-2xl);
+      animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .register-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+      pointer-events: none;
     }
 
     .register-logo {
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .register-logo img {
-      width: 90px;
-      height: 90px;
+      width: 80px;
+      height: 80px;
       object-fit: contain;
+      border-radius: 18px;
+      box-shadow: var(--shadow-lg);
+      background: var(--white);
+      padding: 4px;
+      animation: float 6s ease-in-out infinite;
     }
 
     .register-title {
       text-align: center;
-      margin: 0 0 4px;
+      margin: 12px 0 2px;
       font-size: 22px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--primary);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    .register-title span {
+      color: var(--accent);
     }
 
     .register-subtitle {
@@ -78,39 +143,74 @@
       margin: 0 0 28px;
       font-size: 13px;
       color: var(--gray-600);
-      line-height: 1.4;
+      line-height: 1.5;
+      font-weight: 400;
     }
 
-    .field-group { margin-bottom: 16px; }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--gray-900);
+    .field-group {
+      margin-bottom: 18px;
+      position: relative;
     }
 
-    .input-control {
+    .floating-label {
+      position: relative;
+    }
+
+    .floating-label input {
       width: 100%;
       border: 1.5px solid var(--gray-200);
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 18px 14px 6px;
       font-size: 14px;
       color: var(--gray-900);
       outline: none;
-      background: var(--gray-100);
+      background: var(--gray-50);
       transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
       font-family: inherit;
+      height: 54px;
     }
 
-    .input-control:focus {
-      border-color: var(--primary-light);
-      box-shadow: 0 0 0 4px rgba(45, 95, 138, 0.12);
+    .floating-label input:focus {
+      border-color: var(--primary-mid);
+      box-shadow: 0 0 0 4px rgba(45, 95, 138, 0.1);
       background: var(--white);
     }
 
-    .password-wrapper { position: relative; }
+    .floating-label label {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-400);
+      pointer-events: none;
+      transition: all 0.2s ease;
+      background: transparent;
+      padding: 0 2px;
+      line-height: 1;
+    }
+
+    .floating-label input:focus ~ label,
+    .floating-label input:not(:placeholder-shown) ~ label {
+      top: 10px;
+      transform: translateY(0);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary-mid);
+    }
+
+    .floating-label input::placeholder {
+      color: transparent;
+    }
+
+    .floating-label input:focus::placeholder {
+      color: var(--gray-400);
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
 
     .toggle-password {
       position: absolute;
@@ -119,16 +219,19 @@
       transform: translateY(-50%);
       border: none;
       background: transparent;
-      color: var(--primary-light);
+      color: var(--gray-400);
       font-weight: 600;
       cursor: pointer;
       padding: 4px 8px;
       border-radius: 6px;
       font-size: 12px;
+      transition: color 0.2s ease, background 0.2s ease;
+      z-index: 2;
     }
 
     .toggle-password:hover {
-      background: rgba(45, 95, 138, 0.08);
+      color: var(--primary-mid);
+      background: rgba(45, 95, 138, 0.06);
     }
 
     .field-error {
@@ -136,10 +239,23 @@
       margin-top: 6px;
       padding: 8px 10px;
       background: var(--error-bg);
-      border-left: 4px solid var(--error-border);
+      border: 1px solid var(--error-border);
       border-radius: 8px;
-      color: #7a1f18;
+      color: var(--error-text);
       font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .field-hint {
+      margin: 6px 0 0;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--gray-400);
+      line-height: 1.4;
+    }
+
+    .field-hint strong {
+      color: var(--gray-600);
     }
 
     .submit-btn {
@@ -156,26 +272,52 @@
       justify-content: center;
       align-items: center;
       gap: 10px;
-      transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-      box-shadow: 0 4px 14px rgba(26, 58, 92, 0.3);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 14px rgba(15, 23, 41, 0.3);
       font-family: inherit;
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-mid) 100%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .submit-btn:hover:not(:disabled)::before {
+      opacity: 1;
     }
 
     .submit-btn:hover:not(:disabled) {
-      filter: brightness(1.08);
-      box-shadow: 0 6px 20px rgba(26, 58, 92, 0.4);
-      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(15, 23, 41, 0.4);
+      transform: translateY(-2px);
     }
 
     .submit-btn:active:not(:disabled) {
       transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(15, 23, 41, 0.3);
     }
 
-    .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .submit-btn .btn-text,
+    .submit-btn .spinner {
+      position: relative;
+      z-index: 1;
+    }
 
     .spinner {
-      width: 18px; height: 18px;
-      border: 2.5px solid rgba(255, 255, 255, 0.4);
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.3);
       border-top-color: var(--white);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
@@ -185,37 +327,91 @@
     .submit-btn.loading .spinner { display: inline-block; }
     .submit-btn.loading .btn-text { opacity: 0.9; }
 
-    .field-hint {
-      margin: 4px 0 0;
-      font-size: 12px;
-      font-weight: 400;
-      color: var(--gray-600);
-    }
-
     .register-footer {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 22px;
       font-size: 13px;
-      color: var(--gray-600);
+      color: var(--gray-400);
     }
 
     .register-footer a {
-      color: var(--primary-light);
+      color: var(--primary-mid);
       font-weight: 600;
       text-decoration: none;
+      transition: color 0.2s ease;
     }
 
-    .register-footer a:hover { text-decoration: underline; }
+    .register-footer a:hover {
+      color: var(--primary-light);
+      text-decoration: underline;
+    }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .inline-link {
+      color: var(--primary-mid);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .inline-link:hover {
+      color: var(--primary-light);
+      text-decoration: underline;
+    }
+
+    .decorative-dots {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .decorative-dots span {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(200, 168, 78, 0.15);
+      border-radius: 50%;
+    }
+
+    .decorative-dots span:nth-child(1) { top: 15%; left: 10%; animation: float 8s ease-in-out infinite; }
+    .decorative-dots span:nth-child(2) { top: 70%; left: 85%; width: 10px; height: 10px; animation: float 10s ease-in-out infinite 1s; background: rgba(45, 95, 138, 0.15); }
+    .decorative-dots span:nth-child(3) { top: 85%; left: 20%; width: 8px; height: 8px; animation: float 7s ease-in-out infinite 2s; }
+    .decorative-dots span:nth-child(4) { top: 25%; left: 80%; width: 4px; height: 4px; animation: float 9s ease-in-out infinite 0.5s; background: rgba(45, 95, 138, 0.2); }
+    .decorative-dots span:nth-child(5) { top: 50%; left: 5%; width: 12px; height: 12px; animation: float 11s ease-in-out infinite 3s; background: rgba(200, 168, 78, 0.1); }
+
+    @media (max-width: 480px) {
+      .register-card {
+        padding: 32px 24px 28px;
+        border-radius: 20px;
+      }
+
+      .register-logo img {
+        width: 68px;
+        height: 68px;
+      }
+
+      .register-title {
+        font-size: 20px;
+      }
+
+      .floating-label input {
+        height: 50px;
+        padding: 16px 12px 6px;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="decorative-dots">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
   <div class="register-card">
     <div class="register-logo">
       <img src="images/logo.jpg" alt="IGSS" />
     </div>
-    <h1 class="register-title">Crear cuenta</h1>
+    <h1 class="register-title">Crear cuenta<span>.</span></h1>
     <p class="register-subtitle">
       Delegación Retalhuleu<br />
       Registro de nuevos usuarios
@@ -223,22 +419,26 @@
 
     <form id="registerForm" novalidate>
       <div class="field-group">
-        <label for="nombre">Nombre completo</label>
-        <input class="input-control" id="nombre" type="text" placeholder="Ej: Juan Pérez" required autocomplete="name" />
+        <div class="floating-label">
+          <input class="input-control" id="nombre" type="text" placeholder="Ej: Juan Pérez" required autocomplete="name" />
+          <label for="nombre">Nombre completo</label>
+        </div>
         <div class="field-error" id="nombreError"></div>
       </div>
 
       <div class="field-group">
-        <label for="username">Usuario</label>
-        <input class="input-control" id="username" type="text" placeholder="ej: juan" required autocomplete="username" />
+        <div class="floating-label">
+          <input class="input-control" id="username" type="text" placeholder="ej: juan" required autocomplete="username" />
+          <label for="username">Usuario</label>
+        </div>
         <p class="field-hint">Se guardará como <strong>usuario.igss</strong></p>
         <div class="field-error" id="usernameError"></div>
       </div>
 
       <div class="field-group">
-        <label for="password">Contraseña</label>
-        <div class="password-wrapper">
-          <input class="input-control" id="password" type="password" placeholder="Mínimo 8 caracteres, 1 número y 1 carácter especial" required autocomplete="new-password" />
+        <div class="password-wrapper floating-label">
+          <input class="input-control" id="password" type="password" placeholder="Mínimo 8 caracteres" required autocomplete="new-password" />
+          <label for="password">Contraseña</label>
           <button class="toggle-password" type="button" id="togglePassword" aria-label="Mostrar u ocultar contraseña">Mostrar</button>
         </div>
         <p class="field-hint">Mínimo 8 caracteres, al menos 1 número y 1 carácter especial</p>
@@ -246,12 +446,13 @@
       </div>
 
       <div class="field-group">
-        <label for="codigo">Código de invitación</label>
-        <input class="input-control" id="codigo" type="text" placeholder="Código proporcionado por el administrador" required autocomplete="off" />
-        <p class="field-hint">Solicite un código al administrador del sistema</p>
-        <p style="margin:6px 0 0;font-size:12px;color:var(--gray-600);">
-          ¿No tienes código?
-          <a href="mailto:48126117a@gmail.com?subject=Solicitud%20de%20código%20de%20invitación%20-%20SGFIP&body=Nombre%20completo%3A%0AUsuario%20deseado%3A%0ARol%20deseado%20(Inspector%20o%20Supervisor)%3A%0A%0A" style="color:var(--primary-light);font-weight:600;text-decoration:none;">Solicita uno</a>
+        <div class="floating-label">
+          <input class="input-control" id="codigo" type="text" placeholder="Código del administrador" required autocomplete="off" />
+          <label for="codigo">Código de invitación</label>
+        </div>
+        <p class="field-hint">
+          Solicite un código al administrador del sistema &middot;
+          <a href="mailto:48126117a@gmail.com?subject=Solicitud%20de%20código%20de%20invitación%20-%20SGFIP&body=Nombre%20completo%3A%0AUsuario%20deseado%3A%0ARol%20deseado%20(Inspector%20o%20Supervisor)%3A%0A%0A" class="inline-link">Solicita uno</a>
         </p>
         <div class="field-error" id="codigoError"></div>
       </div>
