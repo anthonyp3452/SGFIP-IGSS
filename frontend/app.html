@@ -1757,27 +1757,19 @@
 
             <!-- Tab: Inspectores -->
             <div class="tab-content active" id="tab-inspectores">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Desempe&amp;ntilde;o por inspector</h3>
+              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Desempeño por inspector</h3>
               <div class="table-wrap">
                 <table>
                   <thead>
                     <tr>
                       <th>Inspector</th>
                       <th>Asignados</th>
-                      <th>Pend.</th>
-                      <th>Proceso</th>
-                      <th>Revisi&amp;oacute;n</th>
+                      <th>Pendiente</th>
                       <th>Devueltos</th>
-                      <th>Finalizados</th>
-                      <th>Anulados</th>
-                      <th>Tasa dev.</th>
-                      <th>Prom. d&amp;iacute;as</th>
-                      <th>M&amp;aacute;s r&amp;aacute;pido</th>
-                      <th>M&amp;aacute;s lento</th>
                     </tr>
                   </thead>
                   <tbody id="tablaTiemposInspectores">
-                    <tr><td colspan="12" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
+                    <tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1785,7 +1777,7 @@
 
             <!-- Tab: Supervisores -->
             <div class="tab-content" id="tab-supervisores">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Desempe&amp;ntilde;o por supervisor</h3>
+              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Desempeño por supervisor</h3>
               <div class="table-wrap">
                 <table>
                   <thead>
@@ -1795,9 +1787,9 @@
                       <th>Aprobados</th>
                       <th>Devueltos</th>
                       <th>Tasa aprob.</th>
-                      <th>Prom. d&amp;iacute;as</th>
-                      <th>M&amp;aacute;s r&amp;aacute;pido</th>
-                      <th>M&amp;aacute;s lento</th>
+                      <th>Prom. días</th>
+                      <th>Más rápido</th>
+                      <th>Más lento</th>
                     </tr>
                   </thead>
                   <tbody id="tablaTiemposSupervisores">
@@ -1824,12 +1816,12 @@
               <!-- Barras de progreso -->
               <div class="monitor-progress-section">
                 <div class="monitor-progress-item">
-                  <span class="monitor-progress-label">Tasa de finalizaci&amp;oacute;n</span>
+                  <span class="monitor-progress-label">Tasa de finalización</span>
                   <span class="monitor-progress-pct" id="mpTasaFinalizacion">0%</span>
                   <div class="monitor-progress-bar"><div class="monitor-progress-fill" id="mpBarFinalizacion" style="width:0%"></div></div>
                 </div>
                 <div class="monitor-progress-item">
-                  <span class="monitor-progress-label">Tasa de devoluci&amp;oacute;n</span>
+                  <span class="monitor-progress-label">Tasa de devolución</span>
                   <span class="monitor-progress-pct" id="mpTasaDevolucion">0%</span>
                   <div class="monitor-progress-bar"><div class="monitor-progress-fill warn" id="mpBarDevolucion" style="width:0%"></div></div>
                 </div>
@@ -1842,8 +1834,8 @@
                     <tr>
                       <th>Indicador</th>
                       <th>Promedio</th>
-                      <th>M&amp;aacute;s r&amp;aacute;pido</th>
-                      <th>M&amp;aacute;s lento</th>
+                      <th>Más rápido</th>
+                      <th>Más lento</th>
                     </tr>
                   </thead>
                   <tbody id="tablaTiemposGenerales">
@@ -2982,21 +2974,13 @@
         const dataInsp = resInsp.ok ? await resInsp.json() : [];
         const tbodyInsp = document.getElementById("tablaTiemposInspectores");
         if (dataInsp.length === 0) {
-          tbodyInsp.innerHTML = '<tr><td colspan="12" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
+          tbodyInsp.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
         } else {
           tbodyInsp.innerHTML = dataInsp.map(r => `<tr>
             <td><strong>${esc(r.inspector_nombre) || "Inspector #" + r.inspector_id}</strong></td>
             <td>${r.total_asignados}</td>
-            <td>${r.pendientes}</td>
             <td>${r.en_proceso}</td>
-            <td>${r.en_revision || 0}</td>
-            <td class="${parseFloat(r.tasa_devolucion||0) > 50 ? 'valor-alto' : ''}">${r.devueltos}</td>
-            <td>${r.finalizados}</td>
-            <td>${r.anulados || 0}</td>
-            <td>${r.tasa_devolucion || 0}%</td>
-            <td>${r.dias_promedio || "—"}</td>
-            <td>${r.dias_minimo || "—"}</td>
-            <td>${r.dias_maximo || "—"}</td>
+            <td>${r.devueltos}</td>
           </tr>`).join("");
         }
 
