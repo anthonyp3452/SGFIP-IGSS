@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://sgfip-igss.onrender.com http://localhost:3000; frame-src 'none'; object-src 'none'; base-uri 'self';" />
   <title>SGFIP | Inicio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1111,6 +1112,206 @@
       text-align: left;
     }
 
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 16px 14px;
+      text-align: center;
+      box-shadow: var(--shadow-xs);
+      transition: box-shadow var(--transition-fast);
+    }
+
+    .kpi-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray-500);
+    }
+
+    .kpi-neutral .kpi-value { color: var(--primary-mid); }
+    .kpi-ok .kpi-value { color: #16a34a; }
+    .kpi-warn .kpi-value { color: #d97706; }
+    .kpi-danger .kpi-value { color: #dc2626; }
+    .kpi-muted .kpi-value { color: var(--gray-400); }
+
+    .dashboard-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .dashboard-card h3 {
+      margin: 0 0 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-700);
+    }
+
+    .dashboard-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .bar-horizontal {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .bar-label {
+      width: 90px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      text-align: right;
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 22px;
+      background: var(--gray-100);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      min-width: 4px;
+    }
+
+    .bar-count {
+      width: 36px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-700);
+      text-align: left;
+      flex-shrink: 0;
+    }
+
+    .bar-verde { background: linear-gradient(90deg, #16a34a, #22c55e); }
+    .bar-azul { background: linear-gradient(90deg, var(--primary-mid), #3b82f6); }
+    .bar-amarillo { background: linear-gradient(90deg, #d97706, #eab308); }
+    .bar-rojo { background: linear-gradient(90deg, #dc2626, #ef4444); }
+    .bar-gris { background: linear-gradient(90deg, var(--gray-400), var(--gray-300)); }
+
+    .alert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .alert-item .alert-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .alert-warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    .alert-danger {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    .alert-success {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .dashboard-card .table-wrap {
+      margin-top: 12px;
+    }
+
+    .chart-vertical {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 140px;
+      padding: 0 4px;
+    }
+
+    .chart-vertical .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .chart-vertical .bar-col .bar-fill {
+      width: 100%;
+      max-width: 32px;
+      min-height: 4px;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .chart-vertical .bar-col .bar-col-label {
+      font-size: 9px;
+      color: var(--gray-400);
+      margin-top: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      height: 36px;
+      overflow: hidden;
+    }
+
     @media (max-width: 768px) {
       .app-shell {
         flex-direction: column;
@@ -1140,6 +1341,14 @@
 
       .main-content {
         padding: 16px;
+      }
+
+      .dashboard-row {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
 
       .content-card {
@@ -1346,6 +1555,45 @@
                   <tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="view" id="view-dashboard">
+          <div class="content-card" style="max-width: 100%;">
+            <div class="header-row">
+              <h2>Dashboard</h2>
+            </div>
+            <p style="margin: -10px 0 20px; font-size: 13px; color: var(--gray-500);">
+              Resumen general del sistema, tiempos y alertas.
+            </p>
+
+            <div class="kpi-grid" id="kpiGrid">
+              <div class="kpi-card"><div class="kpi-value">—</div><div class="kpi-label">Cargando...</div></div>
+            </div>
+
+            <div class="dashboard-row">
+              <div class="dashboard-card">
+                <h3>Distribución por estado</h3>
+                <div id="distribucionBarras"></div>
+              </div>
+              <div class="dashboard-card">
+                <h3>Alertas</h3>
+                <div id="alertasDashboard" class="alert-list"></div>
+              </div>
+            </div>
+
+            <div class="dashboard-row">
+              <div class="dashboard-card full">
+                <h3>Tendencia mensual (creados vs finalizados)</h3>
+                <div class="chart-vertical" id="tendenciaChart"></div>
+              </div>
+            </div>
+
+            <div class="dashboard-card full" style="margin-top: 8px;">
+              <h3>Rendimiento por inspector</h3>
+              <div id="rendimientoBarras"></div>
             </div>
           </div>
         </div>
@@ -1719,6 +1967,16 @@
 
     const CONFIG = SGFIP_CONFIG;
 
+    function esc(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     const ROLE = {
       ADMIN: "admin",
       INSPECTOR: "inspector",
@@ -1731,7 +1989,8 @@
       { id: "bandeja-supervisor", label: "Bandeja de supervisor", icon: "✅", view: "bandeja-supervisor", roles: [ROLE.SUPERVISOR] },
       { id: "informes", label: "Informes patronales", icon: "📂", view: "informes", roles: [ROLE.ADMIN, ROLE.SUPERVISOR] },
       { id: "solicitar-informe", label: "Nuevo informe", icon: "➕", view: "solicitar-informe", roles: [ROLE.INSPECTOR] },
-      { id: "monitoreo", label: "Monitoreo", icon: "📊", view: "monitoreo", roles: [ROLE.ADMIN] },
+      { id: "dashboard", label: "Dashboard", icon: "📊", view: "dashboard", roles: [ROLE.ADMIN] },
+      { id: "monitoreo", label: "Monitoreo", icon: "📋", view: "monitoreo", roles: [ROLE.ADMIN] },
       { id: "usuarios", label: "Usuarios", icon: "👤", view: "usuarios", roles: [ROLE.ADMIN] },
     ];
 
@@ -1799,6 +2058,7 @@
       if (viewId === "informes") cargarInformes();
       if (viewId === "mis-informes") cargarMisInformes();
       if (viewId === "bandeja-supervisor") cargarBandejaSupervisor();
+      if (viewId === "dashboard") cargarDashboard();
       if (viewId === "monitoreo") cargarMonitoreo();
       if (viewId === "usuarios") { cargarUsuarios(); cargarInvitaciones(); }
     }
@@ -1912,12 +2172,12 @@
           tbody.innerHTML = data.map((inf) => {
             const fecha = new Date(inf.createdAt).toLocaleDateString("es-GT");
             return `<tr>
-              <td><strong>${inf.numeroInforme}</strong></td>
-              <td>${inf.nombrePatrono || "—"}</td>
-              <td>${inf.nitPatrono || "—"}</td>
+              <td><strong>${esc(inf.numeroInforme)}</strong></td>
+              <td>${esc(inf.nombrePatrono) || "—"}</td>
+              <td>${esc(inf.nitPatrono) || "—"}</td>
               <td>${badgeEstado(inf.estado)}</td>
               <td>${badgeUrgencia(inf.nivelUrgencia)}</td>
-              <td>${inf.inspectorNombre || "Inspector #" + inf.inspectorId}</td>
+              <td>${esc(inf.inspectorNombre) || "Inspector #" + inf.inspectorId}</td>
               <td>${fecha}</td>
               <td><button class="btn-accion btn-iniciar" onclick="verDetalle(${inf.informeId})">Ver detalle</button></td>
             </tr>`;
@@ -1988,14 +2248,14 @@
         "Anulado": "badge-anulado"
       };
       const cls = classMap[estado] || "badge-pendiente";
-      return `<span class="badge ${cls}">${estado}</span>`;
+      return `<span class="badge ${cls}">${esc(estado)}</span>`;
     }
 
     function badgeUrgencia(urgencia) {
       if (!urgencia) return '<span class="badge badge-pendiente">—</span>';
       const classMap = { "Baja": "badge-finalizado", "Media": "badge-en-revision", "Alta": "badge-devuelto" };
       const cls = classMap[urgencia] || "badge-pendiente";
-      return `<span class="badge ${cls}">${urgencia}</span>`;
+      return `<span class="badge ${cls}">${esc(urgencia)}</span>`;
     }
 
     async function cargarMisInformes() {
@@ -2032,9 +2292,9 @@
         } else {
           tbodyPendientes.innerHTML = dataPendientes.map((inf) => {
             return `<tr>
-              <td><strong>${inf.numeroInforme}</strong></td>
-              <td>${inf.nombrePatrono || "—"}</td>
-              <td>${inf.nitPatrono || "—"}</td>
+              <td><strong>${esc(inf.numeroInforme)}</strong></td>
+              <td>${esc(inf.nombrePatrono) || "—"}</td>
+              <td>${esc(inf.nitPatrono) || "—"}</td>
               <td>${badgeEstado(inf.estado)}</td>
               <td>
                 <button class="btn-accion btn-iniciar" onclick="iniciarInforme(${inf.informeId})">Iniciar</button>
@@ -2049,8 +2309,8 @@
         } else {
           tbodyProceso.innerHTML = dataProceso.map((inf) => {
             return `<tr>
-              <td><strong>${inf.numeroInforme}</strong></td>
-              <td>${inf.nombrePatrono || "—"}</td>
+              <td><strong>${esc(inf.numeroInforme)}</strong></td>
+              <td>${esc(inf.nombrePatrono) || "—"}</td>
               <td>${badgeEstado(inf.estado)}</td>
               <td>
                 <button class="btn-accion btn-enviar" onclick="abrirModalEnviarRevision(${inf.informeId})">Enviar a revisión</button>
@@ -2064,12 +2324,12 @@
           tbodyDevueltos.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">No hay informes devueltos.</td></tr>';
         } else {
           tbodyDevueltos.innerHTML = dataDevueltos.map((inf) => {
-            const obs = inf.observacion ? inf.observacion : "—";
+            const obs = inf.observacion ? esc(inf.observacion) : "—";
             return `<tr>
-              <td><strong>${inf.numeroInforme}</strong></td>
-              <td>${inf.nombrePatrono || "—"}</td>
+              <td><strong>${esc(inf.numeroInforme)}</strong></td>
+              <td>${esc(inf.nombrePatrono) || "—"}</td>
               <td>${badgeEstado(inf.estado)}</td>
-              <td><span class="observacion-text" title="${obs.replace(/"/g, '&quot;')}">${obs}</span></td>
+              <td><span class="observacion-text" title="${obs}">${obs}</span></td>
               <td>
                 <button class="btn-accion btn-iniciar" onclick="iniciarInforme(${inf.informeId})">Reanudar</button>
                 <button class="btn-accion" style="background:#e8eaf6;color:#283593;" onclick="verDetalle(${inf.informeId})">Ver detalle</button>
@@ -2111,10 +2371,10 @@
         tbody.innerHTML = data.map((inf) => {
           const fecha = new Date(inf.createdAt).toLocaleDateString("es-GT");
           return `<tr>
-            <td><strong>${inf.numeroInforme}</strong></td>
-            <td>${inf.nombrePatrono || "—"}</td>
-            <td>${inf.nitPatrono || "—"}</td>
-            <td>${inf.inspectorNombre || "Inspector #" + inf.inspectorId}</td>
+            <td><strong>${esc(inf.numeroInforme)}</strong></td>
+            <td>${esc(inf.nombrePatrono) || "—"}</td>
+            <td>${esc(inf.nitPatrono) || "—"}</td>
+            <td>${esc(inf.inspectorNombre) || "Inspector #" + inf.inspectorId}</td>
             <td>${fecha}</td>
             <td>
               <button class="btn-accion btn-aprobar" onclick="abrirModalAprobar(${inf.informeId})">Aprobar</button>
@@ -2338,21 +2598,21 @@
 
         const infoHtml = `
           <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
-            ${renderDetalleFila("N° Informe", `<strong>${inf.numeroInforme}</strong>`)}
+            ${renderDetalleFila("N° Informe", `<strong>${esc(inf.numeroInforme)}</strong>`)}
             ${renderDetalleFila("Estado", badgeEstado(inf.estado))}
             ${renderDetalleFila("Urgencia", badgeUrgencia(inf.nivelUrgencia))}
-            ${inf.nombrePatrono ? renderDetalleFila("Patrono", inf.nombrePatrono) : ""}
-            ${inf.nitPatrono ? renderDetalleFila("NIT", inf.nitPatrono) : ""}
-            ${renderDetalleFila("Inspector", inf.inspectorNombre || "Inspector #" + inf.inspectorId)}
-            ${inf.supervisorId ? renderDetalleFila("Supervisor", inf.supervisorNombre || "Supervisor #" + inf.supervisorId) : ""}
-            ${inf.direccionPatrono ? renderDetalleFila("Dirección", inf.direccionPatrono) : ""}
-            ${inf.descripcion ? renderDetalleFila("Descripción", inf.descripcion) : ""}
-            ${inf.noAfiliacionRiesgo ? renderDetalleFila("No. afiliación y riesgo", inf.noAfiliacionRiesgo) : ""}
-            ${inf.noOficio ? renderDetalleFila("No. oficio", inf.noOficio) : ""}
-            ${inf.fechaOficio ? renderDetalleFila("Fecha oficio", inf.fechaOficio) : ""}
-            ${inf.envio ? renderDetalleFila("Envío", inf.envio) : ""}
-            ${inf.motivoAnulacion ? renderDetalleFila("Motivo de anulación", inf.motivoAnulacion) : ""}
-            ${inf.fechaInforme ? renderDetalleFila("Fecha del informe", inf.fechaInforme) : ""}
+            ${inf.nombrePatrono ? renderDetalleFila("Patrono", esc(inf.nombrePatrono)) : ""}
+            ${inf.nitPatrono ? renderDetalleFila("NIT", esc(inf.nitPatrono)) : ""}
+            ${renderDetalleFila("Inspector", esc(inf.inspectorNombre) || "Inspector #" + inf.inspectorId)}
+            ${inf.supervisorId ? renderDetalleFila("Supervisor", esc(inf.supervisorNombre) || "Supervisor #" + inf.supervisorId) : ""}
+            ${inf.direccionPatrono ? renderDetalleFila("Dirección", esc(inf.direccionPatrono)) : ""}
+            ${inf.descripcion ? renderDetalleFila("Descripción", esc(inf.descripcion)) : ""}
+            ${inf.noAfiliacionRiesgo ? renderDetalleFila("No. afiliación y riesgo", esc(inf.noAfiliacionRiesgo)) : ""}
+            ${inf.noOficio ? renderDetalleFila("No. oficio", esc(inf.noOficio)) : ""}
+            ${inf.fechaOficio ? renderDetalleFila("Fecha oficio", esc(inf.fechaOficio)) : ""}
+            ${inf.envio ? renderDetalleFila("Envío", esc(inf.envio)) : ""}
+            ${inf.motivoAnulacion ? renderDetalleFila("Motivo de anulación", esc(inf.motivoAnulacion)) : ""}
+            ${inf.fechaInforme ? renderDetalleFila("Fecha del informe", esc(inf.fechaInforme)) : ""}
           </table>
         `;
 
@@ -2361,14 +2621,14 @@
           timelineHtml = '<h4 style="margin:16px 0 8px;font-size:14px;font-weight:600;">⏱ Historial del informe</h4><div class="timeline">';
           inf.auditoria.forEach((a) => {
             const fecha = new Date(a.createdAt).toLocaleString("es-GT");
-            const usuario = a.usuarioNombre || a.usuarioUsername || "Usuario #" + a.usuarioId;
+            const usuario = esc(a.usuarioNombre) || esc(a.usuarioUsername) || "Usuario #" + a.usuarioId;
             timelineHtml += '<div class="timeline-item">';
             timelineHtml += '<div class="timeline-dot"></div>';
             timelineHtml += '<div class="timeline-content">';
             timelineHtml += `<div class="timeline-header"><span class="timeline-action">${accionLabel(a.accion)}</span><span class="timeline-date">${fecha}</span></div>`;
             timelineHtml += `<div class="timeline-user">${usuario}</div>`;
             if (a.detalle) {
-              timelineHtml += `<div class="timeline-detail">${a.detalle}</div>`;
+              timelineHtml += `<div class="timeline-detail">${esc(a.detalle)}</div>`;
             }
             timelineHtml += '</div></div>';
           });
@@ -2383,7 +2643,117 @@
     }
 
     function renderDetalleFila(label, value) {
-      return `<tr><td style="font-weight:600;padding:6px 8px;border-bottom:1px solid var(--gray-200);width:40%;">${label}</td><td style="padding:6px 8px;border-bottom:1px solid var(--gray-200);">${value}</td></tr>`;
+      return `<tr><td style="font-weight:600;padding:6px 8px;border-bottom:1px solid var(--gray-200);width:40%;">${esc(label)}</td><td style="padding:6px 8px;border-bottom:1px solid var(--gray-200);">${value}</td></tr>`;
+    }
+
+    function barColor(estado) {
+      const map = {
+        "Pendiente": "bar-azul",
+        "En Proceso": "bar-amarillo",
+        "En Revisión": "bar-amarillo",
+        "Finalizado": "bar-verde",
+        "Devuelto": "bar-rojo",
+        "Anulado": "bar-gris"
+      };
+      return map[estado] || "bar-azul";
+    }
+
+    async function cargarDashboard() {
+      const token = getAuthToken();
+      if (!token) return;
+
+      try {
+        const [resResumen, resDist, resInsp] = await Promise.all([
+          fetch(CONFIG.apiBaseUrl + "/api/admin/dashboard/resumen", { headers: { Authorization: "Bearer " + token } }),
+          fetch(CONFIG.apiBaseUrl + "/api/admin/dashboard/distribucion", { headers: { Authorization: "Bearer " + token } }),
+          fetch(CONFIG.apiBaseUrl + "/api/admin/tiempos/inspectores", { headers: { Authorization: "Bearer " + token } }),
+        ]);
+        if (resResumen.status === 401) { logout(); return; }
+
+        const resumen = resResumen.ok ? await resResumen.json() : {};
+        const distribucion = resDist.ok ? await resDist.json() : [];
+        const inspectores = resInsp.ok ? await resInsp.json() : [];
+
+        // KPIs
+        const kpis = [
+          { value: resumen.total ?? "—", label: "Total informes", cls: "kpi-neutral" },
+          { value: resumen.pendientes ?? "—", label: "Pendientes", cls: resumen.pendientes > 10 ? "kpi-warn" : "kpi-ok" },
+          { value: resumen.en_curso ?? "—", label: "En curso", cls: "kpi-neutral" },
+          { value: resumen.devueltos ?? "—", label: "Devueltos", cls: resumen.devueltos > 5 ? "kpi-danger" : "kpi-ok" },
+          { value: resumen.finalizados ?? "—", label: "Finalizados", cls: "kpi-ok" },
+          { value: resumen.del_mes ?? "—", label: "Del mes", cls: "kpi-neutral" },
+          { value: resumen.promedio_dias ? parseFloat(resumen.promedio_dias).toFixed(1) + "d" : "—", label: "Prom. días", cls: "kpi-neutral" },
+        ];
+
+        const kpiGrid = document.getElementById("kpiGrid");
+        kpiGrid.innerHTML = kpis.map(k =>
+          `<div class="kpi-card ${k.cls}"><div class="kpi-value">${esc(String(k.value))}</div><div class="kpi-label">${esc(k.label)}</div></div>`
+        ).join("");
+
+        // Distribución por estado (barras horizontales)
+        const distMax = Math.max(...distribucion.map(d => d.count), 1);
+        const distEl = document.getElementById("distribucionBarras");
+        distEl.innerHTML = distribucion.map(d =>
+          `<div class="bar-horizontal">
+            <span class="bar-label">${esc(d.estado)}</span>
+            <div class="bar-track"><div class="bar-fill ${barColor(d.estado)}" style="width:${(d.count / distMax * 100).toFixed(1)}%"></div></div>
+            <span class="bar-count">${d.count}</span>
+          </div>`
+        ).join("");
+
+        // Alertas
+        const alertas = [];
+        if (resumen.devueltos > 0) alertas.push({ type: "warning", icon: "⚠️", text: `${resumen.devueltos} informe(s) devuelto(s) esperando corrección.` });
+        if (resumen.pendientes > 10) alertas.push({ type: "warning", icon: "📌", text: `${resumen.pendientes} informe(s) pendientes sin asignar.` });
+        if (resumen.promedio_dias > 7) alertas.push({ type: "danger", icon: "⏰", text: `El promedio de días por informe es de ${parseFloat(resumen.promedio_dias).toFixed(1)} días.` });
+
+        const alertasEl = document.getElementById("alertasDashboard");
+        if (alertas.length === 0) {
+          alertasEl.innerHTML = '<div class="alert-item alert-success"><span class="alert-icon">✅</span><span>Sin alertas. Todo está dentro de los parámetros normales.</span></div>';
+        } else {
+          alertasEl.innerHTML = alertas.map(a =>
+            `<div class="alert-item alert-${a.type}"><span class="alert-icon">${a.icon}</span><span>${esc(a.text)}</span></div>`
+          ).join("");
+        }
+
+        // Rendimiento por inspector (barras horizontales)
+        const inspMax = Math.max(...inspectores.map(r => r.total_informes), 1);
+        const rendEl = document.getElementById("rendimientoBarras");
+        if (inspectores.length === 0) {
+          rendEl.innerHTML = '<p style="color:var(--gray-400);font-size:13px;">Sin datos de rendimiento.</p>';
+        } else {
+          rendEl.innerHTML = inspectores.map(r =>
+            `<div class="bar-horizontal">
+              <span class="bar-label">${esc(r.inspector_nombre) || "Inspector #" + r.inspector_id}</span>
+              <div class="bar-track"><div class="bar-fill bar-azul" style="width:${(r.total_informes / inspMax * 100).toFixed(1)}%"></div></div>
+              <span class="bar-count">${r.total_informes}</span>
+            </div>`
+          ).join("");
+        }
+
+        // Tendencia mensual (barras verticales) — fetch aparte
+        const resTend = await fetch(CONFIG.apiBaseUrl + "/api/admin/dashboard/tendencia?meses=12", {
+          headers: { Authorization: "Bearer " + token }
+        });
+        const tendencia = resTend.ok ? await resTend.json() : [];
+        const tendMax = Math.max(...tendencia.flatMap(t => [t.creados, t.finalizados]), 1);
+        const tendEl = document.getElementById("tendenciaChart");
+        if (tendencia.length === 0) {
+          tendEl.innerHTML = '<p style="color:var(--gray-400);font-size:13px;">Sin datos de tendencia.</p>';
+        } else {
+          tendEl.innerHTML = tendencia.map(t => {
+            const creadosPct = (t.creados / tendMax * 100).toFixed(1);
+            const finalizadosPct = (t.finalizados / tendMax * 100).toFixed(1);
+            return `<div class="bar-col">
+              <div class="bar-fill bar-azul" style="height:${creadosPct}%" title="Creados: ${t.creados}"></div>
+              <div class="bar-fill bar-verde" style="height:${finalizadosPct}%;margin-top:2px;" title="Finalizados: ${t.finalizados}"></div>
+              <span class="bar-col-label">${esc(t.mes ? t.mes.slice(5) : "")}</span>
+            </div>`;
+          }).join("");
+        }
+      } catch {
+        showToast("Error al cargar dashboard.", "error");
+      }
     }
 
     async function cargarMonitoreo() {
@@ -2406,7 +2776,7 @@
           tbodyInsp.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
         } else {
           tbodyInsp.innerHTML = dataInsp.map(r => `<tr>
-            <td>${r.inspector_nombre || "Inspector #" + r.inspector_id}</td>
+            <td>${esc(r.inspector_nombre) || "Inspector #" + r.inspector_id}</td>
             <td>${r.total_informes}</td>
             <td>${r.dias_promedio ? parseFloat(r.dias_promedio).toFixed(1) : "—"}</td>
             <td>${r.dias_total ? parseFloat(r.dias_total).toFixed(1) : "—"}</td>
@@ -2418,7 +2788,7 @@
           tbodySup.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Sin datos.</td></tr>';
         } else {
           tbodySup.innerHTML = dataSup.map(r => `<tr>
-            <td>${r.supervisor_nombre || "Supervisor #" + r.supervisor_id}</td>
+            <td>${esc(r.supervisor_nombre) || "Supervisor #" + r.supervisor_id}</td>
             <td>${r.total_aprobados}</td>
             <td>${r.dias_promedio_revision ? parseFloat(r.dias_promedio_revision).toFixed(1) : "—"}</td>
             <td>${r.dias_total_revision ? parseFloat(r.dias_total_revision).toFixed(1) : "—"}</td>
@@ -2462,8 +2832,8 @@
           const rolLabels = { 1: "Administrador", 2: "Inspector", 3: "Supervisor" };
           tbody.innerHTML = data.map((u) => `<tr>
             <td>${u.usuarioId}</td>
-            <td>${u.nombre}</td>
-            <td>${u.username}</td>
+            <td>${esc(u.nombre)}</td>
+            <td>${esc(u.username)}</td>
             <td>${rolLabels[u.rolId] || "Rol #" + u.rolId}</td>
             <td>${u.activo ? '<span style="color:#16a34a;font-weight:600;">Activo</span>' : '<span style="color:#dc2626;font-weight:600;">Inactivo</span>'}</td>
             <td>
@@ -2637,12 +3007,12 @@
         } else {
           const rolLabels = { 2: "Inspector", 3: "Supervisor" };
           tbody.innerHTML = data.map((inv) => `<tr>
-            <td><code style="font-size:11px;">${inv.codigo}</code></td>
+            <td><code style="font-size:11px;">${esc(inv.codigo)}</code></td>
             <td>${rolLabels[inv.rolId] || "Rol #" + inv.rolId}</td>
             <td>${inv.usado ? '<span style="color:#dc2626;font-weight:600;">Usado</span>' : '<span style="color:#16a34a;font-weight:600;">Disponible</span>'}</td>
             <td>${new Date(inv.createdAt).toLocaleDateString("es-GT")}</td>
             <td>${inv.usedAt ? new Date(inv.usedAt).toLocaleString("es-GT") : "—"}</td>
-            <td>${inv.usado ? "—" : '<button class="btn-sm" style="background:#dc2626;" onclick="eliminarInvitacion(' + inv.id + ')" style="margin-right:4px;">Eliminar</button><button class="btn-sm" onclick="compartirCodigo(\'' + inv.codigo + '\',' + inv.rolId + ')">Compartir</button>'}</td>
+            <td>${inv.usado ? "—" : '<button class="btn-sm" style="background:#dc2626;" onclick="eliminarInvitacion(' + inv.id + ')" style="margin-right:4px;">Eliminar</button><button class="btn-sm" onclick="compartirCodigo(\'' + esc(inv.codigo) + '\',' + inv.rolId + ')">Compartir</button>'}</td>
           </tr>`).join("");
         }
       } catch {

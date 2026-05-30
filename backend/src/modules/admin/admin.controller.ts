@@ -64,6 +64,57 @@ export class AdminController {
     private readonly anuladosRepository: Repository<InformeAnulado>,
   ) {}
 
+  @Get('dashboard/resumen')
+  async dashboardResumen() {
+    const raw: Record<string, unknown>[] = await this.informesRepository.query(
+      `SELECT
+        (SELECT COUNT(*) FROM informes) AS total,
+        (SELECT COUNT(*) FROM informes WHERE estado = 'Pendiente') AS pendientes,
+        (SELECT COUNT(*) FROM informes WHERE estado IN ('En Proceso','En Revisión')) AS en_curso,
+        (SELECT COUNT(*) FROM informes WHERE estado = 'Devuelto') AS devueltos,
+        (SELECT COUNT(*) FROM informes WHERE estado = 'Finalizado') AS finalizados,
+        (SELECT COUNT(*) FROM informes WHERE estado = 'Anulado') AS anulados,
+        (SELECT COUNT(*) FROM informes
+          WHERE EXTRACT(MONTH FROM created_at) = EXTRACT(MONTH FROM NOW())
+            AND EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM NOW())
+        ) AS del_mes,
+        COALESCE(
+          (SELECT SUM(EXTRACT(EPOCH FROM (finalizado_at - iniciado_at)) / 86400.0) /
+                  NULLIF(COUNT(*), 0)
+           FROM informes
+           WHERE estado = 'Finalizado' AND iniciado_at IS NOT NULL AND finalizado_at IS NOT NULL),
+          0
+        ) AS promedio_dias
+      `,
+    );
+    return raw[0] || {};
+  }
+
+  @Get('dashboard/distribucion')
+  async dashboardDistribucion() {
+    return this.informesRepository.query(
+      `SELECT estado, COUNT(*)::int AS count
+       FROM informes
+       GROUP BY estado
+       ORDER BY count DESC`,
+    );
+  }
+
+  @Get('dashboard/tendencia')
+  async dashboardTendencia(@Query('meses') meses?: string) {
+    const limite = meses ? Math.min(Math.max(parseInt(meses, 10) || 12, 1), 36) : 12;
+    return this.informesRepository.query(
+      `SELECT
+        TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS mes,
+        COUNT(*)::int AS creados,
+        COUNT(*) FILTER (WHERE estado = 'Finalizado')::int AS finalizados
+      FROM informes
+      WHERE created_at >= DATE_TRUNC('month', NOW()) - INTERVAL '${limite} months'
+      GROUP BY DATE_TRUNC('month', created_at)
+      ORDER BY mes`,
+    );
+  }
+
   @Get('tiempos/inspectores')
   async tiemposInspectores() {
     const raw: Record<string, unknown>[] = await this.informesRepository.query(

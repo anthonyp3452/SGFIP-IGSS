@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://sgfip-igss.onrender.com http://localhost:3000; frame-src 'none'; object-src 'none'; base-uri 'self';" />
   <title>SGFIP | Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -531,8 +532,7 @@
     const messages = {
       required: "El campo es obligatorio.",
       invalidUsername: "El usuario debe tener al menos 3 caracteres.",
-      userNotFound: "Usuario no encontrado. Verifique el usuario ingresado.",
-      wrongPassword: "Contraseña incorrecta. Intente nuevamente o contacte al administrador."
+      invalidCredentials: "Credenciales inválidas. Verifique los datos ingresados o contacte al administrador."
     };
 
     const clearFieldError = (input, errorBox) => {
@@ -595,16 +595,7 @@
         return { ok: true, data: payload };
       }
 
-      const backendCode = payload.code || payload.error;
-      if (response.status === 404 || backendCode === "USER_NOT_FOUND") {
-        return { ok: false, reason: "userNotFound" };
-      }
-
-      if (response.status === 401 || backendCode === "INVALID_PASSWORD") {
-        return { ok: false, reason: "wrongPassword" };
-      }
-
-      return { ok: false, reason: "generic" };
+      return { ok: false, reason: "invalidCredentials" };
     };
 
     const loginWithApi = async ({ username, password }) => {
@@ -686,16 +677,8 @@
         if (!result.ok) {
           if (result.reason === "network") {
             showToast("Error al conectar con el servidor. Verifique su conexión e intente de nuevo.", "error");
-          } else if (result.reason === "userNotFound") {
-            showToast(messages.userNotFound, "error");
-            usernameInput.classList.remove("valid");
-            usernameInput.focus();
-          } else if (result.reason === "wrongPassword") {
-            showToast(messages.wrongPassword, "error");
-            passwordInput.classList.remove("valid");
-            passwordInput.focus();
           } else {
-            showToast("Ocurrió un error al autenticar. Intente nuevamente.", "error");
+            showToast(messages.invalidCredentials, "error");
           }
           return;
         }

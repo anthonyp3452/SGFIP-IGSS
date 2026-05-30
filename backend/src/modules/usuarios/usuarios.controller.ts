@@ -16,6 +16,8 @@ import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
+import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto';
+import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { Usuario } from './usuario.entity';
 import { UsuariosService } from './usuarios.service';
 
@@ -53,14 +55,7 @@ export class UsuariosController {
   @Roles(1)
   async crear(
     @Req() req: Request & { user: JwtPayload },
-    @Body()
-    body: {
-      nombre: string;
-      username: string;
-      password: string;
-      rolId: number;
-      supervisorId?: number;
-    },
+    @Body() body: CrearUsuarioDto,
   ) {
     const fullUsername = body.username.trim().toLowerCase();
     const username = fullUsername.endsWith('.igss') ? fullUsername : `${fullUsername}.igss`;
@@ -79,7 +74,7 @@ export class UsuariosController {
   @Roles(1)
   async actualizar(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: Partial<Usuario>,
+    @Body() body: ActualizarUsuarioDto,
   ) {
     return this.usuariosService.update(id, body);
   }

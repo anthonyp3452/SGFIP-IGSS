@@ -65,34 +65,13 @@ export class AuthService {
     const fullUsername = this.buildUsername(username);
     const usuario = await this.usuariosService.findByUsername(fullUsername);
 
-    if (!usuario) {
-      throw new UnauthorizedException({
-        code: 'USER_NOT_FOUND',
-        message: 'Usuario no encontrado',
-      });
-    }
-
-    if (!usuario.passwordHash) {
-      throw new UnauthorizedException({
-        code: 'INVALID_PASSWORD',
-        message:
-          'Este usuario no tiene contraseña local. Contacte al administrador.',
-      });
-    }
-
-    const passwordValid = await bcrypt.compare(password, usuario.passwordHash);
-    if (!passwordValid) {
-      throw new UnauthorizedException({
-        code: 'INVALID_PASSWORD',
-        message: 'Contraseña incorrecta',
-      });
-    }
-
-    if (!usuario.activo) {
-      throw new UnauthorizedException({
-        code: 'USER_INACTIVE',
-        message: 'Usuario inactivo',
-      });
+    if (
+      !usuario ||
+      !usuario.passwordHash ||
+      !usuario.activo ||
+      !(await bcrypt.compare(password, usuario.passwordHash))
+    ) {
+      throw new UnauthorizedException('Credenciales inválidas');
     }
 
     return {
