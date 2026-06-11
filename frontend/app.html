@@ -3997,8 +3997,7 @@
       renderSidebar(role);
 
       document.getElementById("btnLogout").addEventListener("click", logout);
-      document.getElementById("btnSolicitar").addEventListener("click", solicitarInforme);
-      document.getElementById("btnNuevoInforme").addEventListener("click", () => showView("solicitar-informe"));
+      document.getElementById("btnNuevoInforme").addEventListener("click", () => showView("ordenes-trabajo"));
 
       document.querySelectorAll("#tabsMisInformes .tab-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -4091,6 +4090,22 @@
         if (e.target === e.currentTarget) cerrarModalEnviarActaRevision();
       });
 
+      document.getElementById("btnElegirInforme").addEventListener("click", () => {
+        if (ordenTrabajoSeleccionada) {
+          const id = ordenTrabajoSeleccionada;
+          cerrarModal("modalElegirTipo");
+          ordenTrabajoSeleccionada = null;
+          trabajarOrden(id, "informe");
+        }
+      });
+      document.getElementById("btnElegirActa").addEventListener("click", () => {
+        if (ordenTrabajoSeleccionada) {
+          const id = ordenTrabajoSeleccionada;
+          cerrarModal("modalElegirTipo");
+          ordenTrabajoSeleccionada = null;
+          trabajarOrden(id, "acta");
+        }
+      });
       document.getElementById("modalElegirTipo").addEventListener("click", (e) => {
         if (e.target === e.currentTarget) cerrarModal("modalElegirTipo");
       });
