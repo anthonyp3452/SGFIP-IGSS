@@ -47,6 +47,7 @@ async function bootstrap() {
   const rateLimit = rateLimitModule.default;
 
   const app = await NestFactory.create(AppModule);
+  (app as any).set('trust proxy', 1);
   const configService = app.get(ConfigService);
   const port = configService.get<number>('app.port', 3000);
   const frontendUrl = configService.get<string>(
