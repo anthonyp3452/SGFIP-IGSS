@@ -1650,6 +1650,37 @@
           </div>
         </div>
 
+        <!-- Órdenes de trabajo (Supervisor) -->
+        <div class="view" id="view-ordenes-trabajo">
+          <div class="content-card" style="max-width: 100%;">
+            <div class="header-row">
+              <h2>Órdenes de trabajo</h2>
+              <button class="btn-sm" onclick="abrirModalCrearOT()">+ Nueva orden</button>
+            </div>
+            <p style="margin: -10px 0 16px; font-size: 13px; color: var(--gray-500);">
+              Cree órdenes de trabajo y asígnelas a inspectores para su gestión.
+            </p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Código OT</th>
+                    <th>Patrono</th>
+                    <th>N° Patronal</th>
+                    <th>Inspector</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaOrdenesTrabajoBody">
+                  <tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando órdenes...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- Informes patronales -->
         <div class="view" id="view-informes">
           <div class="content-card" style="max-width: 100%;">
@@ -1661,9 +1692,10 @@
               <table>
                 <thead>
                   <tr>
-                      <th>N° Informe</th>
+                      <th>N° Documento</th>
+                      <th>Tipo</th>
                       <th>Patrono</th>
-                      <th>NIT</th>
+                      <th>N° Patronal</th>
                       <th>Estado</th>
                       <th>Urgencia</th>
                       <th>Solicitado por</th>
@@ -1672,26 +1704,39 @@
                   </tr>
                 </thead>
                 <tbody id="tablaInformesBody">
-                  <tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando informes...</td></tr>
+                  <tr><td colspan="9" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando informes...</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- Solicitar informe -->
-        <div class="view" id="view-solicitar-informe">
-          <div class="content-card" style="max-width: 480px; text-align: center;">
-            <h2 style="margin-bottom: 8px;">Solicitar número de informe</h2>
-            <p style="margin-bottom: 24px;">
-              Genere un nuevo número de informe para agregarlo a su cola de trabajo.
+        <!-- Mis órdenes de trabajo (Inspector) -->
+        <div class="view" id="view-mis-ordenes">
+          <div class="content-card" style="max-width: 100%;">
+            <div class="header-row">
+              <h2>Mis órdenes de trabajo</h2>
+            </div>
+            <p style="margin: -10px 0 16px; font-size: 13px; color: var(--gray-500);">
+              Órdenes de trabajo asignadas por su supervisor. Seleccione una para generar un informe o acta.
             </p>
-            <button type="button" class="btn-generar-numero" id="btnSolicitar">
-              <span class="btn-text">Generar Número</span>
-            </button>
-            <p class="field-hint" style="margin-top: 12px; font-size: 12px;">
-              El correlativo se asignará automáticamente.
-            </p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Código OT</th>
+                    <th>Patrono</th>
+                    <th>N° Patronal</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaMisOrdenesBody">
+                  <tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando órdenes...</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -1711,9 +1756,9 @@
                 <table>
                   <thead>
                     <tr>
-                      <th>N° Informe</th>
+                      <th>N° Documento</th>
+                      <th>Tipo</th>
                       <th>Patrono</th>
-                      <th>NIT</th>
                       <th>Estado</th>
                       <th>Acciones</th>
                     </tr>
@@ -1729,14 +1774,15 @@
                 <table>
                   <thead>
                     <tr>
-                      <th>N° Informe</th>
+                      <th>N° Documento</th>
+                      <th>Tipo</th>
                       <th>Patrono</th>
                       <th>Estado</th>
                       <th>Acciones</th>
                     </tr>
                   </thead>
                   <tbody id="tablaMisInformesProceso">
-                    <tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
+                    <tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1746,7 +1792,8 @@
                 <table>
                   <thead>
                     <tr>
-                      <th>N° Informe</th>
+                      <th>N° Documento</th>
+                      <th>Tipo</th>
                       <th>Patrono</th>
                       <th>Estado</th>
                       <th>Observación</th>
@@ -1775,16 +1822,17 @@
               <table>
                 <thead>
                   <tr>
-                    <th>N° Informe</th>
+                    <th>N° Documento</th>
+                    <th>Tipo</th>
                     <th>Patrono</th>
-                    <th>NIT</th>
+                    <th>N° Patronal</th>
                     <th>Inspector</th>
                     <th>Fecha</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody id="tablaBandejaSupervisor">
-                  <tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
+                  <tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -2065,8 +2113,8 @@
         <input type="text" id="envNombrePatrono" class="input-control" placeholder="Nombre o razón social" required />
       </div>
       <div class="form-group">
-        <label for="envNitPatrono">NIT del patrono <span style="color:#dc2626;">*</span></label>
-        <input type="text" id="envNitPatrono" class="input-control" placeholder="NIT (sin guiones)" required />
+        <label for="envNumeroPatronal">N° Patronal <span style="color:#dc2626;">*</span></label>
+        <input type="text" id="envNumeroPatronal" class="input-control" placeholder="Número patronal" required />
       </div>
       <div class="form-group">
         <label for="envDireccionPatrono">Dirección <span style="color:var(--gray-400);font-weight:400;">(opcional)</span></label>
@@ -2083,6 +2131,40 @@
       <div class="modal-actions">
         <button type="button" class="btn-primary" id="btnConfirmarEnviar">Enviar a revisión</button>
         <button type="button" class="btn-link-modal" id="btnCancelarEnviar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Enviar acta a revisión -->
+  <div class="modal-overlay" id="modalEnviarActaRevision" role="dialog" aria-modal="true" aria-labelledby="modalEnviarActaTitulo">
+    <div class="modal-box" style="text-align:left;max-width:520px;">
+      <h3 class="modal-success-title" id="modalEnviarActaTitulo">Completar datos del acta</h3>
+      <p style="margin:0 0 16px;font-size:13px;color:var(--gray-500);">
+        Complete los campos obligatorios antes de enviar a revisión.
+      </p>
+      <div class="form-group">
+        <label for="actFecha">Fecha del acta <span style="color:#dc2626;">*</span></label>
+        <input type="date" id="actFecha" class="input-control" required />
+      </div>
+      <div class="form-group">
+        <label for="actNombrePatrono">Nombre empresa/patrono <span style="color:#dc2626;">*</span></label>
+        <input type="text" id="actNombrePatrono" class="input-control" placeholder="Nombre o razón social" required />
+      </div>
+      <div class="form-group">
+        <label for="actPeriodoDesde">Período revisado DEL <span style="color:#dc2626;">*</span></label>
+        <input type="date" id="actPeriodoDesde" class="input-control" required />
+      </div>
+      <div class="form-group">
+        <label for="actPeriodoHasta">Período revisado AL <span style="color:#dc2626;">*</span></label>
+        <input type="date" id="actPeriodoHasta" class="input-control" required />
+      </div>
+      <div class="form-group">
+        <label for="actMonto">Monto revisado <span style="color:#dc2626;">*</span></label>
+        <input type="number" id="actMonto" class="input-control" placeholder="0.00" step="0.01" min="0" required />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" id="btnConfirmarEnviarActa">Enviar a revisión</button>
+        <button type="button" class="btn-link-modal" id="btnCancelarEnviarActa">Cancelar</button>
       </div>
     </div>
   </div>
@@ -2234,6 +2316,110 @@
     </div>
   </div>
 
+  <!-- Modal: Crear Orden de Trabajo -->
+  <div class="modal-overlay" id="modalCrearOT" role="dialog" aria-modal="true" aria-labelledby="modalCrearOTTitulo">
+    <div class="modal-box" style="text-align:left;max-width:560px;">
+      <h3 class="modal-success-title" id="modalCrearOTTitulo">Nueva orden de trabajo</h3>
+      <p style="margin:0 0 16px;font-size:13px;color:var(--gray-500);">
+        Complete los datos de la orden y asígnela a un inspector.
+      </p>
+      <div class="form-group">
+        <label for="otInspector">Asignar a inspector <span style="color:#dc2626;">*</span></label>
+        <select id="otInspector" class="input-control" required></select>
+      </div>
+      <div class="form-group">
+        <label for="otDescripcion">Descripción de lo que se hará <span style="color:#dc2626;">*</span></label>
+        <textarea id="otDescripcion" rows="3" placeholder="Describa el trabajo a realizar..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="otNumeroPatronal">Número patronal <span style="color:#dc2626;">*</span></label>
+        <input type="text" id="otNumeroPatronal" class="input-control" placeholder="Ej: 12345678" required />
+      </div>
+      <div class="form-group">
+        <label for="otNombrePatrono">Nombre del patrono <span style="color:#dc2626;">*</span></label>
+        <input type="text" id="otNombrePatrono" class="input-control" placeholder="Nombre o razón social" required />
+      </div>
+      <div class="form-group">
+        <label for="otEmpresa">Empresa</label>
+        <input type="text" id="otEmpresa" class="input-control" placeholder="Nombre de la empresa" />
+      </div>
+      <div class="form-group">
+        <label for="otNumeroAfiliado">Número de afiliado</label>
+        <input type="text" id="otNumeroAfiliado" class="input-control" placeholder="Ej: AF-12345" />
+      </div>
+      <div class="form-group">
+        <label for="otNombreAfiliado">Nombre de afiliado</label>
+        <input type="text" id="otNombreAfiliado" class="input-control" placeholder="Nombre completo" />
+      </div>
+      <div class="form-group">
+        <label for="otDependencia">Dependencia solicitante</label>
+        <input type="text" id="otDependencia" class="input-control" placeholder="Ej: Delegación Retalhuleu" />
+      </div>
+      <div class="form-group">
+        <label for="otFechaIngreso">Fecha de ingreso</label>
+        <input type="date" id="otFechaIngreso" class="input-control" />
+      </div>
+      <div class="form-group">
+        <label for="otDocumentos">Documentos de soporte</label>
+        <textarea id="otDocumentos" rows="2" class="input-control" placeholder="Liste los documentos de soporte..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" id="btnCrearOT">Crear orden de trabajo</button>
+        <button type="button" class="btn-link-modal" onclick="cerrarModal('modalCrearOT')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Éxito creación -->
+  <div class="modal-overlay" id="modalExitoOT" role="dialog" aria-modal="true" aria-labelledby="modalExitoOTTitulo">
+    <div class="modal-box">
+      <div class="modal-success-icon" aria-hidden="true">✅</div>
+      <h3 class="modal-success-title" id="modalExitoOTTitulo">Orden de trabajo creada</h3>
+      <p class="modal-success-sub">La orden de trabajo se ha creado y asignado correctamente.</p>
+      <div class="modal-numero-card">
+        <span class="modal-numero-label">Código de orden generado</span>
+        <p class="numero-asignado" id="modalOTNumero" tabindex="0">001/2026</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" onclick="cerrarModal('modalExitoOT')">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Elegir tipo (Informe / Acta) al tomar una OT -->
+  <div class="modal-overlay" id="modalElegirTipo" role="dialog" aria-modal="true" aria-labelledby="modalElegirTipoTitulo">
+    <div class="modal-box" style="text-align:center;">
+      <h3 class="modal-success-title" id="modalElegirTipoTitulo">Seleccionar tipo de documento</h3>
+      <p style="margin:0 0 20px;font-size:13px;color:var(--gray-500);">
+        ¿Cómo desea trabajar esta orden de trabajo?
+      </p>
+      <div style="display:flex;gap:16px;justify-content:center;">
+        <button type="button" class="btn-primary" id="btnElegirInforme" style="padding:16px 32px;font-size:15px;">📄 Como Informe</button>
+        <button type="button" class="btn-primary" id="btnElegirActa" style="padding:16px 32px;font-size:15px;background:#1565c0;">📋 Como Acta</button>
+      </div>
+      <div style="margin-top:20px;">
+        <button type="button" class="btn-link-modal" onclick="cerrarModal('modalElegirTipo')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Éxito creación de informe/acta -->
+  <div class="modal-overlay" id="modalExitoDoc" role="dialog" aria-modal="true" aria-labelledby="modalExitoDocTitulo">
+    <div class="modal-box">
+      <div class="modal-success-icon" aria-hidden="true">✅</div>
+      <h3 class="modal-success-title" id="modalExitoDocTitulo">Documento generado</h3>
+      <p class="modal-success-sub">El documento se ha creado correctamente. Puede verlo en su cola de trabajo.</p>
+      <div class="modal-numero-card">
+        <span class="modal-numero-label">Código generado</span>
+        <p class="numero-asignado" id="modalDocNumero" tabindex="0">INF-2026-0001</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" onclick="cerrarModalYVerCola()">Ir a mi cola de trabajo</button>
+        <button type="button" class="btn-link-modal" onclick="cerrarModal('modalExitoDoc')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/toast.js"></script>
   <script src="js/config.js"></script>
   <script>
@@ -2261,10 +2447,11 @@
 
     const MENU_ITEMS = [
       { id: "inicio", label: "Inicio", icon: "⌂", href: "app.html", view: "inicio", roles: null },
-      { id: "mis-informes", label: "Mi cola de trabajo", icon: "📋", view: "mis-informes", roles: [ROLE.INSPECTOR] },
+      { id: "mis-ordenes", label: "Mis órdenes de trabajo", icon: "📋", view: "mis-ordenes", roles: [ROLE.INSPECTOR] },
+      { id: "mis-informes", label: "Mi cola de trabajo", icon: "📂", view: "mis-informes", roles: [ROLE.INSPECTOR] },
       { id: "bandeja-supervisor", label: "Bandeja de supervisor", icon: "✅", view: "bandeja-supervisor", roles: [ROLE.SUPERVISOR] },
+      { id: "ordenes-trabajo", label: "Órdenes de trabajo", icon: "📋", view: "ordenes-trabajo", roles: [ROLE.SUPERVISOR] },
       { id: "informes", label: "Informes patronales", icon: "📂", view: "informes", roles: [ROLE.ADMIN, ROLE.SUPERVISOR] },
-      { id: "solicitar-informe", label: "Nuevo informe", icon: "➕", view: "solicitar-informe", roles: [ROLE.INSPECTOR] },
       { id: "monitoreo", label: "Monitoreo", icon: "📊", view: "monitoreo", roles: [ROLE.ADMIN] },
       { id: "usuarios", label: "Usuarios", icon: "👤", view: "usuarios", roles: [ROLE.ADMIN] },
     ];
@@ -2345,6 +2532,8 @@
 
       if (viewId === "informes") cargarInformes();
       if (viewId === "mis-informes") cargarMisInformes();
+      if (viewId === "mis-ordenes") cargarMisOrdenes();
+      if (viewId === "ordenes-trabajo") { cargarOrdenesTrabajo(); cargarInspectoresSelect(); }
       if (viewId === "bandeja-supervisor") cargarBandejaSupervisor();
       if (viewId === "monitoreo") { cargarMonitoreo(); cargarDashboard(); }
       if (viewId === "usuarios") { cargarUsuarios(); cargarInvitaciones(); }
@@ -2434,12 +2623,17 @@
       }
     }
 
+    function badgeTipo(tipo) {
+      if (tipo === 'acta') return '<span class="badge badge-en-proceso">Acta</span>';
+      return '<span class="badge badge-en-revision">Informe</span>';
+    }
+
     async function cargarInformes() {
       const token = getAuthToken();
       if (!token) return;
 
       const tbody = document.getElementById("tablaInformesBody");
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando informes...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando informes...</td></tr>';
 
       try {
         const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiInformesPath, {
@@ -2448,21 +2642,22 @@
 
         if (!response.ok) {
           if (response.status === 401) { logout(); return; }
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#dc2626;padding:24px;">Error al cargar informes.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#dc2626;padding:24px;">Error al cargar informes.</td></tr>';
           return;
         }
 
         const data = await response.json();
 
         if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">No hay informes registrados.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--gray-400);padding:24px;">No hay informes registrados.</td></tr>';
         } else {
           tbody.innerHTML = data.map((inf) => {
             const fecha = new Date(inf.createdAt).toLocaleDateString("es-GT");
             return `<tr>
               <td><strong>${esc(inf.numeroInforme)}</strong></td>
+              <td>${badgeTipo(inf.tipo)}</td>
               <td>${esc(inf.nombrePatrono) || "—"}</td>
-              <td>${esc(inf.nitPatrono) || "—"}</td>
+              <td>${esc(inf.numeroPatronal) || "—"}</td>
               <td>${badgeEstado(inf.estado)}</td>
               <td>${badgeUrgencia(inf.nivelUrgencia)}</td>
               <td>${esc(inf.inspectorNombre) || "Inspector #" + inf.inspectorId}</td>
@@ -2472,7 +2667,7 @@
           }).join("");
         }
       } catch {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
       }
     }
 
@@ -2553,7 +2748,7 @@
       const tbodyProceso = document.getElementById("tablaMisInformesProceso");
       const tbodyDevueltos = document.getElementById("tablaMisInformesDevueltos");
       tbodyPendientes.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>';
-      tbodyProceso.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>';
+      tbodyProceso.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>';
       tbodyDevueltos.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>';
 
       try {
@@ -2576,13 +2771,13 @@
         const dataDevueltos = resDevueltos.ok ? await resDevueltos.json() : [];
 
         if (dataPendientes.length === 0) {
-          tbodyPendientes.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">No hay informes pendientes.</td></tr>';
+          tbodyPendientes.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">No hay documentos pendientes.</td></tr>';
         } else {
           tbodyPendientes.innerHTML = dataPendientes.map((inf) => {
             return `<tr>
               <td><strong>${esc(inf.numeroInforme)}</strong></td>
+              <td>${badgeTipo(inf.tipo)}</td>
               <td>${esc(inf.nombrePatrono) || "—"}</td>
-              <td>${esc(inf.nitPatrono) || "—"}</td>
               <td>${badgeEstado(inf.estado)}</td>
               <td>
                 <button class="btn-accion btn-iniciar" onclick="iniciarInforme(${inf.informeId})">Iniciar</button>
@@ -2593,15 +2788,21 @@
         }
 
         if (dataProceso.length === 0) {
-          tbodyProceso.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px;">No hay informes en proceso.</td></tr>';
+          tbodyProceso.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">No hay documentos en proceso.</td></tr>';
         } else {
           tbodyProceso.innerHTML = dataProceso.map((inf) => {
+            const esActa = inf.tipo === 'acta';
+            const btnAction = esActa
+              ? `onclick="abrirModalEnviarActaRevision(${inf.informeId})"`
+              : `onclick="abrirModalEnviarRevision(${inf.informeId})"`;
+            const btnLabel = esActa ? 'Enviar acta a revisión' : 'Enviar a revisión';
             return `<tr>
               <td><strong>${esc(inf.numeroInforme)}</strong></td>
+              <td>${badgeTipo(inf.tipo)}</td>
               <td>${esc(inf.nombrePatrono) || "—"}</td>
               <td>${badgeEstado(inf.estado)}</td>
               <td>
-                <button class="btn-accion btn-enviar" onclick="abrirModalEnviarRevision(${inf.informeId})">Enviar a revisión</button>
+                <button class="btn-accion btn-enviar" ${btnAction}>${btnLabel}</button>
                 <button class="btn-accion" style="background:#e8eaf6;color:#283593;" onclick="verDetalle(${inf.informeId})">Ver detalle</button>
               </td>
             </tr>`;
@@ -2609,12 +2810,13 @@
         }
 
         if (dataDevueltos.length === 0) {
-          tbodyDevueltos.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">No hay informes devueltos.</td></tr>';
+          tbodyDevueltos.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">No hay documentos devueltos.</td></tr>';
         } else {
           tbodyDevueltos.innerHTML = dataDevueltos.map((inf) => {
             const obs = inf.observacion ? esc(inf.observacion) : "—";
             return `<tr>
               <td><strong>${esc(inf.numeroInforme)}</strong></td>
+              <td>${badgeTipo(inf.tipo)}</td>
               <td>${esc(inf.nombrePatrono) || "—"}</td>
               <td>${badgeEstado(inf.estado)}</td>
               <td><span class="observacion-text" title="${obs}">${obs}</span></td>
@@ -2627,7 +2829,7 @@
         }
       } catch {
         tbodyPendientes.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
-        tbodyProceso.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
+        tbodyProceso.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
         tbodyDevueltos.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
       }
     }
@@ -2636,7 +2838,7 @@
       const token = getAuthToken();
       if (!token) return;
       const tbody = document.getElementById("tablaBandejaSupervisor");
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>';
 
       try {
         const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiInformesPath + "/en-revision", {
@@ -2645,23 +2847,24 @@
         if (!response.ok) {
           if (response.status === 401) { logout(); return; }
           if (response.status === 403) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#dc2626;padding:24px;">No tiene permisos de supervisor.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#dc2626;padding:24px;">No tiene permisos de supervisor.</td></tr>';
             return;
           }
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#dc2626;padding:24px;">Error al cargar.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#dc2626;padding:24px;">Error al cargar.</td></tr>';
           return;
         }
         const data = await response.json();
         if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">No hay informes pendientes de revisión.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">No hay documentos pendientes de revisión.</td></tr>';
           return;
         }
         tbody.innerHTML = data.map((inf) => {
           const fecha = new Date(inf.createdAt).toLocaleDateString("es-GT");
           return `<tr>
             <td><strong>${esc(inf.numeroInforme)}</strong></td>
+            <td>${badgeTipo(inf.tipo)}</td>
             <td>${esc(inf.nombrePatrono) || "—"}</td>
-            <td>${esc(inf.nitPatrono) || "—"}</td>
+            <td>${esc(inf.numeroPatronal) || "—"}</td>
             <td>${esc(inf.inspectorNombre) || "Inspector #" + inf.inspectorId}</td>
             <td>${fecha}</td>
             <td>
@@ -2673,7 +2876,7 @@
           </tr>`;
         }).join("");
       } catch {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
       }
     }
 
@@ -2703,7 +2906,7 @@
       informeIdEnviar = id;
       document.getElementById("envFechaInforme").value = new Date().toISOString().split("T")[0];
       document.getElementById("envNombrePatrono").value = "";
-      document.getElementById("envNitPatrono").value = "";
+      document.getElementById("envNumeroPatronal").value = "";
       document.getElementById("envDireccionPatrono").value = "";
       document.getElementById("envDescripcion").value = "";
       document.getElementById("envNoAfiliacion").value = "";
@@ -2721,11 +2924,11 @@
       if (!id) return;
       const fechaInforme = document.getElementById("envFechaInforme").value;
       const nombrePatrono = document.getElementById("envNombrePatrono").value.trim();
-      const nitPatrono = document.getElementById("envNitPatrono").value.trim();
+      const numeroPatronal = document.getElementById("envNumeroPatronal").value.trim();
       const direccionPatrono = document.getElementById("envDireccionPatrono").value.trim();
       const descripcion = document.getElementById("envDescripcion").value.trim();
       const noAfiliacionRiesgo = document.getElementById("envNoAfiliacion").value.trim();
-      if (!fechaInforme || !nombrePatrono || !nitPatrono || !descripcion || !noAfiliacionRiesgo) {
+      if (!fechaInforme || !nombrePatrono || !numeroPatronal || !descripcion || !noAfiliacionRiesgo) {
         showToast("Complete todos los campos obligatorios (excepto dirección).", "warning");
         return;
       }
@@ -2741,7 +2944,7 @@
           body: JSON.stringify({
             fechaInforme,
             nombrePatrono,
-            nitPatrono,
+            numeroPatronal,
             direccionPatrono: direccionPatrono || undefined,
             descripcion,
             noAfiliacionRiesgo
@@ -2752,12 +2955,295 @@
           showToast(err.message || "Error al enviar a revisión.", "error");
           return;
         }
-        showToast("Informe enviado a revisión.", "success");
+        showToast("Documento enviado a revisión.", "success");
         cerrarModalEnviarRevision();
         cargarMisInformes();
       } catch {
         showToast("Error de conexión.", "error");
       }
+    }
+
+    // ─── Acta: Enviar a revisión ──────────────────────────────
+
+    let informeIdActa = null;
+
+    function abrirModalEnviarActaRevision(id) {
+      informeIdActa = id;
+      document.getElementById("actFecha").value = new Date().toISOString().split("T")[0];
+      document.getElementById("actNombrePatrono").value = "";
+      document.getElementById("actPeriodoDesde").value = "";
+      document.getElementById("actPeriodoHasta").value = "";
+      document.getElementById("actMonto").value = "";
+      document.getElementById("modalEnviarActaRevision").classList.add("open");
+      document.getElementById("actFecha").focus();
+    }
+
+    function cerrarModalEnviarActaRevision() {
+      document.getElementById("modalEnviarActaRevision").classList.remove("open");
+      informeIdActa = null;
+    }
+
+    async function confirmarEnviarActaRevision() {
+      const id = informeIdActa;
+      if (!id) return;
+      const fechaActa = document.getElementById("actFecha").value;
+      const nombrePatrono = document.getElementById("actNombrePatrono").value.trim();
+      const periodoDesde = document.getElementById("actPeriodoDesde").value;
+      const periodoHasta = document.getElementById("actPeriodoHasta").value;
+      const montoRevisado = parseFloat(document.getElementById("actMonto").value);
+      if (!fechaActa || !nombrePatrono || !periodoDesde || !periodoHasta || isNaN(montoRevisado)) {
+        showToast("Complete todos los campos obligatorios.", "warning");
+        return;
+      }
+      const token = getAuthToken();
+      if (!token) { logout(); return; }
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiInformesPath + "/" + id + "/enviar-revision-acta", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token
+          },
+          body: JSON.stringify({
+            fechaActa,
+            nombrePatrono,
+            periodoDesde,
+            periodoHasta,
+            montoRevisado
+          })
+        });
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          showToast(err.message || "Error al enviar acta a revisión.", "error");
+          return;
+        }
+        showToast("Acta enviada a revisión.", "success");
+        cerrarModalEnviarActaRevision();
+        cargarMisInformes();
+      } catch {
+        showToast("Error de conexión.", "error");
+      }
+    }
+
+    // ─── Órdenes de Trabajo ────────────────────────────────────
+
+    async function cargarInspectoresSelect() {
+      const token = getAuthToken();
+      if (!token) return;
+      try {
+        const res = await fetch(CONFIG.apiBaseUrl + CONFIG.apiUsuariosPath + "/inspectores", {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const sel = document.getElementById("otInspector");
+        sel.innerHTML = '<option value="">Seleccione un inspector...</option>';
+        data.forEach(u => {
+          sel.innerHTML += `<option value="${u.usuarioId}">${esc(u.nombre)} (${esc(u.username)})</option>`;
+        });
+      } catch {}
+    }
+
+    function abrirModalCrearOT() {
+      document.getElementById("otInspector").value = "";
+      document.getElementById("otDescripcion").value = "";
+      document.getElementById("otNumeroPatronal").value = "";
+      document.getElementById("otNombrePatrono").value = "";
+      document.getElementById("otEmpresa").value = "";
+      document.getElementById("otNumeroAfiliado").value = "";
+      document.getElementById("otNombreAfiliado").value = "";
+      document.getElementById("otDependencia").value = "";
+      document.getElementById("otFechaIngreso").value = "";
+      document.getElementById("otDocumentos").value = "";
+      cargarInspectoresSelect();
+      document.getElementById("modalCrearOT").classList.add("open");
+    }
+
+    async function crearOrdenTrabajo() {
+      const token = getAuthToken();
+      if (!token) { logout(); return; }
+      const inspectorId = parseInt(document.getElementById("otInspector").value);
+      const descripcion = document.getElementById("otDescripcion").value.trim();
+      const numeroPatronal = document.getElementById("otNumeroPatronal").value.trim();
+      const nombrePatrono = document.getElementById("otNombrePatrono").value.trim();
+      const empresa = document.getElementById("otEmpresa").value.trim() || undefined;
+      const numeroAfiliado = document.getElementById("otNumeroAfiliado").value.trim() || undefined;
+      const nombreAfiliado = document.getElementById("otNombreAfiliado").value.trim() || undefined;
+      const dependenciaSolicitante = document.getElementById("otDependencia").value.trim() || undefined;
+      const fechaIngreso = document.getElementById("otFechaIngreso").value || undefined;
+      const documentoSoporte = document.getElementById("otDocumentos").value.trim() || undefined;
+      if (!inspectorId || !descripcion || !numeroPatronal || !nombrePatrono) {
+        showToast("Complete los campos obligatorios (Inspector, Descripción, N° Patronal, Nombre).", "warning");
+        return;
+      }
+      const btn = document.getElementById("btnCrearOT");
+      btn.disabled = true;
+      btn.textContent = "Creando...";
+      try {
+        const res = await fetch(CONFIG.apiBaseUrl + CONFIG.apiOrdenesTrabajoPath, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token
+          },
+          body: JSON.stringify({
+            inspectorId, descripcion, numeroPatronal, nombrePatrono,
+            empresa, numeroAfiliado, nombreAfiliado,
+            dependenciaSolicitante, fechaIngreso, documentoSoporte
+          })
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          showToast(err.message || "Error al crear orden de trabajo.", "error");
+          return;
+        }
+        const data = await res.json();
+        document.getElementById("modalOTNumero").textContent = data.codigoOrden;
+        cerrarModal("modalCrearOT");
+        document.getElementById("modalExitoOT").classList.add("open");
+        cargarOrdenesTrabajo();
+      } catch {
+        showToast("Error de conexión.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Crear orden de trabajo";
+      }
+    }
+
+    async function cargarOrdenesTrabajo() {
+      const token = getAuthToken();
+      if (!token) return;
+      const tbody = document.getElementById("tablaOrdenesTrabajoBody");
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>';
+      try {
+        const res = await fetch(CONFIG.apiBaseUrl + CONFIG.apiOrdenesTrabajoPath, {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (!res.ok) {
+          if (res.status === 401) { logout(); return; }
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#dc2626;padding:24px;">Error al cargar.</td></tr>';
+          return;
+        }
+        const data = await res.json();
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">No hay órdenes de trabajo.</td></tr>';
+          return;
+        }
+        const estadosBadge = { Pendiente: 'badge-pendiente', Completada: 'badge-finalizado', Anulada: 'badge-anulado' };
+        tbody.innerHTML = data.map(o => {
+          const fecha = new Date(o.createdAt).toLocaleDateString("es-GT");
+          const cls = estadosBadge[o.estado] || 'badge-pendiente';
+          const acciones = o.estado === 'Pendiente'
+            ? `<button class="btn-accion btn-anular" onclick="anularOT(${o.ordenId})">Anular</button>`
+            : "—";
+          return `<tr>
+            <td><strong>${esc(o.codigoOrden)}</strong></td>
+            <td>${esc(o.nombrePatrono)}</td>
+            <td>${esc(o.numeroPatronal)}</td>
+            <td>Inspector #${o.inspectorId}</td>
+            <td><span class="badge ${cls}">${esc(o.estado)}</span></td>
+            <td>${fecha}</td>
+            <td>${acciones}</td>
+          </tr>`;
+        }).join("");
+      } catch {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
+      }
+    }
+
+    async function anularOT(id) {
+      if (!confirm("¿Está seguro de anular esta orden de trabajo?")) return;
+      const token = getAuthToken();
+      if (!token) { logout(); return; }
+      try {
+        const res = await fetch(CONFIG.apiBaseUrl + CONFIG.apiOrdenesTrabajoPath + "/" + id + "/anular", {
+          method: "PATCH",
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          showToast(err.message || "Error al anular.", "error");
+          return;
+        }
+        showToast("Orden de trabajo anulada.", "success");
+        cargarOrdenesTrabajo();
+      } catch {
+        showToast("Error de conexión.", "error");
+      }
+    }
+
+    // ─── Mis órdenes (Inspector) ──────────────────────────────
+
+    async function cargarMisOrdenes() {
+      const token = getAuthToken();
+      if (!token) return;
+      const tbody = document.getElementById("tablaMisOrdenesBody");
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>';
+      try {
+        const res = await fetch(CONFIG.apiBaseUrl + CONFIG.apiOrdenesTrabajoPath + "/mis-ordenes?estado=Pendiente", {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (!res.ok) {
+          if (res.status === 401) { logout(); return; }
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#dc2626;padding:24px;">Error al cargar.</td></tr>';
+          return;
+        }
+        const data = await res.json();
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">No tiene órdenes de trabajo pendientes.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = data.map(o => {
+          const descCorta = o.descripcion.length > 60 ? o.descripcion.slice(0, 60) + "…" : o.descripcion;
+          return `<tr>
+            <td><strong>${esc(o.codigoOrden)}</strong></td>
+            <td>${esc(o.nombrePatrono)}</td>
+            <td>${esc(o.numeroPatronal)}</td>
+            <td title="${esc(o.descripcion)}">${esc(descCorta)}</td>
+            <td><span class="badge badge-pendiente">${esc(o.estado)}</span></td>
+            <td>
+              <button class="btn-accion btn-aprobar" onclick="trabajarOrden(${o.ordenId}, 'informe')">📄 Informe</button>
+              <button class="btn-accion btn-iniciar" onclick="trabajarOrden(${o.ordenId}, 'acta')">📋 Acta</button>
+            </td>
+          </tr>`;
+        }).join("");
+      } catch {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
+      }
+    }
+
+    let ordenTrabajoSeleccionada = null;
+
+    async function trabajarOrden(ordenId, tipo) {
+      const token = getAuthToken();
+      if (!token) { logout(); return; }
+      try {
+        const res = await fetch(CONFIG.apiBaseUrl + CONFIG.apiInformesPath, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token
+          },
+          body: JSON.stringify({ ordenTrabajoId: ordenId, tipo })
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          showToast(err.message || "Error al generar el documento.", "error");
+          return;
+        }
+        const data = await res.json();
+        document.getElementById("modalDocNumero").textContent = data.numeroInforme;
+        document.getElementById("modalExitoDoc").classList.add("open");
+        cargarMisOrdenes();
+      } catch {
+        showToast("Error de conexión.", "error");
+      }
+    }
+
+    function cerrarModalYVerCola() {
+      cerrarModal("modalExitoDoc");
+      showView("mis-informes");
+      cargarMisInformes();
     }
 
     let informeIdAprobar = null;
@@ -2884,25 +3370,38 @@
           return accion;
         }
 
-        const infoHtml = `
-          <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
-            ${renderDetalleFila("N° Informe", `<strong>${esc(inf.numeroInforme)}</strong>`)}
-            ${renderDetalleFila("Estado", badgeEstado(inf.estado))}
-            ${renderDetalleFila("Urgencia", badgeUrgencia(inf.nivelUrgencia))}
-            ${inf.nombrePatrono ? renderDetalleFila("Patrono", esc(inf.nombrePatrono)) : ""}
-            ${inf.nitPatrono ? renderDetalleFila("NIT", esc(inf.nitPatrono)) : ""}
-            ${renderDetalleFila("Inspector", esc(inf.inspectorNombre) || "Inspector #" + inf.inspectorId)}
-            ${inf.supervisorId ? renderDetalleFila("Supervisor", esc(inf.supervisorNombre) || "Supervisor #" + inf.supervisorId) : ""}
-            ${inf.direccionPatrono ? renderDetalleFila("Dirección", esc(inf.direccionPatrono)) : ""}
-            ${inf.descripcion ? renderDetalleFila("Descripción", esc(inf.descripcion)) : ""}
-            ${inf.noAfiliacionRiesgo ? renderDetalleFila("No. afiliación y riesgo", esc(inf.noAfiliacionRiesgo)) : ""}
-            ${inf.noOficio ? renderDetalleFila("No. oficio", esc(inf.noOficio)) : ""}
-            ${inf.fechaOficio ? renderDetalleFila("Fecha oficio", esc(inf.fechaOficio)) : ""}
-            ${inf.envio ? renderDetalleFila("Envío", esc(inf.envio)) : ""}
-            ${inf.motivoAnulacion ? renderDetalleFila("Motivo de anulación", esc(inf.motivoAnulacion)) : ""}
-            ${inf.fechaInforme ? renderDetalleFila("Fecha del informe", esc(inf.fechaInforme)) : ""}
-          </table>
-        `;
+        function cuerpoDetalle(inf) {
+          let html = '';
+          html += renderDetalleFila("N° Documento", `<strong>${esc(inf.numeroInforme)}</strong>`);
+          html += renderDetalleFila("Tipo", badgeTipo(inf.tipo));
+          html += renderDetalleFila("Estado", badgeEstado(inf.estado));
+          html += renderDetalleFila("Urgencia", badgeUrgencia(inf.nivelUrgencia));
+          html += renderDetalleFila("Inspector", esc(inf.inspectorNombre) || "Inspector #" + inf.inspectorId);
+          if (inf.supervisorId) html += renderDetalleFila("Supervisor", esc(inf.supervisorNombre) || "Supervisor #" + inf.supervisorId);
+
+          if (inf.tipo === 'acta') {
+            if (inf.nombrePatrono) html += renderDetalleFila("Empresa/Patrono", esc(inf.nombrePatrono));
+            if (inf.fechaInforme) html += renderDetalleFila("Fecha del acta", esc(inf.fechaInforme));
+            if (inf.periodoDesde) html += renderDetalleFila("Período desde", esc(inf.periodoDesde));
+            if (inf.periodohasta || inf.periodoHasta) html += renderDetalleFila("Período hasta", esc(inf.periodohasta || inf.periodoHasta));
+            if (inf.montoRevisado != null) html += renderDetalleFila("Monto revisado", "Q" + parseFloat(inf.montoRevisado).toFixed(2));
+          } else {
+            if (inf.nombrePatrono) html += renderDetalleFila("Patrono", esc(inf.nombrePatrono));
+            if (inf.numeroPatronal) html += renderDetalleFila("N° Patronal", esc(inf.numeroPatronal));
+            if (inf.direccionPatrono) html += renderDetalleFila("Dirección", esc(inf.direccionPatrono));
+            if (inf.descripcion) html += renderDetalleFila("Descripción", esc(inf.descripcion));
+            if (inf.noAfiliacionRiesgo) html += renderDetalleFila("No. afiliación y riesgo", esc(inf.noAfiliacionRiesgo));
+            if (inf.fechaInforme) html += renderDetalleFila("Fecha del informe", esc(inf.fechaInforme));
+          }
+
+          if (inf.noOficio) html += renderDetalleFila("No. oficio", esc(inf.noOficio));
+          if (inf.fechaOficio) html += renderDetalleFila("Fecha oficio", esc(inf.fechaOficio));
+          if (inf.envio) html += renderDetalleFila("Envío", esc(inf.envio));
+          if (inf.motivoAnulacion) html += renderDetalleFila("Motivo de anulación", esc(inf.motivoAnulacion));
+          return `<table style="width:100%;border-collapse:collapse;margin-bottom:16px;">${html}</table>`;
+        }
+
+        const infoHtml = cuerpoDetalle(inf);
 
         let timelineHtml = "";
         if (inf.auditoria && inf.auditoria.length > 0) {
@@ -3577,6 +4076,28 @@
       document.getElementById("modalExito").addEventListener("click", (e) => {
         if (e.target === e.currentTarget) cerrarModalExito();
       });
+
+      document.getElementById("btnCrearOT").addEventListener("click", crearOrdenTrabajo);
+      document.getElementById("modalCrearOT").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) cerrarModal("modalCrearOT");
+      });
+      document.getElementById("modalExitoOT").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) cerrarModal("modalExitoOT");
+      });
+
+      document.getElementById("btnConfirmarEnviarActa").addEventListener("click", confirmarEnviarActaRevision);
+      document.getElementById("btnCancelarEnviarActa").addEventListener("click", cerrarModalEnviarActaRevision);
+      document.getElementById("modalEnviarActaRevision").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) cerrarModalEnviarActaRevision();
+      });
+
+      document.getElementById("modalElegirTipo").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) cerrarModal("modalElegirTipo");
+      });
+      document.getElementById("modalExitoDoc").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) cerrarModal("modalExitoDoc");
+      });
+
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
           document.querySelectorAll(".modal-overlay.open").forEach((m) => {

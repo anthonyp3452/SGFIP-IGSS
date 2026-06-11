@@ -1,8 +1,13 @@
-import { IsInt, IsOptional, Min } from 'class-validator';
+import { IsIn, IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 
 export class SolicitarInformeDto {
   @IsInt()
   @Min(1)
-  @IsOptional()
-  inspectorId?: number;
+  @IsNotEmpty({ message: 'La orden de trabajo es requerida' })
+  ordenTrabajoId: number;
+
+  @IsString()
+  @IsNotEmpty({ message: 'El tipo es requerido' })
+  @IsIn(['informe', 'acta'], { message: 'El tipo debe ser "informe" o "acta"' })
+  tipo: string;
 }

@@ -10,13 +10,16 @@ import type { EntityManager } from 'typeorm';
 import { Between, DataSource, FindOptionsWhere, Repository } from 'typeorm';
 import { AuditoriaInforme } from './auditoria-informe.entity';
 import { InformeAnulado } from './informe-anulado.entity';
+import { ActaSecuencia } from './acta-secuencia.entity';
 import { ESTADO, TRANSICIONES } from './const/informe-estados';
 import type { EstadoInforme } from './const/informe-estados';
 import { AprobarInformeDto } from './dto/aprobar-informe.dto';
 import { EnviarRevisionDto } from './dto/enviar-revision.dto';
+import { EnviarRevisionActaDto } from './dto/enviar-revision-acta.dto';
 import { FiltrarInformesDto } from './dto/filtrar-informes.dto';
 import { SolicitarInformeDto } from './dto/solicitar-informe.dto';
 import { Informe } from './informe.entity';
+import { OrdenesTrabajoService } from '../ordenes-trabajo/ordenes-trabajo.service';
 
 const CORRELATIVO_ANCHO = 4;
 
@@ -29,11 +32,14 @@ export class InformesService {
     private readonly auditoriaRepository: Repository<AuditoriaInforme>,
     @InjectRepository(InformeAnulado)
     private readonly anuladosRepository: Repository<InformeAnulado>,
+    @InjectRepository(ActaSecuencia)
+    private readonly actaSecuenciaRepository: Repository<ActaSecuencia>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
+    private readonly ordenesTrabajoService: OrdenesTrabajoService,
   ) {}
 
-  private async reservarSiguienteNumero(
+  private async reservarSiguienteNumeroInforme(
     manager: EntityManager,
     anio: number,
   ): Promise<number> {
@@ -64,27 +70,83 @@ export class InformesService {
     );
   }
 
+  private async reservarSiguienteNumeroActa(
+    manager: EntityManager,
+    anio: number,
+  ): Promise<number> {
+    const maxIter = 1000;
+    for (let i = 0; i < maxIter; i++) {
+      const rows = await manager.query<
+        { ultimo_correlativo: string | number }[]
+      >(
+        `INSERT INTO acta_secuencia (anio, ultimo_correlativo)
+         VALUES ($1, 1)
+         ON CONFLICT (anio) DO UPDATE
+         SET ultimo_correlativo = acta_secuencia.ultimo_correlativo + 1
+         RETURNING ultimo_correlativo`,
+        [anio],
+      );
+      const raw = rows[0]?.ultimo_correlativo;
+      const n = typeof raw === 'string' ? parseInt(raw, 10) : Number(raw);
+      if (!Number.isFinite(n) || n < 1) {
+        throw new InternalServerErrorException(
+          'No se pudo obtener el correlativo del acta',
+        );
+      }
+      return n;
+    }
+    throw new InternalServerErrorException(
+      'No se encontró un número de acta disponible después de varios intentos',
+    );
+  }
+
   private formatearNumeroInforme(anio: number, secuencia: number): string {
     const sufijo = String(secuencia).padStart(CORRELATIVO_ANCHO, '0');
     return `INF-${anio}-${sufijo}`;
   }
 
+  private formatearNumeroActa(anio: number, secuencia: number): string {
+    const sufijo = String(secuencia).padStart(3, '0');
+    return `Acta ${sufijo}/${anio}`;
+  }
+
   async solicitar(
     solicitanteId: number,
-    rolId: number,
     dto: SolicitarInformeDto,
   ): Promise<Informe> {
     const anio = new Date().getUTCFullYear();
-    const inspectorAsignado =
-      rolId === 1 && dto.inspectorId ? dto.inspectorId : solicitanteId;
+
+    const orden = await this.ordenesTrabajoService.findById(dto.ordenTrabajoId);
+    if (orden.estado !== 'Pendiente') {
+      throw new BadRequestException(
+        'La orden de trabajo no está disponible',
+      );
+    }
+    if (orden.inspectorId !== solicitanteId) {
+      throw new ForbiddenException(
+        'Esta orden de trabajo no está asignada a usted',
+      );
+    }
 
     return this.dataSource.transaction(async (manager) => {
-      const secuencia = await this.reservarSiguienteNumero(manager, anio);
-      const numeroInforme = this.formatearNumeroInforme(anio, secuencia);
+      let numeroInforme: string;
+      if (dto.tipo === 'acta') {
+        const secuencia = await this.reservarSiguienteNumeroActa(manager, anio);
+        numeroInforme = this.formatearNumeroActa(anio, secuencia);
+      } else {
+        const secuencia = await this.reservarSiguienteNumeroInforme(
+          manager,
+          anio,
+        );
+        numeroInforme = this.formatearNumeroInforme(anio, secuencia);
+      }
 
       const informe = manager.create(Informe, {
         numeroInforme,
-        inspectorId: inspectorAsignado,
+        tipo: dto.tipo,
+        inspectorId: solicitanteId,
+        ordenTrabajoId: dto.ordenTrabajoId,
+        nombrePatrono: orden.nombrePatrono,
         estado: ESTADO.PENDIENTE,
       });
 
@@ -98,17 +160,23 @@ export class InformesService {
         estadoNuevo: ESTADO.PENDIENTE,
       });
 
+      await this.ordenesTrabajoService.completar(dto.ordenTrabajoId);
+
       return saved;
     });
   }
 
   private async enriquecerConInspectores(informes: Informe[]): Promise<Informe[]> {
     if (informes.length === 0) return informes;
-    const ids = [...new Set([
-      ...informes.map((i) => i.inspectorId),
-      ...informes.filter((i) => i.supervisorId).map((i) => i.supervisorId!),
-    ])];
-    const rows = await this.dataSource.query<{ usuario_id: number; nombre: string }[]>(
+    const ids = [
+      ...new Set([
+        ...informes.map((i) => i.inspectorId),
+        ...informes.filter((i) => i.supervisorId).map((i) => i.supervisorId!),
+      ]),
+    ];
+    const rows = await this.dataSource.query<
+      { usuario_id: number; nombre: string }[]
+    >(
       `SELECT usuario_id, nombre FROM usuarios WHERE usuario_id = ANY($1)`,
       [ids],
     );
@@ -116,7 +184,9 @@ export class InformesService {
     for (const r of rows) map.set(r.usuario_id, r.nombre);
     for (const informe of informes) {
       (informe as any).inspectorNombre = map.get(informe.inspectorId) || null;
-      (informe as any).supervisorNombre = informe.supervisorId ? map.get(informe.supervisorId) || null : null;
+      (informe as any).supervisorNombre = informe.supervisorId
+        ? map.get(informe.supervisorId) || null
+        : null;
     }
     return informes;
   }
@@ -178,7 +248,10 @@ export class InformesService {
     return enriquecido;
   }
 
-  async findByInspector(inspectorId: number, estado?: string): Promise<Informe[]> {
+  async findByInspector(
+    inspectorId: number,
+    estado?: string,
+  ): Promise<Informe[]> {
     const where: Record<string, unknown> = { inspectorId };
     if (estado) where.estado = estado;
     const informes = await this.informesRepository.find({
@@ -307,8 +380,28 @@ export class InformesService {
     informe.descripcion = dto.descripcion;
     informe.noAfiliacionRiesgo = dto.noAfiliacionRiesgo;
     informe.nombrePatrono = dto.nombrePatrono;
-    informe.nitPatrono = dto.nitPatrono;
+    informe.numeroPatronal = dto.numeroPatronal;
     informe.direccionPatrono = dto.direccionPatrono;
+    informe.enviadoRevisionAt = new Date();
+    return this.informesRepository.save(informe);
+  }
+
+  async enviarActaARevision(
+    informeId: number,
+    inspectorId: number,
+    dto: EnviarRevisionActaDto,
+  ): Promise<Informe> {
+    const informe = await this.transitarEstado(
+      informeId,
+      inspectorId,
+      ESTADO.EN_REVISION,
+      true,
+    );
+    informe.nombrePatrono = dto.nombrePatrono;
+    informe.periodoDesde = dto.periodoDesde;
+    informe.periodohasta = dto.periodoHasta;
+    informe.montoRevisado = dto.montoRevisado;
+    informe.fechaInforme = dto.fechaActa;
     informe.enviadoRevisionAt = new Date();
     return this.informesRepository.save(informe);
   }

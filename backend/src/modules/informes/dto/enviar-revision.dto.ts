@@ -25,8 +25,9 @@ export class EnviarRevisionDto {
   nombrePatrono: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'El NIT del patrono es requerido' })
-  nitPatrono: string;
+  @IsNotEmpty({ message: 'El número patronal es requerido' })
+  @MaxLength(100)
+  numeroPatronal: string;
 
   @IsString()
   @IsOptional()

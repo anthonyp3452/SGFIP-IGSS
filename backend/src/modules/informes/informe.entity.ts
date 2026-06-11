@@ -15,11 +15,17 @@ export class Informe {
   @Column({ name: 'numero_informe', type: 'varchar', unique: true })
   numeroInforme: string;
 
+  @Column({ name: 'tipo', type: 'varchar', length: 20, default: 'informe' })
+  tipo: string;
+
   @Column({ name: 'inspector_id', type: 'integer' })
   inspectorId: number;
 
   @Column({ name: 'supervisor_id', type: 'integer', nullable: true })
   supervisorId?: number;
+
+  @Column({ name: 'orden_trabajo_id', type: 'integer', nullable: true })
+  ordenTrabajoId?: number;
 
   @Column({
     name: 'tipo_inspeccion',
@@ -32,8 +38,8 @@ export class Informe {
   @Column({ name: 'nombre_patrono', type: 'varchar', nullable: true })
   nombrePatrono?: string;
 
-  @Column({ name: 'nit_patrono', type: 'varchar', nullable: true })
-  nitPatrono?: string;
+  @Column({ name: 'numero_patronal', type: 'varchar', length: 100, nullable: true })
+  numeroPatronal?: string;
 
   @Column({ name: 'direccion_patrono', type: 'varchar', nullable: true })
   direccionPatrono?: string;
@@ -65,6 +71,15 @@ export class Informe {
     nullable: true,
   })
   noAfiliacionRiesgo?: string;
+
+  @Column({ name: 'periodo_desde', type: 'date', nullable: true })
+  periodoDesde?: string;
+
+  @Column({ name: 'periodo_hasta', type: 'date', nullable: true })
+  periodohasta?: string;
+
+  @Column({ name: 'monto_revisado', type: 'numeric', precision: 15, scale: 2, nullable: true })
+  montoRevisado?: number;
 
   @Column({ name: 'no_oficio', type: 'varchar', length: 100, nullable: true })
   noOficio?: string;

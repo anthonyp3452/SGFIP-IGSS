@@ -21,6 +21,7 @@ import { AnularInformeDto } from './dto/anular-informe.dto';
 import { AprobarInformeDto } from './dto/aprobar-informe.dto';
 import { DevolverInformeDto } from './dto/devolver-informe.dto';
 import { EnviarRevisionDto } from './dto/enviar-revision.dto';
+import { EnviarRevisionActaDto } from './dto/enviar-revision-acta.dto';
 import { FiltrarInformesDto } from './dto/filtrar-informes.dto';
 import { SolicitarInformeDto } from './dto/solicitar-informe.dto';
 import { InformesService } from './informes.service';
@@ -37,9 +38,7 @@ export class InformesController {
     @Req() req: Request & { user: JwtPayload },
     @Body() dto: SolicitarInformeDto,
   ) {
-    const solicitanteId = req.user.usuario_id;
-    const rolId = req.user.rol_id;
-    return this.informesService.solicitar(solicitanteId, rolId, dto);
+    return this.informesService.solicitar(req.user.usuario_id, dto);
   }
 
   @Get()
@@ -94,6 +93,18 @@ export class InformesController {
     @Body() dto: EnviarRevisionDto,
   ) {
     return this.informesService.enviarARevision(id, req.user.usuario_id, dto);
+  }
+
+  @Patch(':id/enviar-revision-acta')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(2)
+  enviarActaARevision(
+    @Req() req: Request & { user: JwtPayload },
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: EnviarRevisionActaDto,
+  ) {
+    return this.informesService.enviarActaARevision(id, req.user.usuario_id, dto);
   }
 
   @Patch(':id/aprobar')

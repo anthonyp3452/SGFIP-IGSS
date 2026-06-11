@@ -25,4 +25,5 @@ const SGFIP_CONFIG = {
   apiInformesPath: '/api/informes',
   apiUsuariosPath: '/api/usuarios',
   apiAdminPath: '/api/admin',
+  apiOrdenesTrabajoPath: '/api/ordenes-trabajo',
 };
