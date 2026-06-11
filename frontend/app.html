@@ -312,6 +312,14 @@
       transform: scale(0.98);
     }
 
+    @keyframes pulse-loading {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .loading-cell {
+      animation: pulse-loading 1.2s ease-in-out infinite;
+    }
+
     .main-content {
       flex: 1;
       padding: 28px;
@@ -4120,6 +4128,13 @@
           });
         }
       });
+
+      // Keepalive: evita que Render duerma el backend mientras la app está abierta
+      function keepalive() {
+        fetch(CONFIG.apiBaseUrl + "/api/health", { method: "GET", cache: "no-store" }).catch(() => {});
+      }
+      setInterval(keepalive, 5 * 60 * 1000);
+      setTimeout(keepalive, 1000);
     }
 
     init();
