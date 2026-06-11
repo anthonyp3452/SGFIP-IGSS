@@ -75,6 +75,8 @@ CREATE TABLE IF NOT EXISTS ordenes_trabajo (
 
 -- FK de informes a ordenes_trabajo
 ALTER TABLE informes ADD COLUMN IF NOT EXISTS orden_trabajo_id INTEGER REFERENCES ordenes_trabajo(orden_id);
+ALTER TABLE informes ADD COLUMN IF NOT EXISTS tipo VARCHAR(20) NOT NULL DEFAULT 'informe';
+ALTER TABLE informes ADD COLUMN IF NOT EXISTS numero_patronal VARCHAR(100);
 ALTER TABLE informes ADD COLUMN IF NOT EXISTS periodo_desde DATE;
 ALTER TABLE informes ADD COLUMN IF NOT EXISTS periodo_hasta DATE;
 ALTER TABLE informes ADD COLUMN IF NOT EXISTS monto_revisado NUMERIC(15,2);

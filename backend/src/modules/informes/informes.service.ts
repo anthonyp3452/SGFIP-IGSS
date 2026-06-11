@@ -19,6 +19,7 @@ import { EnviarRevisionActaDto } from './dto/enviar-revision-acta.dto';
 import { FiltrarInformesDto } from './dto/filtrar-informes.dto';
 import { SolicitarInformeDto } from './dto/solicitar-informe.dto';
 import { Informe } from './informe.entity';
+import { OrdenTrabajo } from '../ordenes-trabajo/orden-trabajo.entity';
 import { OrdenesTrabajoService } from '../ordenes-trabajo/ordenes-trabajo.service';
 
 const CORRELATIVO_ANCHO = 4;
@@ -160,7 +161,7 @@ export class InformesService {
         estadoNuevo: ESTADO.PENDIENTE,
       });
 
-      await this.ordenesTrabajoService.completar(dto.ordenTrabajoId);
+      await manager.update(OrdenTrabajo, dto.ordenTrabajoId, { estado: 'Completada' });
 
       return saved;
     });
