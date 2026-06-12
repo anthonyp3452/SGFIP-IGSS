@@ -1984,6 +1984,35 @@
                     </tbody>
                   </table>
                 </div>
+
+                <!-- Órdenes de trabajo asignadas al inspector -->
+                <div style="margin-top:16px;">
+                  <div class="header-row" style="margin-bottom:12px;">
+                    <h3 style="margin:0;font-size:14px;font-weight:600;color:var(--gray-600);">Órdenes de trabajo asignadas</h3>
+                    <div class="detalle-filter-group" id="detalleFilterGroupOT" style="display:none;">
+                      <button class="btn-sm filter-btn active" data-filter="pendientes" onclick="filtrarDetalleOTInsp('pendientes')">Pendientes</button>
+                      <button class="btn-sm filter-btn" data-filter="completadas" onclick="filtrarDetalleOTInsp('completadas')">Completadas</button>
+                      <button class="btn-sm filter-btn" data-filter="anuladas" onclick="filtrarDetalleOTInsp('anuladas')">Anuladas</button>
+                      <button class="btn-sm filter-btn" data-filter="todos" onclick="filtrarDetalleOTInsp('todos')">Todas</button>
+                    </div>
+                  </div>
+                  <div class="table-wrap" style="max-height:300px;overflow-y:auto;">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Código</th>
+                          <th>Patrono</th>
+                          <th>N° Patronal</th>
+                          <th>Estado</th>
+                          <th>Creado</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tablaDetalleOTInspector">
+                        <tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un inspector para ver sus órdenes de trabajo.</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -2049,6 +2078,36 @@
                       <tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un supervisor para ver sus informes.</td></tr>
                     </tbody>
                   </table>
+                </div>
+
+                <!-- Órdenes de trabajo creadas por el supervisor -->
+                <div style="margin-top:16px;">
+                  <div class="header-row" style="margin-bottom:12px;">
+                    <h3 style="margin:0;font-size:14px;font-weight:600;color:var(--gray-600);">Órdenes de trabajo creadas</h3>
+                    <div class="detalle-filter-group" id="detalleFilterGroupOTSup" style="display:none;">
+                      <button class="btn-sm filter-btn active" data-filter="pendientes" onclick="filtrarDetalleOTSup('pendientes')">Pendientes</button>
+                      <button class="btn-sm filter-btn" data-filter="completadas" onclick="filtrarDetalleOTSup('completadas')">Completadas</button>
+                      <button class="btn-sm filter-btn" data-filter="anuladas" onclick="filtrarDetalleOTSup('anuladas')">Anuladas</button>
+                      <button class="btn-sm filter-btn" data-filter="todos" onclick="filtrarDetalleOTSup('todos')">Todas</button>
+                    </div>
+                  </div>
+                  <div class="table-wrap" style="max-height:300px;overflow-y:auto;">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Código</th>
+                          <th>Patrono</th>
+                          <th>N° Patronal</th>
+                          <th>Inspector</th>
+                          <th>Estado</th>
+                          <th>Creado</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tablaDetalleOTSupervisor">
+                        <tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un supervisor para ver sus órdenes de trabajo.</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3766,13 +3825,18 @@
               cargarDetalleInspector(parseInt(this.value));
             } else {
               document.getElementById("tablaDetalleInspector").innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un inspector para ver sus informes.</td></tr>';
+              document.getElementById("tablaDetalleOTInspector").innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un inspector para ver sus órdenes de trabajo.</td></tr>';
               document.getElementById("detalleFilterGroup").style.display = "none";
+              document.getElementById("detalleFilterGroupOT").style.display = "none";
             }
           };
         }
         // Reset detail when dates change
         if (selInsp) { selInsp.value = ""; }
         document.getElementById("detalleFilterGroup").style.display = "none";
+        document.getElementById("detalleFilterGroupOT").style.display = "none";
+        _detalleInspectorData = [];
+        _detalleInspectorOT = [];
 
         // --- Supervisores ---
         const dataSup = resSup.ok ? await resSup.json() : [];
@@ -3803,12 +3867,17 @@
               cargarDetalleSupervisor(parseInt(this.value));
             } else {
               document.getElementById("tablaDetalleSupervisor").innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un supervisor para ver sus informes.</td></tr>';
+              document.getElementById("tablaDetalleOTSupervisor").innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un supervisor para ver sus órdenes de trabajo.</td></tr>';
               document.getElementById("detalleFilterGroupSup").style.display = "none";
+              document.getElementById("detalleFilterGroupOTSup").style.display = "none";
             }
           };
         }
         if (selSup) { selSup.value = ""; }
         document.getElementById("detalleFilterGroupSup").style.display = "none";
+        document.getElementById("detalleFilterGroupOTSup").style.display = "none";
+        _detalleSupervisorData = [];
+        _detalleSupervisorOT = [];
 
         // --- General ---
         const dataGen = resGen.ok ? await resGen.json() : [];
@@ -3882,25 +3951,39 @@
     // --- Detalle de informes por inspector ---
     let _detalleInspectorData = [];
     let _detalleInspectorFiltro = 'trabajados';
+    let _detalleInspectorOT = [];
+    let _detalleInspectorOTFiltro = 'pendientes';
 
     async function cargarDetalleInspector(inspectorId) {
       const token = getAuthToken();
       if (!token) return;
       const tbody = document.getElementById("tablaDetalleInspector");
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando informes...</td></tr>';
+      document.getElementById("tablaDetalleOTInspector").innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando órdenes...</td></tr>';
       try {
-        const res = await fetch(CONFIG.apiBaseUrl + "/api/informes?inspectorId=" + inspectorId, {
-          headers: { Authorization: "Bearer " + token }
-        });
-        if (res.status === 401) { logout(); return; }
-        _detalleInspectorData = res.ok ? await res.json() : [];
+        const [resInf, resOT] = await Promise.all([
+          fetch(CONFIG.apiBaseUrl + "/api/informes?inspectorId=" + inspectorId, {
+            headers: { Authorization: "Bearer " + token }
+          }),
+          fetch(CONFIG.apiBaseUrl + CONFIG.apiOrdenesTrabajoPath + "?inspectorId=" + inspectorId, {
+            headers: { Authorization: "Bearer " + token }
+          })
+        ]);
+        if (resInf.status === 401 || resOT.status === 401) { logout(); return; }
+        _detalleInspectorData = resInf.ok ? await resInf.json() : [];
+        _detalleInspectorOT = resOT.ok ? await resOT.json() : [];
         _detalleInspectorFiltro = 'trabajados';
+        _detalleInspectorOTFiltro = 'pendientes';
         document.getElementById("detalleFilterGroup").style.display = "flex";
-        // Mark active filter button
+        document.getElementById("detalleFilterGroupOT").style.display = "flex";
         document.querySelectorAll("#detalleFilterGroup .filter-btn").forEach(b => {
           b.classList.toggle("active", b.dataset.filter === 'trabajados');
         });
+        document.querySelectorAll("#detalleFilterGroupOT .filter-btn").forEach(b => {
+          b.classList.toggle("active", b.dataset.filter === 'pendientes');
+        });
         renderDetalleInspector();
+        renderDetalleOTInsp();
       } catch {
         showToast("Error al cargar detalle del inspector.", "error");
       }
@@ -3945,27 +4028,78 @@
       }).join("");
     }
 
+    function filtrarDetalleOTInsp(filtro) {
+      _detalleInspectorOTFiltro = filtro;
+      document.querySelectorAll("#detalleFilterGroupOT .filter-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.filter === filtro);
+      });
+      renderDetalleOTInsp();
+    }
+
+    function renderDetalleOTInsp() {
+      const tbody = document.getElementById("tablaDetalleOTInspector");
+      let filtered = _detalleInspectorOT;
+      if (_detalleInspectorOTFiltro === 'pendientes') {
+        filtered = _detalleInspectorOT.filter(o => o.estado === 'Pendiente');
+      } else if (_detalleInspectorOTFiltro === 'completadas') {
+        filtered = _detalleInspectorOT.filter(o => o.estado === 'Completada');
+      } else if (_detalleInspectorOTFiltro === 'anuladas') {
+        filtered = _detalleInspectorOT.filter(o => o.estado === 'Anulada');
+      }
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px;">Sin órdenes en este filtro.</td></tr>';
+        return;
+      }
+      const estadosBadge = { Pendiente: 'badge-pendiente', Completada: 'badge-finalizado', Anulada: 'badge-anulado' };
+      tbody.innerHTML = filtered.map(o => {
+        const fecha = new Date(o.createdAt).toLocaleDateString("es-GT");
+        const cls = estadosBadge[o.estado] || 'badge-pendiente';
+        return `<tr>
+          <td><strong>${esc(o.codigoOrden)}</strong></td>
+          <td>${esc(o.nombrePatrono)}</td>
+          <td>${esc(o.numeroPatronal)}</td>
+          <td><span class="badge ${cls}">${esc(o.estado)}</span></td>
+          <td>${fecha}</td>
+        </tr>`;
+      }).join("");
+    }
+
     // --- Detalle de informes por supervisor ---
     let _detalleSupervisorData = [];
     let _detalleSupervisorFiltro = 'revisados';
+    let _detalleSupervisorOT = [];
+    let _detalleSupervisorOTFiltro = 'pendientes';
 
     async function cargarDetalleSupervisor(supervisorId) {
       const token = getAuthToken();
       if (!token) return;
       const tbody = document.getElementById("tablaDetalleSupervisor");
       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando informes...</td></tr>';
+      document.getElementById("tablaDetalleOTSupervisor").innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando órdenes...</td></tr>';
       try {
-        const res = await fetch(CONFIG.apiBaseUrl + "/api/informes?supervisorId=" + supervisorId, {
-          headers: { Authorization: "Bearer " + token }
-        });
-        if (res.status === 401) { logout(); return; }
-        _detalleSupervisorData = res.ok ? await res.json() : [];
+        const [resInf, resOT] = await Promise.all([
+          fetch(CONFIG.apiBaseUrl + "/api/informes?supervisorId=" + supervisorId, {
+            headers: { Authorization: "Bearer " + token }
+          }),
+          fetch(CONFIG.apiBaseUrl + CONFIG.apiOrdenesTrabajoPath + "?supervisorId=" + supervisorId, {
+            headers: { Authorization: "Bearer " + token }
+          })
+        ]);
+        if (resInf.status === 401 || resOT.status === 401) { logout(); return; }
+        _detalleSupervisorData = resInf.ok ? await resInf.json() : [];
+        _detalleSupervisorOT = resOT.ok ? await resOT.json() : [];
         _detalleSupervisorFiltro = 'revisados';
+        _detalleSupervisorOTFiltro = 'pendientes';
         document.getElementById("detalleFilterGroupSup").style.display = "flex";
+        document.getElementById("detalleFilterGroupOTSup").style.display = "flex";
         document.querySelectorAll("#detalleFilterGroupSup .filter-btn").forEach(b => {
           b.classList.toggle("active", b.dataset.filter === 'revisados');
         });
+        document.querySelectorAll("#detalleFilterGroupOTSup .filter-btn").forEach(b => {
+          b.classList.toggle("active", b.dataset.filter === 'pendientes');
+        });
         renderDetalleSupervisor();
+        renderDetalleOTSup();
       } catch {
         showToast("Error al cargar detalle del supervisor.", "error");
       }
@@ -4007,6 +4141,43 @@
           <td>${esc(i.nombre_patrono || '\u2014')}</td>
           <td>${creado}</td>
           <td>${dias}d</td>
+        </tr>`;
+      }).join("");
+    }
+
+    function filtrarDetalleOTSup(filtro) {
+      _detalleSupervisorOTFiltro = filtro;
+      document.querySelectorAll("#detalleFilterGroupOTSup .filter-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.filter === filtro);
+      });
+      renderDetalleOTSup();
+    }
+
+    function renderDetalleOTSup() {
+      const tbody = document.getElementById("tablaDetalleOTSupervisor");
+      let filtered = _detalleSupervisorOT;
+      if (_detalleSupervisorOTFiltro === 'pendientes') {
+        filtered = _detalleSupervisorOT.filter(o => o.estado === 'Pendiente');
+      } else if (_detalleSupervisorOTFiltro === 'completadas') {
+        filtered = _detalleSupervisorOT.filter(o => o.estado === 'Completada');
+      } else if (_detalleSupervisorOTFiltro === 'anuladas') {
+        filtered = _detalleSupervisorOT.filter(o => o.estado === 'Anulada');
+      }
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Sin órdenes en este filtro.</td></tr>';
+        return;
+      }
+      const estadosBadge = { Pendiente: 'badge-pendiente', Completada: 'badge-finalizado', Anulada: 'badge-anulado' };
+      tbody.innerHTML = filtered.map(o => {
+        const fecha = new Date(o.createdAt).toLocaleDateString("es-GT");
+        const cls = estadosBadge[o.estado] || 'badge-pendiente';
+        return `<tr>
+          <td><strong>${esc(o.codigoOrden)}</strong></td>
+          <td>${esc(o.nombrePatrono)}</td>
+          <td>${esc(o.numeroPatronal)}</td>
+          <td>Inspector #${o.inspectorId}</td>
+          <td><span class="badge ${cls}">${esc(o.estado)}</span></td>
+          <td>${fecha}</td>
         </tr>`;
       }).join("");
     }

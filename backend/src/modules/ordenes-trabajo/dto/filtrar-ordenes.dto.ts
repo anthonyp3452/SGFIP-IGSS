@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsDateString, IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class FiltrarOrdenesDto {
@@ -8,7 +9,14 @@ export class FiltrarOrdenesDto {
   @IsInt()
   @Min(1)
   @IsOptional()
+  @Transform(({ value }) => Number(value))
   inspectorId?: number;
+
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  @Transform(({ value }) => Number(value))
+  supervisorId?: number;
 
   @IsDateString()
   @IsOptional()
