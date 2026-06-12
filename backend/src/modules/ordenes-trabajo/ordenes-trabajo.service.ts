@@ -115,7 +115,7 @@ export class OrdenesTrabajoService {
     return this.ordenesRepository.find({
       where,
       order: { createdAt: 'DESC' },
-    });
+    }).then((ordenes) => this.enriquecerConUsuarios(ordenes));
   }
 
   async findById(id: number): Promise<OrdenTrabajo> {
@@ -149,12 +149,12 @@ export class OrdenesTrabajoService {
     return this.ordenesRepository.find({
       where,
       order: { createdAt: 'DESC' },
-    });
+    }).then((ordenes) => this.enriquecerConUsuarios(ordenes));
   }
 
   async findPendientes(): Promise<OrdenTrabajo[]> {
     return this.ordenesRepository.find({
-      where,
+      where: { estado: 'Pendiente' },
       order: { createdAt: 'DESC' },
     }).then((ordenes) => this.enriquecerConUsuarios(ordenes));
   }
