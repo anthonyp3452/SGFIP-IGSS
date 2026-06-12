@@ -652,6 +652,29 @@
       border-color: var(--gray-300);
     }
 
+    .filter-btn {
+      border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      color: var(--gray-600);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-family: inherit;
+      line-height: 1.4;
+    }
+    .filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .filter-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--white);
+    }
+
     .table-wrap {
       overflow-x: auto;
       border-radius: var(--radius-md);
@@ -1926,6 +1949,41 @@
                     <tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</td></tr>
                   </tbody>
                 </table>
+              </div>
+
+              <!-- Detalle de informes por inspector -->
+              <div style="margin-top:24px;">
+                <div class="header-row" style="margin-bottom:12px;">
+                  <h3 style="margin:0;font-size:15px;font-weight:600;">Detalle de informes por inspector</h3>
+                    <div class="detalle-filter-group" id="detalleFilterGroup" style="display:none;">
+                    <button class="btn-sm filter-btn active" data-filter="trabajados" onclick="filtrarDetalleInspector('trabajados')">Trabajados</button>
+                    <button class="btn-sm filter-btn" data-filter="pendientes" onclick="filtrarDetalleInspector('pendientes')">Pendientes</button>
+                    <button class="btn-sm filter-btn" data-filter="devueltos" onclick="filtrarDetalleInspector('devueltos')">Devueltos</button>
+                    <button class="btn-sm filter-btn" data-filter="todos" onclick="filtrarDetalleInspector('todos')">Todos</button>
+                  </div>
+                </div>
+                <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
+                  <select id="selectInspectorDetalle" style="padding:6px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:13px;min-width:220px;">
+                    <option value="">— Seleccione inspector —</option>
+                  </select>
+                </div>
+                <div class="table-wrap" style="max-height:420px;overflow-y:auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>N° Informe</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Patrono</th>
+                        <th>Creado</th>
+                        <th>Días</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaDetalleInspector">
+                      <tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un inspector para ver sus informes.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
 
@@ -3661,6 +3719,25 @@
           </tr>`).join("");
         }
 
+        // Populate inspector detail selector
+        const selInsp = document.getElementById("selectInspectorDetalle");
+        if (selInsp && dataInsp.length > 0) {
+          selInsp.innerHTML = '<option value="">— Seleccione inspector —</option>' + dataInsp.map(r =>
+            `<option value="${r.inspector_id}">${esc(r.inspector_nombre || "Inspector #" + r.inspector_id)}</option>`
+          ).join("");
+          selInsp.onchange = function () {
+            if (this.value) {
+              cargarDetalleInspector(parseInt(this.value));
+            } else {
+              document.getElementById("tablaDetalleInspector").innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un inspector para ver sus informes.</td></tr>';
+              document.getElementById("detalleFilterGroup").style.display = "none";
+            }
+          };
+        }
+        // Reset detail when dates change
+        if (selInsp) { selInsp.value = ""; }
+        document.getElementById("detalleFilterGroup").style.display = "none";
+
         // --- Supervisores ---
         const dataSup = resSup.ok ? await resSup.json() : [];
         const tbodySup = document.getElementById("tablaTiemposSupervisores");
@@ -3746,6 +3823,72 @@
       } catch {
         showToast("Error al cargar monitoreo.", "error");
       }
+    }
+
+    // --- Detalle de informes por inspector ---
+    let _detalleInspectorData = [];
+    let _detalleInspectorFiltro = 'trabajados';
+
+    async function cargarDetalleInspector(inspectorId) {
+      const token = getAuthToken();
+      if (!token) return;
+      const tbody = document.getElementById("tablaDetalleInspector");
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando informes...</td></tr>';
+      try {
+        const res = await fetch(CONFIG.apiBaseUrl + "/api/informes?inspectorId=" + inspectorId, {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (res.status === 401) { logout(); return; }
+        _detalleInspectorData = res.ok ? await res.json() : [];
+        _detalleInspectorFiltro = 'trabajados';
+        document.getElementById("detalleFilterGroup").style.display = "flex";
+        // Mark active filter button
+        document.querySelectorAll("#detalleFilterGroup .filter-btn").forEach(b => {
+          b.classList.toggle("active", b.dataset.filter === 'trabajados');
+        });
+        renderDetalleInspector();
+      } catch {
+        showToast("Error al cargar detalle del inspector.", "error");
+      }
+    }
+
+    function filtrarDetalleInspector(filtro) {
+      _detalleInspectorFiltro = filtro;
+      document.querySelectorAll("#detalleFilterGroup .filter-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.filter === filtro);
+      });
+      renderDetalleInspector();
+    }
+
+    function renderDetalleInspector() {
+      const tbody = document.getElementById("tablaDetalleInspector");
+      let filtered = _detalleInspectorData;
+      if (_detalleInspectorFiltro === 'trabajados') {
+        filtered = _detalleInspectorData.filter(i => ['En Proceso', 'En Revisión', 'Finalizado'].includes(i.estado));
+      } else if (_detalleInspectorFiltro === 'pendientes') {
+        filtered = _detalleInspectorData.filter(i => i.estado === 'Pendiente');
+      } else if (_detalleInspectorFiltro === 'devueltos') {
+        filtered = _detalleInspectorData.filter(i => i.estado === 'Devuelto');
+      }
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px;">Sin informes en este filtro.</td></tr>';
+        return;
+      }
+      const now = Date.now();
+      tbody.innerHTML = filtered.map(i => {
+        const creado = i.createdAt ? new Date(i.createdAt).toLocaleDateString('es-GT', { timeZone: 'America/Guatemala' }) : '—';
+        const fin = i.finalizadoAt ? new Date(i.finalizadoAt).getTime() : now;
+        const ini = i.createdAt ? new Date(i.createdAt).getTime() : now;
+        const dias = Math.round((fin - ini) / 86400000);
+        return `<tr>
+          <td><strong>${esc(i.numero_informe || '#' + i.informe_id)}</strong></td>
+          <td>${esc(i.tipo || 'informe')}</td>
+          <td>${badgeEstado(i.estado)}</td>
+          <td>${esc(i.nombre_patrono || '—')}</td>
+          <td>${creado}</td>
+          <td>${dias}d</td>
+        </tr>`;
+      }).join("");
     }
 
     // --- Export functions per tab ---
