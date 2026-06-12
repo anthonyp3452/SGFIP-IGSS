@@ -1869,7 +1869,13 @@
 
             <!-- Tab: Dashboard -->
             <div class="tab-content active" id="tab-dashboard">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Dashboard</h3>
+              <div class="header-row" style="margin-bottom:12px;">
+                <h3 style="margin:0;font-size:15px;font-weight:600;">Dashboard</h3>
+                <div>
+                  <button class="btn-sm" onclick="expDashCSV()">📥 CSV</button>
+                  <button class="btn-sm" onclick="expDashExcel()">📥 Excel</button>
+                </div>
+              </div>
               <div class="kpi-grid" id="kpiGrid">
                 <div class="kpi-card"><div class="kpi-value">—</div><div class="kpi-label">Cargando...</div></div>
               </div>
@@ -1897,7 +1903,13 @@
 
             <!-- Tab: Inspectores -->
             <div class="tab-content" id="tab-inspectores">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Desempeño por inspector</h3>
+              <div class="header-row" style="margin-bottom:12px;">
+                <h3 style="margin:0;font-size:15px;font-weight:600;">Desempeño por inspector</h3>
+                <div>
+                  <button class="btn-sm" onclick="expInspCSV()">📥 CSV</button>
+                  <button class="btn-sm" onclick="expInspExcel()">📥 Excel</button>
+                </div>
+              </div>
               <div class="table-wrap">
                 <table>
                   <thead>
@@ -1919,7 +1931,13 @@
 
             <!-- Tab: Supervisores -->
             <div class="tab-content" id="tab-supervisores">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Desempeño por supervisor</h3>
+              <div class="header-row" style="margin-bottom:12px;">
+                <h3 style="margin:0;font-size:15px;font-weight:600;">Desempeño por supervisor</h3>
+                <div>
+                  <button class="btn-sm" onclick="expSupCSV()">📥 CSV</button>
+                  <button class="btn-sm" onclick="expSupExcel()">📥 Excel</button>
+                </div>
+              </div>
               <div class="table-wrap">
                 <table>
                   <thead>
@@ -1943,7 +1961,13 @@
 
             <!-- Tab: General -->
             <div class="tab-content" id="tab-general">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Resumen general del sistema</h3>
+              <div class="header-row" style="margin-bottom:12px;">
+                <h3 style="margin:0;font-size:15px;font-weight:600;">Resumen general del sistema</h3>
+                <div>
+                  <button class="btn-sm" onclick="expGenCSV()">📥 CSV</button>
+                  <button class="btn-sm" onclick="expGenExcel()">📥 Excel</button>
+                </div>
+              </div>
 
               <!-- Mini KPIs -->
               <div class="monitor-kpis" id="monitorKpis">
@@ -1989,7 +2013,13 @@
 
             <!-- Tab: Actividad reciente -->
             <div class="tab-content" id="tab-timeline">
-              <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;">Actividad reciente del sistema</h3>
+              <div class="header-row" style="margin-bottom:12px;">
+                <h3 style="margin:0;font-size:15px;font-weight:600;">Actividad reciente del sistema</h3>
+                <div>
+                  <button class="btn-sm" onclick="expTimelineCSV()">📥 CSV</button>
+                  <button class="btn-sm" onclick="expTimelineExcel()">📥 Excel</button>
+                </div>
+              </div>
               <div id="timelineList" style="max-height:500px;overflow-y:auto;">
                 <p style="text-align:center;color:var(--gray-400);padding:24px;">Cargando...</p>
               </div>
@@ -3441,6 +3471,42 @@
       return `<tr><td style="font-weight:600;padding:6px 8px;border-bottom:1px solid var(--gray-200);width:40%;">${esc(label)}</td><td style="padding:6px 8px;border-bottom:1px solid var(--gray-200);">${value}</td></tr>`;
     }
 
+    // --- Export helpers ---
+    let exportData = { dashboard: null, inspectores: null, supervisores: null, general: null, timeline: null };
+
+    function escNoCSV(v) {
+      if (v === null || v === undefined) return '';
+      return String(v).replace(/"/g, '""');
+    }
+
+    function exportToCSV(filename, headers, rows) {
+      const csv = [headers.join(','), ...rows.map(r => r.map(c => `"${escNoCSV(c)}"`).join(','))].join('\n');
+      const bom = '\uFEFF';
+      const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }
+
+    function exportToExcel(filename, headers, rows) {
+      let html = '<table>' + headers.map(h => `<th>${escNoCSV(h)}</th>`).join('');
+      html += rows.map(r => '<tr>' + r.map(c => `<td>${escNoCSV(c)}</td>`).join('') + '</tr>').join('');
+      html += '</table>';
+      const bom = '\uFEFF';
+      const blob = new Blob([bom + html], { type: 'application/vnd.ms-excel' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }
+
     function barColor(estado) {
       const map = {
         "Pendiente": "bar-azul",
@@ -3479,6 +3545,9 @@
           { value: resumen.del_mes ?? "—", label: "Del mes", cls: "kpi-neutral" },
           { value: resumen.promedio_dias ? parseFloat(resumen.promedio_dias).toFixed(1) + "d" : "—", label: "Prom. días", cls: "kpi-neutral" },
         ];
+
+        // Store for export
+        exportData.dashboard = { resumen, kpis, distribucion, inspectores, tendencia: [] };
 
         const kpiGrid = document.getElementById("kpiGrid");
         kpiGrid.innerHTML = kpis.map(k =>
@@ -3531,6 +3600,7 @@
           headers: { Authorization: "Bearer " + token }
         });
         const tendencia = resTend.ok ? await resTend.json() : [];
+        if (exportData.dashboard) exportData.dashboard.tendencia = tendencia;
         const tendMax = Math.max(...tendencia.flatMap(t => [t.creados, t.finalizados]), 1);
         const tendEl = document.getElementById("tendenciaChart");
         if (tendencia.length === 0) {
@@ -3667,9 +3737,103 @@
             </div>`;
           }).join("");
         }
+
+        // Store for export
+        exportData.inspectores = dataInsp;
+        exportData.supervisores = dataSup;
+        exportData.general = dataGen;
+        exportData.timeline = dataAud;
       } catch {
         showToast("Error al cargar monitoreo.", "error");
       }
+    }
+
+    // --- Export functions per tab ---
+    function expDashCSV() {
+      const d = exportData.dashboard;
+      if (!d) { showToast("Carga datos primero.", "warning"); return; }
+      exportToCSV('dashboard.csv',
+        ['Indicador', 'Valor'],
+        d.kpis.map(k => [k.label, k.value]));
+    }
+    function expDashExcel() {
+      const d = exportData.dashboard;
+      if (!d) { showToast("Carga datos primero.", "warning"); return; }
+      exportToExcel('dashboard.xls',
+        ['Indicador', 'Valor'],
+        d.kpis.map(k => [k.label, k.value]));
+    }
+
+    function expInspCSV() {
+      const d = exportData.inspectores;
+      if (!d || !d.length) { showToast("Carga datos primero.", "warning"); return; }
+      exportToCSV('inspectores.csv',
+        ['Inspector', 'Asignados', 'Pendientes', 'Devueltos', 'Anulados', 'Prom. días'],
+        d.map(r => [r.inspector_nombre || 'Inspector #' + r.inspector_id, r.total_asignados, r.en_proceso, r.devueltos, r.anulados || 0, r.dias_promedio || '']));
+    }
+    function expInspExcel() {
+      const d = exportData.inspectores;
+      if (!d || !d.length) { showToast("Carga datos primero.", "warning"); return; }
+      exportToExcel('inspectores.xls',
+        ['Inspector', 'Asignados', 'Pendientes', 'Devueltos', 'Anulados', 'Prom. días'],
+        d.map(r => [r.inspector_nombre || 'Inspector #' + r.inspector_id, r.total_asignados, r.en_proceso, r.devueltos, r.anulados || 0, r.dias_promedio || '']));
+    }
+
+    function expSupCSV() {
+      const d = exportData.supervisores;
+      if (!d || !d.length) { showToast("Carga datos primero.", "warning"); return; }
+      exportToCSV('supervisores.csv',
+        ['Supervisor', 'Revisados', 'Aprobados', 'Devueltos', 'Tasa aprob.', 'Prom. días', 'Más rápido', 'Más lento'],
+        d.map(r => [r.supervisor_nombre || 'Supervisor #' + r.supervisor_id, r.total_revisados, r.aprobados, r.devueltos, (r.tasa_aprobacion || 0) + '%', r.dias_promedio || '', r.dias_minimo || '', r.dias_maximo || '']));
+    }
+    function expSupExcel() {
+      const d = exportData.supervisores;
+      if (!d || !d.length) { showToast("Carga datos primero.", "warning"); return; }
+      exportToExcel('supervisores.xls',
+        ['Supervisor', 'Revisados', 'Aprobados', 'Devueltos', 'Tasa aprob.', 'Prom. días', 'Más rápido', 'Más lento'],
+        d.map(r => [r.supervisor_nombre || 'Supervisor #' + r.supervisor_id, r.total_revisados, r.aprobados, r.devueltos, (r.tasa_aprobacion || 0) + '%', r.dias_promedio || '', r.dias_minimo || '', r.dias_maximo || '']));
+    }
+
+    function expGenCSV() {
+      const d = exportData.general;
+      if (!d || !d.length) { showToast("Carga datos primero.", "warning"); return; }
+      const g = d[0] || {};
+      exportToCSV('general.csv',
+        ['Indicador', 'Valor'],
+        [['Total', g.total || 0], ['Finalizados', g.finalizados || 0], ['Pendientes', g.pendientes || 0],
+         ['En proceso', (g.en_proceso || 0) + (g.en_revision || 0)], ['Devueltos', g.devueltos || 0],
+         ['Anulados', g.anulados || 0], ['Tasa finalización', (g.tasa_finalizacion || 0) + '%'],
+         ['Tasa devolución', (g.tasa_devolucion || 0) + '%'],
+         ['Prom. global (días)', g.dias_promedio_global || ''], ['Prom. revisión (días)', g.dias_promedio_revision || '']]);
+    }
+    function expGenExcel() {
+      const d = exportData.general;
+      if (!d || !d.length) { showToast("Carga datos primero.", "warning"); return; }
+      const g = d[0] || {};
+      exportToExcel('general.xls',
+        ['Indicador', 'Valor'],
+        [['Total', g.total || 0], ['Finalizados', g.finalizados || 0], ['Pendientes', g.pendientes || 0],
+         ['En proceso', (g.en_proceso || 0) + (g.en_revision || 0)], ['Devueltos', g.devueltos || 0],
+         ['Anulados', g.anulados || 0], ['Tasa finalización', (g.tasa_finalizacion || 0) + '%'],
+         ['Tasa devolución', (g.tasa_devolucion || 0) + '%'],
+         ['Prom. global (días)', g.dias_promedio_global || ''], ['Prom. revisión (días)', g.dias_promedio_revision || '']]);
+    }
+
+    function expTimelineCSV() {
+      const d = exportData.timeline;
+      if (!d || !d.length) { showToast("Carga datos primero.", "warning"); return; }
+      const accionLabels = { creacion: 'creado', anulacion: 'anulado' };
+      exportToCSV('actividad.csv',
+        ['Acción', 'Usuario', 'Informe', 'Observación', 'Fecha'],
+        d.map(a => [accionLabels[a.accion] || a.accion, a.usuarioId || '', a.informeId || '', a.observacion || '', a.createdAt || '']));
+    }
+    function expTimelineExcel() {
+      const d = exportData.timeline;
+      if (!d || !d.length) { showToast("Carga datos primero.", "warning"); return; }
+      const accionLabels = { creacion: 'creado', anulacion: 'anulado' };
+      exportToExcel('actividad.xls',
+        ['Acción', 'Usuario', 'Informe', 'Observación', 'Fecha'],
+        d.map(a => [accionLabels[a.accion] || a.accion, a.usuarioId || '', a.informeId || '', a.observacion || '', a.createdAt || '']));
     }
 
     function cerrarModal(id) {
