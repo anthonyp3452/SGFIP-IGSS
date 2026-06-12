@@ -1742,6 +1742,34 @@
           </div>
         </div>
 
+        <!-- Actas -->
+        <div class="view" id="view-actas">
+          <div class="content-card" style="max-width: 100%;">
+            <div class="header-row">
+              <h2>Actas</h2>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>N° Acta</th>
+                    <th>Patrono</th>
+                    <th>N° Patronal</th>
+                    <th>Inspector</th>
+                    <th>Estado</th>
+                    <th>N° Oficio</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaActasBody">
+                  <tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando actas...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- Mis órdenes de trabajo (Inspector) -->
         <div class="view" id="view-mis-ordenes">
           <div class="content-card" style="max-width: 100%;">
@@ -2643,6 +2671,7 @@
       { id: "bandeja-supervisor", label: "Bandeja de supervisor", icon: "✅", view: "bandeja-supervisor", roles: [ROLE.SUPERVISOR] },
       { id: "ordenes-trabajo", label: "Órdenes de trabajo", icon: "📋", view: "ordenes-trabajo", roles: [ROLE.SUPERVISOR] },
       { id: "informes", label: "Informes patronales", icon: "📂", view: "informes", roles: [ROLE.ADMIN, ROLE.SUPERVISOR] },
+      { id: "actas", label: "Actas", icon: "📜", view: "actas", roles: [ROLE.ADMIN, ROLE.SUPERVISOR, ROLE.INSPECTOR] },
       { id: "monitoreo", label: "Monitoreo", icon: "📊", view: "monitoreo", roles: [ROLE.ADMIN] },
       { id: "usuarios", label: "Usuarios", icon: "👤", view: "usuarios", roles: [ROLE.ADMIN] },
     ];
@@ -2726,6 +2755,7 @@
       if (viewId === "mis-ordenes") cargarMisOrdenes();
       if (viewId === "ordenes-trabajo") { cargarOrdenesTrabajo(); cargarInspectoresSelect(); }
       if (viewId === "bandeja-supervisor") cargarBandejaSupervisor();
+      if (viewId === "actas") cargarActas();
       if (viewId === "monitoreo") { cargarMonitoreo(); cargarDashboard(); }
       if (viewId === "usuarios") { cargarUsuarios(); cargarInvitaciones(); }
     }
@@ -2859,6 +2889,43 @@
         }
       } catch {
         tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
+      }
+    }
+
+    async function cargarActas() {
+      const token = getAuthToken();
+      if (!token) return;
+      const tbody = document.getElementById("tablaActasBody");
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando actas...</td></tr>';
+      try {
+        const response = await fetch(CONFIG.apiBaseUrl + CONFIG.apiInformesPath + "?tipo=acta", {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (!response.ok) {
+          if (response.status === 401) { logout(); return; }
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#dc2626;padding:24px;">Error al cargar actas.</td></tr>';
+          return;
+        }
+        const data = await response.json();
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px;">No hay actas registradas.</td></tr>';
+        } else {
+          tbody.innerHTML = data.map((a) => {
+            const fecha = new Date(a.createdAt).toLocaleDateString("es-GT");
+            return `<tr>
+              <td><strong>${esc(a.numeroInforme)}</strong></td>
+              <td>${esc(a.nombrePatrono) || "—"}</td>
+              <td>${esc(a.numeroPatronal) || "—"}</td>
+              <td>${esc(a.inspectorNombre) || "Inspector #" + a.inspectorId}</td>
+              <td>${badgeEstado(a.estado)}</td>
+              <td>${esc(a.noOficio) || "—"}</td>
+              <td>${fecha}</td>
+              <td><button class="btn-accion btn-iniciar" onclick="verDetalle(${a.informeId})">Ver detalle</button></td>
+            </tr>`;
+          }).join("");
+        }
+      } catch {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#dc2626;padding:24px;">Error de conexión.</td></tr>';
       }
     }
 

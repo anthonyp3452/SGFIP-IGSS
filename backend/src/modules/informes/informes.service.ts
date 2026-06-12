@@ -198,6 +198,7 @@ export class InformesService {
     if (filtros?.estado) where.estado = filtros.estado;
     if (filtros?.inspectorId) where.inspectorId = filtros.inspectorId;
     if (filtros?.supervisorId) where.supervisorId = filtros.supervisorId;
+    if (filtros?.tipo) where.tipo = filtros.tipo;
     if (filtros?.fechaInicio || filtros?.fechaFin) {
       where.createdAt = Between(
         filtros.fechaInicio

@@ -4,6 +4,8 @@ import { ESTADOS_VALIDOS } from '../const/informe-estados';
 
 export const URGENCIAS = ['Baja', 'Media', 'Alta'] as const;
 export type Urgencia = (typeof URGENCIAS)[number];
+export const TIPOS_DOCUMENTO = ['informe', 'acta'] as const;
+export type TipoDocumento = (typeof TIPOS_DOCUMENTO)[number];
 
 export class FiltrarInformesDto {
   @IsOptional()
@@ -33,4 +35,8 @@ export class FiltrarInformesDto {
   @IsOptional()
   @IsIn(URGENCIAS, { message: 'Urgencia no válida' })
   urgencia?: Urgencia;
+
+  @IsOptional()
+  @IsIn(TIPOS_DOCUMENTO, { message: 'Tipo no válido' })
+  tipo?: TipoDocumento;
 }
