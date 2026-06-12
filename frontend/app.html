@@ -3331,7 +3331,7 @@
             <td><strong>${esc(o.codigoOrden)}</strong></td>
             <td>${esc(o.nombrePatrono)}</td>
             <td>${esc(o.numeroPatronal)}</td>
-            <td>Inspector #${o.inspectorId}</td>
+            <td>${esc(o.inspectorNombre || "Inspector #" + o.inspectorId)}</td>
             <td><span class="badge ${cls}">${esc(o.estado)}</span></td>
             <td>${fecha}</td>
             <td>${acciones}</td>
@@ -4175,7 +4175,7 @@
           <td><strong>${esc(o.codigoOrden)}</strong></td>
           <td>${esc(o.nombrePatrono)}</td>
           <td>${esc(o.numeroPatronal)}</td>
-          <td>Inspector #${o.inspectorId}</td>
+          <td>${esc(o.inspectorNombre || "Inspector #" + o.inspectorId)}</td>
           <td><span class="badge ${cls}">${esc(o.estado)}</span></td>
           <td>${fecha}</td>
         </tr>`;

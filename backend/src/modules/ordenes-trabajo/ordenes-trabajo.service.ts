@@ -137,7 +137,7 @@ export class OrdenesTrabajoService {
     return this.ordenesRepository.find({
       where,
       order: { createdAt: 'DESC' },
-    });
+    }).then((ordenes) => this.enriquecerConUsuarios(ordenes));
   }
 
   async findBySupervisor(
@@ -154,9 +154,32 @@ export class OrdenesTrabajoService {
 
   async findPendientes(): Promise<OrdenTrabajo[]> {
     return this.ordenesRepository.find({
-      where: { estado: 'Pendiente' },
+      where,
       order: { createdAt: 'DESC' },
-    });
+    }).then((ordenes) => this.enriquecerConUsuarios(ordenes));
+  }
+
+  private async enriquecerConUsuarios(ordenes: OrdenTrabajo[]): Promise<OrdenTrabajo[]> {
+    if (ordenes.length === 0) return ordenes;
+    const ids = [
+      ...new Set([
+        ...ordenes.map((o) => o.inspectorId),
+        ...ordenes.filter((o) => o.supervisorId).map((o) => o.supervisorId),
+      ]),
+    ];
+    const rows = await this.dataSource.query<{ usuario_id: number; nombre: string }[]>(
+      `SELECT usuario_id, nombre FROM usuarios WHERE usuario_id = ANY($1)`,
+      [ids],
+    );
+    const map = new Map<number, string>();
+    for (const r of rows) map.set(r.usuario_id, r.nombre);
+    for (const orden of ordenes) {
+      (orden as any).inspectorNombre = map.get(orden.inspectorId) || null;
+      (orden as any).supervisorNombre = orden.supervisorId
+        ? map.get(orden.supervisorId) || null
+        : null;
+    }
+    return ordenes;
   }
 
   async anular(
