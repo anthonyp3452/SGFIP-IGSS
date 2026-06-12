@@ -2015,6 +2015,42 @@
                   </tbody>
                 </table>
               </div>
+
+              <!-- Detalle de informes por supervisor -->
+              <div style="margin-top:24px;">
+                <div class="header-row" style="margin-bottom:12px;">
+                  <h3 style="margin:0;font-size:15px;font-weight:600;">Detalle de informes por supervisor</h3>
+                  <div class="detalle-filter-group" id="detalleFilterGroupSup" style="display:none;">
+                    <button class="btn-sm filter-btn active" data-filter="revisados" onclick="filtrarDetalleSupervisor('revisados')">Revisados</button>
+                    <button class="btn-sm filter-btn" data-filter="aprobados" onclick="filtrarDetalleSupervisor('aprobados')">Aprobados</button>
+                    <button class="btn-sm filter-btn" data-filter="devueltos" onclick="filtrarDetalleSupervisor('devueltos')">Devueltos</button>
+                    <button class="btn-sm filter-btn" data-filter="todos" onclick="filtrarDetalleSupervisor('todos')">Todos</button>
+                  </div>
+                </div>
+                <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
+                  <select id="selectSupervisorDetalle" style="padding:6px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:13px;min-width:220px;">
+                    <option value="">— Seleccione supervisor —</option>
+                  </select>
+                </div>
+                <div class="table-wrap" style="max-height:420px;overflow-y:auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>N° Informe</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Inspector</th>
+                        <th>Patrono</th>
+                        <th>Creado</th>
+                        <th>Días</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaDetalleSupervisor">
+                      <tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un supervisor para ver sus informes.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
 
             <!-- Tab: General -->
@@ -3756,6 +3792,24 @@
           </tr>`).join("");
         }
 
+        // Populate supervisor detail selector
+        const selSup = document.getElementById("selectSupervisorDetalle");
+        if (selSup && dataSup.length > 0) {
+          selSup.innerHTML = '<option value="">— Seleccione supervisor —</option>' + dataSup.map(r =>
+            `<option value="${r.supervisor_id}">${esc(r.supervisor_nombre || "Supervisor #" + r.supervisor_id)}</option>`
+          ).join("");
+          selSup.onchange = function () {
+            if (this.value) {
+              cargarDetalleSupervisor(parseInt(this.value));
+            } else {
+              document.getElementById("tablaDetalleSupervisor").innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Seleccione un supervisor para ver sus informes.</td></tr>';
+              document.getElementById("detalleFilterGroupSup").style.display = "none";
+            }
+          };
+        }
+        if (selSup) { selSup.value = ""; }
+        document.getElementById("detalleFilterGroupSup").style.display = "none";
+
         // --- General ---
         const dataGen = resGen.ok ? await resGen.json() : [];
         const g = dataGen[0] || {};
@@ -3885,6 +3939,72 @@
           <td>${esc(i.tipo || 'informe')}</td>
           <td>${badgeEstado(i.estado)}</td>
           <td>${esc(i.nombre_patrono || '—')}</td>
+          <td>${creado}</td>
+          <td>${dias}d</td>
+        </tr>`;
+      }).join("");
+    }
+
+    // --- Detalle de informes por supervisor ---
+    let _detalleSupervisorData = [];
+    let _detalleSupervisorFiltro = 'revisados';
+
+    async function cargarDetalleSupervisor(supervisorId) {
+      const token = getAuthToken();
+      if (!token) return;
+      const tbody = document.getElementById("tablaDetalleSupervisor");
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Cargando informes...</td></tr>';
+      try {
+        const res = await fetch(CONFIG.apiBaseUrl + "/api/informes?supervisorId=" + supervisorId, {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (res.status === 401) { logout(); return; }
+        _detalleSupervisorData = res.ok ? await res.json() : [];
+        _detalleSupervisorFiltro = 'revisados';
+        document.getElementById("detalleFilterGroupSup").style.display = "flex";
+        document.querySelectorAll("#detalleFilterGroupSup .filter-btn").forEach(b => {
+          b.classList.toggle("active", b.dataset.filter === 'revisados');
+        });
+        renderDetalleSupervisor();
+      } catch {
+        showToast("Error al cargar detalle del supervisor.", "error");
+      }
+    }
+
+    function filtrarDetalleSupervisor(filtro) {
+      _detalleSupervisorFiltro = filtro;
+      document.querySelectorAll("#detalleFilterGroupSup .filter-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.filter === filtro);
+      });
+      renderDetalleSupervisor();
+    }
+
+    function renderDetalleSupervisor() {
+      const tbody = document.getElementById("tablaDetalleSupervisor");
+      let filtered = _detalleSupervisorData;
+      if (_detalleSupervisorFiltro === 'revisados') {
+        filtered = _detalleSupervisorData.filter(i => ['En Revisi\u00f3n', 'Finalizado', 'Devuelto'].includes(i.estado));
+      } else if (_detalleSupervisorFiltro === 'aprobados') {
+        filtered = _detalleSupervisorData.filter(i => i.estado === 'Finalizado');
+      } else if (_detalleSupervisorFiltro === 'devueltos') {
+        filtered = _detalleSupervisorData.filter(i => i.estado === 'Devuelto');
+      }
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:24px;">Sin informes en este filtro.</td></tr>';
+        return;
+      }
+      const now = Date.now();
+      tbody.innerHTML = filtered.map(i => {
+        const creado = i.createdAt ? new Date(i.createdAt).toLocaleDateString('es-GT', { timeZone: 'America/Guatemala' }) : '\u2014';
+        const fin = i.finalizadoAt ? new Date(i.finalizadoAt).getTime() : now;
+        const ini = i.createdAt ? new Date(i.createdAt).getTime() : now;
+        const dias = Math.round((fin - ini) / 86400000);
+        return `<tr>
+          <td><strong>${esc(i.numero_informe || '#' + i.informe_id)}</strong></td>
+          <td>${esc(i.tipo || 'informe')}</td>
+          <td>${badgeEstado(i.estado)}</td>
+          <td>${esc(i.inspectorNombre || '\u2014')}</td>
+          <td>${esc(i.nombre_patrono || '\u2014')}</td>
           <td>${creado}</td>
           <td>${dias}d</td>
         </tr>`;

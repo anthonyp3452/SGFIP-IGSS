@@ -17,6 +17,12 @@ export class FiltrarInformesDto {
   inspectorId?: number;
 
   @IsOptional()
+  @Transform(({ value }) => Number(value))
+  @IsInt()
+  @Min(1)
+  supervisorId?: number;
+
+  @IsOptional()
   @IsDateString()
   fechaInicio?: string;
 
