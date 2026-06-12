@@ -4018,10 +4018,10 @@
         const ini = i.createdAt ? new Date(i.createdAt).getTime() : now;
         const dias = Math.round((fin - ini) / 86400000);
         return `<tr>
-          <td><strong>${esc(i.numero_informe || '#' + i.informe_id)}</strong></td>
+          <td><strong>${esc(i.numeroInforme || '#' + i.informe_id)}</strong></td>
           <td>${esc(i.tipo || 'informe')}</td>
           <td>${badgeEstado(i.estado)}</td>
-          <td>${esc(i.nombre_patrono || '—')}</td>
+          <td>${esc(i.nombrePatrono || '—')}</td>
           <td>${creado}</td>
           <td>${dias}d</td>
         </tr>`;
@@ -4134,11 +4134,11 @@
         const ini = i.createdAt ? new Date(i.createdAt).getTime() : now;
         const dias = Math.round((fin - ini) / 86400000);
         return `<tr>
-          <td><strong>${esc(i.numero_informe || '#' + i.informe_id)}</strong></td>
+          <td><strong>${esc(i.numeroInforme || '#' + i.informe_id)}</strong></td>
           <td>${esc(i.tipo || 'informe')}</td>
           <td>${badgeEstado(i.estado)}</td>
           <td>${esc(i.inspectorNombre || '\u2014')}</td>
-          <td>${esc(i.nombre_patrono || '\u2014')}</td>
+          <td>${esc(i.nombrePatrono || '\u2014')}</td>
           <td>${creado}</td>
           <td>${dias}d</td>
         </tr>`;
